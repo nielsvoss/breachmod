@@ -34,4 +34,6 @@ object BreachConfig {
         }
         config.save()
     }
+
+    val instantKillArrows = Setting("instantKillArrows", true)
 }

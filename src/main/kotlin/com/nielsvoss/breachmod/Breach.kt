@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod
 
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
+import net.minecraft.entity.EntityType
 import org.slf4j.LoggerFactory
 
 object Breach : ModInitializer {
@@ -12,5 +14,14 @@ object Breach : ModInitializer {
 		// Proceed with mild caution.
 		logger.info("Hello Fabric world!")
 		BreachConfig.saveDefaults()
+
+		ServerLivingEntityEvents.AFTER_DAMAGE.register { entity, source, _, _, blocked ->
+			if (!blocked && source.source?.type == EntityType.ARROW) {
+				val instantKillArrows = BreachConfig.instantKillArrows.get()
+				if (instantKillArrows) {
+					entity.damage(source, Float.MAX_VALUE)
+				}
+			}
+		}
 	}
 }
