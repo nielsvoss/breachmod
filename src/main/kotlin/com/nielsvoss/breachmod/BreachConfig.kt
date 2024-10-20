@@ -28,5 +28,10 @@ object BreachConfig {
             .map { it.get(BreachConfig) as Setting<*> }
     }
 
-    val testSetting = Setting<Boolean>("testSetting", true)
+    fun saveDefaults() {
+        for (setting in getSettings()) {
+            config.add(setting.settingKey, setting.defaultValue)
+        }
+        config.save()
+    }
 }
