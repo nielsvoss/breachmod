@@ -11,5 +11,9 @@ object Breach : ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		logger.info("Hello Fabric world!")
+
+		logger.info(BreachConfig.testSetting.get().toString())
+		BreachConfig.testSetting.set(false)
+		println(BreachConfig.getSettings())
 	}
 }
