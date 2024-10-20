@@ -36,4 +36,6 @@ object BreachConfig {
     }
 
     val instantKillArrows = Setting("instantKillArrows", true)
+    val prepLengthInSeconds = Setting("prepLengthInSeconds", 30)
+    val roundLengthInSeconds = Setting("roundLengthInSeconds", 180)
 }

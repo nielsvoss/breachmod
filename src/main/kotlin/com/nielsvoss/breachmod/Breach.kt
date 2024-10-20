@@ -28,13 +28,10 @@ object Breach : ModInitializer {
 			}
 		}
 
-		val time : RoundTime = RoundTime(10 * 20, 90 * 20)
-		val sidebar = Sidebar(Text.literal("Game"), Sidebar.Priority.MEDIUM)
-		sidebar.show()
-		sidebar.addLines(SuppliedSidebarLine(0) { Text.literal(time.displayTime()) })
+		val round = Round.startNew(listOf())
 		ServerTickEvents.END_SERVER_TICK.register { server ->
-			server.playerManager.playerList.forEach { sidebar.addPlayer(it) }
-			time.tick()
+			server.playerManager.playerList.forEach { round.addParticipant(it) }
+			round.tick()
 		}
 	}
 }
