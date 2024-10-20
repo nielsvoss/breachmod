@@ -1,8 +1,12 @@
 package com.nielsvoss.breachmod
 
+import eu.pb4.sidebars.api.Sidebar
+import eu.pb4.sidebars.api.lines.SuppliedSidebarLine
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.EntityType
+import net.minecraft.text.Text
 import org.slf4j.LoggerFactory
 
 object Breach : ModInitializer {
@@ -22,6 +26,15 @@ object Breach : ModInitializer {
 					entity.damage(source, Float.MAX_VALUE)
 				}
 			}
+		}
+
+		val time : RoundTime = RoundTime(10 * 20, 90 * 20)
+		val sidebar = Sidebar(Text.literal("Game"), Sidebar.Priority.MEDIUM)
+		sidebar.show()
+		sidebar.addLines(SuppliedSidebarLine(0) { Text.literal(time.displayTime()) })
+		ServerTickEvents.END_SERVER_TICK.register { server ->
+			server.playerManager.playerList.forEach { sidebar.addPlayer(it) }
+			time.tick()
 		}
 	}
 }
