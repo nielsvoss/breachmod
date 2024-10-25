@@ -19,14 +19,14 @@ object Breach : ModInitializer {
 		logger.info("Hello Fabric world!")
 		BreachConfig.saveDefaults()
 
-		ServerLivingEntityEvents.AFTER_DAMAGE.register { entity, source, _, _, blocked ->
+		/*ServerLivingEntityEvents.AFTER_DAMAGE.register { entity, source, _, _, blocked ->
 			if (!blocked && source.source?.type == EntityType.ARROW) {
 				val instantKillArrows = BreachConfig.instantKillArrows.get()
 				if (instantKillArrows) {
 					entity.damage(source, Float.MAX_VALUE)
 				}
 			}
-		}
+		}*/
 
 		val round = Round.startNew(listOf())
 		ServerTickEvents.END_SERVER_TICK.register { server ->
