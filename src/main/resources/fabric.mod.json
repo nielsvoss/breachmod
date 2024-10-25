@@ -40,7 +40,8 @@
 		"minecraft": "~1.20.4",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
+		"fabric-language-kotlin": "*",
+		"plasmid": "*"
 	},
 	"suggests": {
 		"another-mod": "*"

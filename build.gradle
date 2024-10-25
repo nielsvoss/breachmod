@@ -18,6 +18,9 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 	maven { url 'https://maven.nucleoid.xyz' }
+
+	// Needed to prevent error where the mixinextras that plasmid depends on cannot be found
+	maven { url 'https://jitpack.io' }
 }
 
 loom {
@@ -45,6 +48,7 @@ dependencies {
 	implementation "com.electronwill.night-config:json:${project.night_config_version}"
 
 	modImplementation include("eu.pb4:sidebar-api:${project.sidebar_api_version}")
+	modImplementation "xyz.nucleoid:plasmid:${project.plasmid_version}"
 }
 
 processResources {
