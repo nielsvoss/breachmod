@@ -47,7 +47,6 @@ dependencies {
 
 	implementation "com.electronwill.night-config:json:${project.night_config_version}"
 
-	modImplementation include("eu.pb4:sidebar-api:${project.sidebar_api_version}")
 	modImplementation "xyz.nucleoid:plasmid:${project.plasmid_version}"
 }
 
