@@ -4,12 +4,12 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 @JvmRecord
-data class BreachGameConfig(val killArrows: Boolean) {
+data class BreachGameConfig(val arrowsInstantKill: Boolean) {
     companion object {
         @JvmStatic
         val CODEC : Codec<BreachGameConfig> = RecordCodecBuilder.create { instance ->
             instance.group(
-                Codec.BOOL.fieldOf("killArrows").forGetter(BreachGameConfig::killArrows)
+                Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill)
             ).apply(instance, ::BreachGameConfig)
         }
     }

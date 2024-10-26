@@ -58,6 +58,10 @@ object Breach : ModInitializer {
 			context.openWithWorld(worldConfig) { activity, world ->
 				activity.deny(GameRuleType.HUNGER)
 
+				if (config.arrowsInstantKill) {
+					activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
+				}
+
 				activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { offer ->
 					val player: ServerPlayerEntity = offer.player
 					offer.accept(world, Vec3d(0.0, 65.0, 0.0)).and {
