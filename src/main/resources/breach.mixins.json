@@ -3,7 +3,7 @@
 	"package": "com.nielsvoss.breachmod.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"PersistentProjectileEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
