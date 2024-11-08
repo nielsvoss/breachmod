@@ -12,10 +12,12 @@ import xyz.nucleoid.plasmid.game.GameOpenContext
 import xyz.nucleoid.plasmid.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents
+import xyz.nucleoid.plasmid.game.player.PlayerOffer
+import xyz.nucleoid.plasmid.game.player.PlayerOfferResult
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
 
-class BreachWaiting(gameSpace: GameSpace, world: ServerWorld, config: BreachGameConfig) {
+class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val config: BreachGameConfig) {
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
@@ -30,19 +32,23 @@ class BreachWaiting(gameSpace: GameSpace, world: ServerWorld, config: BreachGame
 
 
             return context.openWithWorld(worldConfig) { activity, world ->
+                val waiting = BreachWaiting(activity.gameSpace, world, config)
+
                 activity.deny(GameRuleType.HUNGER)
 
                 if (config.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
                 }
 
-                activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { offer ->
-                    val player: ServerPlayerEntity = offer.player
-                    offer.accept(world, Vec3d(0.0, 65.0, 0.0)).and {
-                        player.changeGameMode(GameMode.ADVENTURE)
-                    }
-                })
+                activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
             }
+        }
+    }
+
+    fun offer(offer: PlayerOffer): PlayerOfferResult {
+        val player: ServerPlayerEntity = offer.player
+        return offer.accept(world, Vec3d(0.0, 65.0, 0.0)).and {
+            player.changeGameMode(GameMode.ADVENTURE)
         }
     }
 }
