@@ -1,4 +1,6 @@
 {
   "type": "breach:breach",
-  "arrowsInstantKill": true
+  "arrowsInstantKill": true,
+  "prepLengthInSeconds": 30,
+  "roundLengthInSeconds": 180
 }

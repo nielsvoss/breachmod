@@ -1,6 +1,6 @@
 package com.nielsvoss.breachmod
 
-class RoundTime(prepPhaseLengthInTicks : Int, private val mainPhaseLengthInTicks : Int) {
+class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLengthInTicks : Int) {
     enum class Phase {
         PREP_PHASE,
         MAIN_PHASE;
