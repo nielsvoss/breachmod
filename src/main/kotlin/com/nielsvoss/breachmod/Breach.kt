@@ -44,31 +44,6 @@ object Breach : ModInitializer {
 			round.tick()
 		}
 
-		GameType.register(Identifier.of(MOD_ID, "breach"), BreachGameConfig.CODEC) { context ->
-			val config: BreachGameConfig = context.config()
-
-			val template = MapTemplate.createEmpty()
-			template.setBlockState(BlockPos(0, 64, 0), Blocks.STONE.defaultState)
-
-			val generator: TemplateChunkGenerator = TemplateChunkGenerator(context.server, template)
-			val worldConfig = RuntimeWorldConfig()
-				.setGenerator(generator)
-				.setTimeOfDay(6000)
-
-			context.openWithWorld(worldConfig) { activity, world ->
-				activity.deny(GameRuleType.HUNGER)
-
-				if (config.arrowsInstantKill) {
-					activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
-				}
-
-				activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { offer ->
-					val player: ServerPlayerEntity = offer.player
-					offer.accept(world, Vec3d(0.0, 65.0, 0.0)).and {
-						player.changeGameMode(GameMode.ADVENTURE)
-					}
-				})
-			}
-		}
+		GameType.register(Identifier.of(MOD_ID, "breach"), BreachGameConfig.CODEC, BreachWaiting::open)
 	}
 }
