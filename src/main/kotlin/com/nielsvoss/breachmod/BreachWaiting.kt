@@ -19,18 +19,19 @@ import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.common.team.TeamAllocator
+import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents
 import xyz.nucleoid.plasmid.game.player.PlayerOffer
 import xyz.nucleoid.plasmid.game.player.PlayerOfferResult
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
+import xyz.nucleoid.plasmid.util.PlayerRef
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val config: BreachGameConfig) {
     private val team1 = createTeam("Breach1", DyeColor.RED)
     private val team2 = createTeam("Breach2", DyeColor.BLUE)
-    private val teams = listOf(team1, team2)
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -68,14 +69,23 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     }
 
     private fun requestStart(): GameResult {
-        val teamAllocator = TeamAllocator<GameTeam, ServerPlayerEntity>(teams)
+        val teamAllocator = TeamAllocator<GameTeam, ServerPlayerEntity>(listOf(team1, team2))
         for (player in gameSpace.players) {
             teamAllocator.add(player, null)
         }
+
+        // TODO: Make it so that team1 isn't always attacking
+        val attackers = mutableListOf<PlayerRef>()
+        val defenders = mutableListOf<PlayerRef>()
         teamAllocator.allocate { team, player ->
-            player.sendMessage(Text.literal(team.key.toString()))
+            when (team.key) {
+                team1.key -> attackers.add(PlayerRef.of(player))
+                team2.key -> defenders.add(PlayerRef.of(player))
+                else -> throw AssertionError("Player was not allocated to a team")
+            }
         }
 
+        BreachActive.open(gameSpace, world, config, team1, team2, attackers, defenders)
         return GameResult.ok()
     }
 
