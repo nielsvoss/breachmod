@@ -1,16 +1,13 @@
 package com.nielsvoss.breachmod
 
-import net.minecraft.block.Blocks
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
-import net.minecraft.util.math.BlockPos
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
-import xyz.nucleoid.map_templates.MapTemplate
 import xyz.nucleoid.plasmid.game.GameOpenContext
 import xyz.nucleoid.plasmid.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.game.GameResult
@@ -19,7 +16,6 @@ import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.common.team.TeamAllocator
-import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.event.GamePlayerEvents
 import xyz.nucleoid.plasmid.game.player.PlayerOffer
@@ -36,15 +32,12 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
+            val map: BreachMap = BreachMap.load(Identifier.of("breach", "test")!!)
+            val generator: TemplateChunkGenerator = map.generator(context.server)
 
-            val template = MapTemplate.createEmpty()
-            template.setBlockState(BlockPos(0, 64, 0), Blocks.STONE.defaultState)
-
-            val generator: TemplateChunkGenerator = TemplateChunkGenerator(context.server, template)
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(generator)
                 .setTimeOfDay(6000)
-
 
             return context.openWithWorld(worldConfig) { activity, world ->
                 val waiting = BreachWaiting(activity.gameSpace, world, config)
