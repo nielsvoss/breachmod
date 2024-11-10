@@ -30,6 +30,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
                 val breachActive = BreachActive(gameSpace, world, config, attackingTeam, defendingTeam, teamManager)
 
+                if (config.arrowsInstantKill) {
+                    activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
+                }
+
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })
 
                 breachActive.start()

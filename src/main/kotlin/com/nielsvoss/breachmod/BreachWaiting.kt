@@ -51,10 +51,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 activity.deny(GameRuleType.HUNGER)
 
-                if (config.arrowsInstantKill) {
-                    activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
-                }
-
                 activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
                 activity.listen(GameActivityEvents.REQUEST_START, GameActivityEvents.RequestStart { waiting.requestStart() })
             }
