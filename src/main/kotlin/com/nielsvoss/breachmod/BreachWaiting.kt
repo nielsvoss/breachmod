@@ -12,6 +12,8 @@ import xyz.nucleoid.plasmid.game.GameOpenContext
 import xyz.nucleoid.plasmid.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.game.GameResult
 import xyz.nucleoid.plasmid.game.GameSpace
+import xyz.nucleoid.plasmid.game.common.GameWaitingLobby
+import xyz.nucleoid.plasmid.game.common.config.PlayerConfig
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
@@ -40,6 +42,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 .setTimeOfDay(6000)
 
             return context.openWithWorld(worldConfig) { activity, world ->
+                GameWaitingLobby.addTo(activity, PlayerConfig(2, 10, 2, PlayerConfig.Countdown.DEFAULT))
                 val waiting = BreachWaiting(activity.gameSpace, world, config)
 
                 activity.deny(GameRuleType.HUNGER)
