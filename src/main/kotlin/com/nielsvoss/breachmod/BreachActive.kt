@@ -8,6 +8,7 @@ import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
+import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.util.PlayerRef
@@ -103,6 +104,28 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         for (player in onlineParticipants()) {
             gameSidebar.addPlayer(player)
         }
+
+        for (player in survivingDefenders()) {
+            TargetSelectorUI.open(player, map.targets) { target ->
+                trySelectTarget(player, target)
+            }
+        }
+    }
+
+    private fun survivingAttackers(): List<ServerPlayerEntity> {
+        return survivingParticipants().filter {
+            it in teamManager.playersIn(attackingTeam.key)
+        }
+    }
+
+    private fun survivingDefenders(): List<ServerPlayerEntity> {
+        return survivingParticipants().filter {
+            it in teamManager.playersIn(defendingTeam.key)
+        }
+    }
+
+    private fun survivingParticipants(): List<ServerPlayerEntity> {
+        return onlineParticipants()
     }
 
     private fun onlineParticipants(): List<ServerPlayerEntity> {
@@ -131,5 +154,20 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun canSeeTargets(player: ServerPlayerEntity): Boolean {
         // TODO: Make it so that in prep time, only defenders can see selected targets
         return true;
+    }
+
+    private fun trySelectTarget(player: ServerPlayerEntity, target: BreachTarget) {
+        if (targetsState.selected().size >= config.numberOfTargets) {
+            player.sendMessage(Text.translatable("text.breach.all_targets_selected"))
+            return
+        }
+
+        if (target in targetsState.selected()) {
+            player.sendMessage(Text.translatable("text.breach.target_already_selected"))
+            return
+        }
+
+        targetsState.selectTarget(target)
+        player.sendMessage(Text.translatable("text.breach.target_selected"))
     }
 }
