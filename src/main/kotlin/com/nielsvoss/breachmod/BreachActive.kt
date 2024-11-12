@@ -64,7 +64,6 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         roundTimer = BreachRoundTimer(prepTicks, roundTicks)
 
         buildSidebar()
-        targetsState.selectTarget(map.targets[0])
 
         if (config.numberOfTargets < 0 || config.numberOfTargets > map.targets.size) {
             throw GameOpenException(Text.literal("Invalid number of targets"))
@@ -93,8 +92,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun tick() {
         targetsState.updateBrokenTargets(world)
         val phaseThatJustEnded: BreachRoundTimer.Phase? = roundTimer.tick()
-        if (phaseThatJustEnded != null) {
-            broadcast(Text.literal("Phase just ended"))
+        when (phaseThatJustEnded) {
+            BreachRoundTimer.Phase.PREP_PHASE -> onEndOfPrepPhase()
+            BreachRoundTimer.Phase.MAIN_PHASE -> {}
+            null -> {}
+        }
+    }
+
+    private fun onEndOfPrepPhase() {
+        if (targetsState.selected().size < config.numberOfTargets) {
+            targetsState.populate(config.numberOfTargets)
+            for (player in survivingDefenders()) {
+                broadcast(Text.translatable("text.breach.randomly_selected_targets"))
+            }
         }
     }
 

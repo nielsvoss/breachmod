@@ -22,6 +22,19 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
         }
     }
 
+    fun populate(size: Int) {
+        if (selectedTargets.size >= size) return
+
+        val unselectedTargets: MutableList<BreachTarget> = availableTargets.toMutableList()
+        unselectedTargets.removeAll(selectedTargets)
+        unselectedTargets.shuffle()
+        var i = 0
+        while (selectedTargets.size < size && i < unselectedTargets.size) {
+            selectedTargets.add(unselectedTargets[i])
+            i++
+        }
+    }
+
     fun selected(): List<BreachTarget> {
         return selectedTargets
     }
