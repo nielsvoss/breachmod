@@ -22,6 +22,14 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
         }
     }
 
+    fun selected(): List<BreachTarget> {
+        return selectedTargets
+    }
+
+    fun isBroken(target: BreachTarget): Boolean {
+        return target in brokenTargets
+    }
+
     override fun toString(): String {
         return "BreachTargetsState{available: $availableTargets, selected: $selectedTargets, broken: $brokenTargets}"
     }

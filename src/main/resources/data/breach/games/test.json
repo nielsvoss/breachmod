@@ -2,5 +2,6 @@
   "type": "breach:breach",
   "arrowsInstantKill": true,
   "prepLengthInSeconds": 30,
-  "roundLengthInSeconds": 180
+  "roundLengthInSeconds": 180,
+  "numberOfTargets": 3
 }

@@ -4,11 +4,14 @@ import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
+import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.util.PlayerRef
+import kotlin.jvm.Throws
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
@@ -16,6 +19,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                                        private val attackingTeam: GameTeam, private val defendingTeam: GameTeam,
                                        private val teamManager: TeamManager) {
     companion object {
+        @Throws(GameOpenException::class)
         fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
                  attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>) {
             gameSpace.setActivity { activity ->
@@ -60,11 +64,25 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
         buildSidebar()
         targetsState.selectTarget(map.targets[0])
+
+        if (config.numberOfTargets < 0 || config.numberOfTargets > map.targets.size) {
+            throw GameOpenException(Text.literal("Invalid number of targets"))
+        }
     }
 
     private fun buildSidebar() {
         gameSidebar.title = Text.translatable("breach.sidebar.title")
         gameSidebar.set {
+            for (i in 0 until config.numberOfTargets) {
+                it.add { player ->
+                    val selectedTargets = targetsState.selected()
+                    if (!canSeeTargets(player)) Text.of("???")
+                    else if (i >= selectedTargets.size) Text.of("...")
+                    else if (targetsState.isBroken(selectedTargets[i]))
+                        selectedTargets[i].block.name.formatted(Formatting.STRIKETHROUGH)
+                    else selectedTargets[i].block.name
+                }
+            }
             it.add { _ ->
                 Text.literal(roundTimer.displayTime())
             }
@@ -108,5 +126,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun broadcastServerError(message: String) {
         broadcast(Text.literal(message))
         broadcast(Text.literal("Please contact the server admins."))
+    }
+
+    private fun canSeeTargets(player: ServerPlayerEntity): Boolean {
+        // TODO: Make it so that in prep time, only defenders can see selected targets
+        return true;
     }
 }
