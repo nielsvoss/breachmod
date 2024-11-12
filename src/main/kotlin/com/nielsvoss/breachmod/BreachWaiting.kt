@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
+import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.game.GameOpenContext
 import xyz.nucleoid.plasmid.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.game.GameResult
@@ -27,23 +28,23 @@ import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
 import xyz.nucleoid.plasmid.util.PlayerRef
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
-class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val config: BreachGameConfig) {
+class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
+                    private val config: BreachGameConfig) {
     private val team1 = createTeam("Breach1", DyeColor.RED)
     private val team2 = createTeam("Breach2", DyeColor.BLUE)
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
-            val map: BreachMap = BreachMap.load(Identifier.of("breach", "test")!!)
-            val generator: TemplateChunkGenerator = map.generator(context.server)
+            val map: BreachMap = BreachMap.load(Identifier.of("breach", "test")!!, context.server)
 
             val worldConfig = RuntimeWorldConfig()
-                .setGenerator(generator)
+                .setGenerator(map.generator(context.server))
                 .setTimeOfDay(6000)
 
             return context.openWithWorld(worldConfig) { activity, world ->
                 GameWaitingLobby.addTo(activity, PlayerConfig(1, 10, 2, PlayerConfig.Countdown.DEFAULT))
-                val waiting = BreachWaiting(activity.gameSpace, world, config)
+                val waiting = BreachWaiting(activity.gameSpace, world, map, config)
 
                 activity.deny(GameRuleType.HUNGER)
 
@@ -55,7 +56,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
     private fun offer(offer: PlayerOffer): PlayerOfferResult {
         val player: ServerPlayerEntity = offer.player
-        return offer.accept(world, Vec3d(0.0, 65.0, 0.0)).and {
+        val spawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
+        return offer.accept(world, spawnLocation).and {
             player.changeGameMode(GameMode.ADVENTURE)
         }
     }
