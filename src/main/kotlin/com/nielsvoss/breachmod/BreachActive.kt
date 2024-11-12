@@ -12,11 +12,12 @@ import xyz.nucleoid.plasmid.util.PlayerRef
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
-                   private val config: BreachGameConfig, private val attackingTeam: GameTeam,
-                   private val defendingTeam: GameTeam, private val teamManager: TeamManager) {
+                                       private val map: BreachMap, private val config: BreachGameConfig,
+                                       private val attackingTeam: GameTeam, private val defendingTeam: GameTeam,
+                                       private val teamManager: TeamManager) {
     companion object {
-        fun open(gameSpace: GameSpace, world: ServerWorld, config: BreachGameConfig, attackingTeam: GameTeam,
-                 defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>) {
+        fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
+                 attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>) {
             gameSpace.setActivity { activity ->
                 val teamManager: TeamManager = TeamManager.addTo(activity)
                 teamManager.addTeam(attackingTeam)
@@ -28,7 +29,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                     teamManager.addPlayerTo(player, defendingTeam.key)
                 }
 
-                val breachActive = BreachActive(gameSpace, world, config, attackingTeam, defendingTeam, teamManager)
+                val breachActive = BreachActive(gameSpace, world, map, config, attackingTeam, defendingTeam, teamManager)
 
                 if (config.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
@@ -41,6 +42,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
     }
 
+    private val targetsState = BreachTargetsState(map.targets)
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
     private val roundTimer: BreachRoundTimer
     init {
@@ -57,6 +59,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         roundTimer = BreachRoundTimer(prepTicks, roundTicks)
 
         buildSidebar()
+        targetsState.selectTarget(map.targets[0])
     }
 
     private fun buildSidebar() {
@@ -69,6 +72,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun tick() {
+        targetsState.updateBrokenTargets(world)
         val phaseThatJustEnded: BreachRoundTimer.Phase? = roundTimer.tick()
         if (phaseThatJustEnded != null) {
             broadcast(Text.literal("Phase just ended"))
