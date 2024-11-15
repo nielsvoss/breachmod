@@ -3,5 +3,6 @@
   "arrowsInstantKill": true,
   "prepLengthInSeconds": 30,
   "roundLengthInSeconds": 180,
-  "numberOfTargets": 3
+  "numberOfTargets": 3,
+  "outlineTargets": true
 }

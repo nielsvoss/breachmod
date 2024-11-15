@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 
 @JvmRecord
 data class BreachGameConfig(val arrowsInstantKill: Boolean, val prepLengthInSeconds: Int, val roundLengthInSeconds: Int,
-                            val numberOfTargets: Int) {
+                            val numberOfTargets: Int, val outlineTargets: Boolean) {
     companion object {
         @JvmStatic
         val CODEC : Codec<BreachGameConfig> = RecordCodecBuilder.create { instance ->
@@ -13,7 +13,8 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean, val prepLengthInSeco
                 Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
                 Codec.INT.fieldOf("prepLengthInSeconds").forGetter(BreachGameConfig::prepLengthInSeconds),
                 Codec.INT.fieldOf("roundLengthInSeconds").forGetter(BreachGameConfig::roundLengthInSeconds),
-                Codec.INT.fieldOf("numberOfTargets").forGetter(BreachGameConfig::numberOfTargets)
+                Codec.INT.fieldOf("numberOfTargets").forGetter(BreachGameConfig::numberOfTargets),
+                Codec.BOOL.fieldOf("outlineTargets").forGetter(BreachGameConfig::outlineTargets)
             ).apply(instance, ::BreachGameConfig)
         }
     }

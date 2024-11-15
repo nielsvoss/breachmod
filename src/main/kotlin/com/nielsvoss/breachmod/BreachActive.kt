@@ -91,7 +91,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun tick() {
         targetsState.updateBrokenTargets(world)
-        targetsState.updateOutlines(world)
+        if (config.outlineTargets) {
+            targetsState.updateOutlines(world)
+        }
         val phaseThatJustEnded: BreachRoundTimer.Phase? = roundTimer.tick()
         when (phaseThatJustEnded) {
             BreachRoundTimer.Phase.PREP_PHASE -> onEndOfPrepPhase()
