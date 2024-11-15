@@ -1,14 +1,17 @@
 package com.nielsvoss.breachmod
 
 import com.nielsvoss.breachmod.mixin.BlockDisplayEntityAccessor
+import com.nielsvoss.breachmod.mixin.DisplayEntityAccessor
 import net.minecraft.block.BlockState
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.decoration.DisplayEntity.BlockDisplayEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.AffineTransformation
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
+import org.joml.Vector3f
 
 class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
     private val selectedTargets: MutableList<BreachTarget> = mutableListOf()
@@ -74,14 +77,24 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
         return "BreachTargetsState{available: $availableTargets, selected: $selectedTargets, broken: $brokenTargets}"
     }
 
+    @Suppress("KotlinConstantConditions")
     private fun createBlockDisplayEntity(world: ServerWorld, blockState: BlockState, pos: BlockPos): BlockDisplayEntity {
+        // Scale down block display to prevent Z-fighting
+        val sizeDecrease = 0.01F
+
         val display = BlockDisplayEntity(EntityType.BLOCK_DISPLAY, world)
-        display.setPosition(Vec3d(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()))
+        // sizeDecrease / 2 is needed to center the block display after shrinking it
+        val position = Vec3d(pos.x.toDouble() + sizeDecrease / 2, pos.y.toDouble() + sizeDecrease / 2,
+            pos.z.toDouble() + sizeDecrease / 2)
+        display.setPosition(position)
         display.isGlowing = true
         display.isInvisible = true // Doesn't seem to do anything right now
 
-        @Suppress("KotlinConstantConditions")
         (display as BlockDisplayEntityAccessor).invokeSetBlockState(blockState)
+
+        val scaleTransformation = AffineTransformation(null, null,
+            Vector3f(1.0F - sizeDecrease, 1.0F - sizeDecrease, 1.0F - sizeDecrease), null)
+        (display as DisplayEntityAccessor).invokeSetTransformation(scaleTransformation)
 
         world.spawnEntity(display)
         return display
