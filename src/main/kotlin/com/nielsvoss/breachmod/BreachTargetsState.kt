@@ -7,6 +7,7 @@ import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.decoration.DisplayEntity.BlockDisplayEntity
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 
 class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
@@ -38,15 +39,9 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
                 }
 
                 if (target !in outlineEntities) {
-                    val display = BlockDisplayEntity(EntityType.BLOCK_DISPLAY, world)
-                    val pos = Vec3d(target.pos.x.toDouble(), target.pos.y.toDouble(), target.pos.z.toDouble())
                     val blockState: BlockState = world.getBlockState(target.pos)
-                    (display as BlockDisplayEntityAccessor).invokeSetBlockState(blockState)
-                    display.setPosition(pos)
-                    display.isGlowing = true
-                    display.isInvisible = true
-                    world.spawnEntity(display)
-                    outlineEntities[target] = display
+                    val blockDisplayEntity = createBlockDisplayEntity(world, blockState, target.pos)
+                    outlineEntities[target] = blockDisplayEntity
                 }
             } else {
                 outlineEntities.remove(target)?.kill()
@@ -77,5 +72,18 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
 
     override fun toString(): String {
         return "BreachTargetsState{available: $availableTargets, selected: $selectedTargets, broken: $brokenTargets}"
+    }
+
+    private fun createBlockDisplayEntity(world: ServerWorld, blockState: BlockState, pos: BlockPos): BlockDisplayEntity {
+        val display = BlockDisplayEntity(EntityType.BLOCK_DISPLAY, world)
+        display.setPosition(Vec3d(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble()))
+        display.isGlowing = true
+        display.isInvisible = true // Doesn't seem to do anything right now
+
+        @Suppress("KotlinConstantConditions")
+        (display as BlockDisplayEntityAccessor).invokeSetBlockState(blockState)
+
+        world.spawnEntity(display)
+        return display
     }
 }
