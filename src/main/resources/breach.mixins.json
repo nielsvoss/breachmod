@@ -1,11 +1,12 @@
 {
-	"required": true,
-	"package": "com.nielsvoss.breachmod.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"PersistentProjectileEntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "com.nielsvoss.breachmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockDisplayEntityAccessor",
+    "PersistentProjectileEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
