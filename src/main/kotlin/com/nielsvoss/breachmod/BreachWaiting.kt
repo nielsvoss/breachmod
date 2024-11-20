@@ -3,6 +3,7 @@ package com.nielsvoss.breachmod
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
@@ -26,6 +27,7 @@ import xyz.nucleoid.plasmid.game.player.PlayerOfferResult
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
 import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
@@ -49,6 +51,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 activity.deny(GameRuleType.HUNGER)
 
                 activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
+                activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })
                 activity.listen(GameActivityEvents.REQUEST_START, GameActivityEvents.RequestStart { waiting.requestStart() })
             }
         }
@@ -60,6 +63,13 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         return offer.accept(world, spawnLocation).and {
             player.changeGameMode(GameMode.ADVENTURE)
         }
+    }
+
+    private fun onPlayerDeath(player: ServerPlayerEntity): ActionResult {
+        player.health = 20.0F
+        val respawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
+        player.teleport(world, respawnLocation.x, respawnLocation.y, respawnLocation.z, 0.0F, 0.0F)
+        return ActionResult.FAIL
     }
 
     private fun requestStart(): GameResult {
