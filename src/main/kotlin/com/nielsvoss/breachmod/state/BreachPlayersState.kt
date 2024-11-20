@@ -97,6 +97,14 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
         return teamManager.getTeamConfig(team).name.copy().append(Text.of(": $n"))
     }
 
+    fun getPopupMessage(): Text {
+        val firstTeam = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
+        val secondTeam = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
+        val n = numSurvivingOnlinePlayers(firstTeam)
+        val m = numSurvivingOnlinePlayers(secondTeam)
+        return Text.of("$n vs $m")
+    }
+
     private fun numSurvivingOnlinePlayers(gameTeamKey: GameTeamKey): Int {
         val onlinePlayers = teamManager.playersIn(gameTeamKey)
         return onlinePlayers.filter(::isSurviving).size

@@ -10,5 +10,6 @@
   "prepLengthInSeconds": 30,
   "roundLengthInSeconds": 180,
   "numberOfTargets": 3,
-  "outlineTargets": true
+  "outlineTargets": true,
+  "remainingPlayersPopup": true
 }

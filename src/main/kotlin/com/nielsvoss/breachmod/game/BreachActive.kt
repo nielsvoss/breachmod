@@ -9,6 +9,7 @@ import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.broadcast
+import com.nielsvoss.breachmod.util.sendTitle
 import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -167,8 +168,17 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun onPlayerDeath(player: ServerPlayerEntity): ActionResult {
-        players.eliminate(player)
-        // TODO: Players remaining display
+        val didEliminate: Boolean = players.eliminate(player)
+        if (didEliminate && config.remainingPlayersPopup) {
+            displayRemainingPlayersPopup()
+        }
         return ActionResult.PASS
+    }
+
+    private fun displayRemainingPlayersPopup() {
+        val popupMessage: Text = players.getPopupMessage()
+        for (player in players.onlineParticipants()) {
+            player.sendTitle(popupMessage)
+        }
     }
 }

@@ -10,7 +10,8 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
                             val disableHunger: Boolean, val disableNaturalRegeneration: Boolean,
                             val disableTileDrops: Boolean, val disableFireTick: Boolean,
                             val prepLengthInSeconds: Int, val roundLengthInSeconds: Int,
-                            val numberOfTargets: Int, val outlineTargets: Boolean) {
+                            val numberOfTargets: Int, val outlineTargets: Boolean,
+                            val remainingPlayersPopup: Boolean) {
     companion object {
         @JvmStatic
         val CODEC : Codec<BreachGameConfig> = RecordCodecBuilder.create { instance ->
@@ -25,7 +26,8 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
                 Codec.INT.fieldOf("prepLengthInSeconds").forGetter(BreachGameConfig::prepLengthInSeconds),
                 Codec.INT.fieldOf("roundLengthInSeconds").forGetter(BreachGameConfig::roundLengthInSeconds),
                 Codec.INT.fieldOf("numberOfTargets").forGetter(BreachGameConfig::numberOfTargets),
-                Codec.BOOL.fieldOf("outlineTargets").forGetter(BreachGameConfig::outlineTargets)
+                Codec.BOOL.fieldOf("outlineTargets").forGetter(BreachGameConfig::outlineTargets),
+                Codec.BOOL.fieldOf("remainingPlayersPopup").forGetter(BreachGameConfig::remainingPlayersPopup)
             ).apply(instance, ::BreachGameConfig)
         }
     }
