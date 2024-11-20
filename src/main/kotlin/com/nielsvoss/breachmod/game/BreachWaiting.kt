@@ -6,6 +6,7 @@ import com.nielsvoss.breachmod.util.randomBottom
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
 import net.minecraft.util.math.Vec3d
@@ -33,8 +34,8 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
                     private val config: BreachGameConfig
 ) {
-    private val team1 = createTeam("Breach1", DyeColor.RED)
-    private val team2 = createTeam("Breach2", DyeColor.BLUE)
+    private val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
+    private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -100,15 +101,16 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             }
         }
 
-        BreachActive.open(gameSpace, world, map, config, team1, team2, attackers, defenders)
+        BreachActive.open(gameSpace, world, map, config, team1, team2, attackers, defenders, team1.key)
         return GameResult.ok()
     }
 
-    private fun createTeam(id: String, color: DyeColor): GameTeam {
+    private fun createTeam(id: String, name: Text, color: DyeColor): GameTeam {
         return GameTeam(GameTeamKey(id),
             GameTeamConfig.builder()
                 .setCollision(AbstractTeam.CollisionRule.NEVER)
                 .setColors(GameTeamConfig.Colors.from(color))
+                .setName(name)
                 .build())
     }
 }

@@ -18,6 +18,7 @@ import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
+import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.util.PlayerRef
@@ -30,9 +31,15 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     companion object {
         @Throws(GameOpenException::class)
         fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
-                 attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>) {
+                 attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>,
+                 teamToDisplayFirst: GameTeamKey
+        ) {
+            if (teamToDisplayFirst != attackingTeam.key && teamToDisplayFirst != defendingTeam.key) {
+                throw IllegalArgumentException("teamToDisplayFirst needs to be either the attacking or defending team")
+            }
+
             gameSpace.setActivity { activity ->
-                val breachPlayersState: BreachPlayersState = BreachPlayersState.create(activity, attackingTeam, defendingTeam, attackers, defenders)
+                val breachPlayersState: BreachPlayersState = BreachPlayersState.create(activity, attackingTeam, defendingTeam, attackers, defenders, teamToDisplayFirst)
                 val breachActive = BreachActive(gameSpace, world, map, config, breachPlayersState)
 
                 if (config.arrowsInstantKill) {
@@ -92,8 +99,12 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                     else selectedTargets[i].block.name
                 }
             }
+            it.add(Text.of(""))
             it.add { _ ->
-                Text.of("A: ${players.survivingOnlineAttackers().size} D: ${players.survivingOnlineDefenders().size}")
+                players.getFirstSidebarLine()
+            }
+            it.add { _ ->
+                players.getSecondSidebarLine()
             }
             it.add { _ ->
                 Text.of(roundTimer.displayTime())
