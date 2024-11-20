@@ -1,4 +1,4 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.data
 
 import net.minecraft.server.MinecraftServer
 import net.minecraft.text.Text

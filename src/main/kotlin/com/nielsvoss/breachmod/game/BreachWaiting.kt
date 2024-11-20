@@ -1,5 +1,7 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.game
 
+import com.nielsvoss.breachmod.BreachGameConfig
+import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.util.randomBottom
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
@@ -30,7 +32,8 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
-                    private val config: BreachGameConfig) {
+                    private val config: BreachGameConfig
+) {
     private val team1 = createTeam("Breach1", DyeColor.RED)
     private val team2 = createTeam("Breach2", DyeColor.BLUE)
 

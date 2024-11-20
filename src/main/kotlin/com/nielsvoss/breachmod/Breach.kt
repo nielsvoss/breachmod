@@ -1,20 +1,10 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.game.BreachWaiting
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-import net.minecraft.block.Blocks
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Vec3d
-import net.minecraft.world.GameMode
 import org.slf4j.LoggerFactory
-import xyz.nucleoid.fantasy.RuntimeWorldConfig
-import xyz.nucleoid.map_templates.MapTemplate
 import xyz.nucleoid.plasmid.game.GameType
-import xyz.nucleoid.plasmid.game.event.GamePlayerEvents
-import xyz.nucleoid.plasmid.game.rule.GameRuleType
-import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
 
 
 object Breach : ModInitializer {

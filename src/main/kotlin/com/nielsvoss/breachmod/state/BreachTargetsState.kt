@@ -1,12 +1,12 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.state
 
+import com.nielsvoss.breachmod.data.BreachTarget
 import com.nielsvoss.breachmod.mixin.BlockDisplayEntityAccessor
 import com.nielsvoss.breachmod.mixin.DisplayEntityAccessor
 import net.minecraft.block.BlockState
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.decoration.DisplayEntity
 import net.minecraft.entity.decoration.DisplayEntity.BlockDisplayEntity
-import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.AffineTransformation
 import net.minecraft.util.math.BlockPos

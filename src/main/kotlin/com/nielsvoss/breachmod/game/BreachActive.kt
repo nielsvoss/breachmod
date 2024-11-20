@@ -1,5 +1,11 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.game
 
+import com.nielsvoss.breachmod.*
+import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.data.BreachTarget
+import com.nielsvoss.breachmod.state.BreachRoundTimer
+import com.nielsvoss.breachmod.state.BreachTargetsState
+import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -8,7 +14,6 @@ import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.util.PlayerRef

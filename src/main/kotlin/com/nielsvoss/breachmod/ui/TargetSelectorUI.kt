@@ -1,5 +1,6 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.ui
 
+import com.nielsvoss.breachmod.data.BreachTarget
 import com.nielsvoss.breachmod.util.toSpaceSeparatedString
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.SimpleGui

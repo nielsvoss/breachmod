@@ -1,4 +1,4 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.state
 
 class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLengthInTicks : Int) {
     enum class Phase {
