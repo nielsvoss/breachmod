@@ -3,6 +3,7 @@ package com.nielsvoss.breachmod.state
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameActivity
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
@@ -104,9 +105,13 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
     fun getPopupMessage(): Text {
         val firstTeam = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
         val secondTeam = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
+        val firstTeamColor: Formatting = teamManager.getTeamConfig(firstTeam).colors.chatFormatting
+        val secondTeamColor: Formatting = teamManager.getTeamConfig(secondTeam).colors.chatFormatting
         val n = numSurvivingOnlinePlayers(firstTeam)
         val m = numSurvivingOnlinePlayers(secondTeam)
-        return Text.of("$n vs $m")
+        return Text.empty().append(Text.literal("$n").formatted(firstTeamColor))
+            .append(Text.translatable("text.breach.popup_versus"))
+            .append(Text.literal("$m").formatted(secondTeamColor))
     }
 
     private fun numSurvivingOnlinePlayers(gameTeamKey: GameTeamKey): Int {

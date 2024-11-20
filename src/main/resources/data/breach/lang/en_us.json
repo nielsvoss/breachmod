@@ -7,5 +7,6 @@
   "text.breach.all_targets_selected": "Cannot select target, since all targets all already selected",
   "text.breach.target_already_selected": "This target has already been chosen",
   "text.breach.target_selected": "Selected target",
+  "text.breach.popup_versus": " vs ",
   "gui.breach.select_targets": "Select targets to defend"
 }
