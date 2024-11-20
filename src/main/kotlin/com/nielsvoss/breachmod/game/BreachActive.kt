@@ -3,6 +3,7 @@ package com.nielsvoss.breachmod.game
 import com.nielsvoss.breachmod.*
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
+import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
@@ -22,24 +23,14 @@ import kotlin.jvm.Throws
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
                                        private val map: BreachMap, private val config: BreachGameConfig,
-                                       private val attackingTeam: GameTeam, private val defendingTeam: GameTeam,
-                                       private val teamManager: TeamManager) {
+                                       private val players: BreachPlayersState) {
     companion object {
         @Throws(GameOpenException::class)
         fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
                  attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>) {
             gameSpace.setActivity { activity ->
-                val teamManager: TeamManager = TeamManager.addTo(activity)
-                teamManager.addTeam(attackingTeam)
-                teamManager.addTeam(defendingTeam)
-                for (player in attackers) {
-                    teamManager.addPlayerTo(player, attackingTeam.key)
-                }
-                for (player in defenders) {
-                    teamManager.addPlayerTo(player, defendingTeam.key)
-                }
-
-                val breachActive = BreachActive(gameSpace, world, map, config, attackingTeam, defendingTeam, teamManager)
+                val breachPlayersState: BreachPlayersState = BreachPlayersState.create(activity, attackingTeam, defendingTeam, attackers, defenders)
+                val breachActive = BreachActive(gameSpace, world, map, config, breachPlayersState)
 
                 if (config.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
@@ -105,7 +96,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun onEndOfPrepPhase() {
         if (targetsState.selected().size < config.numberOfTargets) {
             targetsState.populate(config.numberOfTargets)
-            for (player in survivingDefenders()) {
+            for (player in players.survivingDefenders()) {
                 broadcast(Text.translatable("text.breach.randomly_selected_targets"))
             }
         }
@@ -114,49 +105,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun start() {
         gameSidebar.show()
         // TODO: Handle offline players
-        for (player in onlineParticipants()) {
+        for (player in players.onlineParticipants()) {
             gameSidebar.addPlayer(player)
         }
 
-        for (player in survivingDefenders()) {
+        for (player in players.survivingDefenders()) {
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
         }
     }
 
-    private fun survivingAttackers(): List<ServerPlayerEntity> {
-        return survivingParticipants().filter {
-            it in teamManager.playersIn(attackingTeam.key)
-        }
-    }
-
-    private fun survivingDefenders(): List<ServerPlayerEntity> {
-        return survivingParticipants().filter {
-            it in teamManager.playersIn(defendingTeam.key)
-        }
-    }
-
-    private fun survivingParticipants(): List<ServerPlayerEntity> {
-        return onlineParticipants()
-    }
-
-    private fun onlineParticipants(): List<ServerPlayerEntity> {
-        val players = mutableListOf<ServerPlayerEntity>()
-        players.addAll(teamManager.playersIn(attackingTeam.key))
-        players.addAll(teamManager.playersIn(defendingTeam.key))
-        return players
-    }
-
-    private fun allParticipants(): List<PlayerRef> {
-        val players = mutableListOf<PlayerRef>()
-        players.addAll(teamManager.allPlayersIn(attackingTeam.key))
-        players.addAll(teamManager.allPlayersIn(defendingTeam.key))
-        return players
-    }
-
     private fun broadcast(text: Text) {
-        onlineParticipants().forEach { it.sendMessage(text) }
+        players.onlineParticipants().forEach { it.sendMessage(text) }
     }
 
     private fun canSeeTargets(player: ServerPlayerEntity): Boolean {
