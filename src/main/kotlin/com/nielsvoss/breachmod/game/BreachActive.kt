@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod.game
 
-import com.nielsvoss.breachmod.*
+import com.nielsvoss.breachmod.BreachGameConfig
+import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
 import com.nielsvoss.breachmod.state.BreachPlayersState
@@ -16,10 +17,8 @@ import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.util.PlayerRef
-import kotlin.jvm.Throws
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
