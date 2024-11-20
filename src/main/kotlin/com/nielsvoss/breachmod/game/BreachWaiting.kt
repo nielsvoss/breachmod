@@ -51,6 +51,15 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 activity.deny(GameRuleType.HUNGER)
                 activity.deny(GameRuleType.PVP)
+                activity.deny(GameRuleType.CRAFTING)
+                activity.deny(GameRuleType.THROW_ITEMS)
+
+                activity.deny(GameRuleType.PORTALS)
+                activity.deny(GameRuleType.FIRE_TICK)
+                activity.deny(GameRuleType.CORAL_DEATH)
+                activity.deny(GameRuleType.ICE_MELT)
+                activity.deny(GameRuleType.FLUID_FLOW)
+                activity.deny(GameRuleType.DISPENSER_ACTIVATE)
 
                 activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })

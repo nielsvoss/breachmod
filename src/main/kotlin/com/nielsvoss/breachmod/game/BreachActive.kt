@@ -14,6 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
+import net.minecraft.world.GameRules
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
@@ -48,6 +49,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 if (config.disableFireTick) {
                     activity.deny(GameRuleType.FIRE_TICK)
                 }
+
+                activity.deny(GameRuleType.PORTALS)
 
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })
 
