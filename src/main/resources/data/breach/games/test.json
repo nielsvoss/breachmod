@@ -1,6 +1,11 @@
 {
   "type": "breach:breach",
   "map": "breach:test",
+  "timeOfDay": 18000,
+  "disableHunger": true,
+  "disableNaturalRegeneration": true,
+  "disableTileDrops": true,
+  "disableFireTick": true,
   "arrowsInstantKill": true,
   "prepLengthInSeconds": 30,
   "roundLengthInSeconds": 180,

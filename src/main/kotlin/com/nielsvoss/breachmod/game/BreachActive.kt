@@ -18,6 +18,7 @@ import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
+import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.util.PlayerRef
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
@@ -34,6 +35,18 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
                 if (config.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
+                }
+                if (config.disableHunger) {
+                    activity.deny(GameRuleType.HUNGER)
+                }
+                if (config.disableNaturalRegeneration) {
+                    activity.deny(GameRuleType.SATURATED_REGENERATION)
+                }
+                if (config.disableTileDrops) {
+                    activity.deny(GameRuleType.BLOCK_DROPS)
+                }
+                if (config.disableFireTick) {
+                    activity.deny(GameRuleType.FIRE_TICK)
                 }
 
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })

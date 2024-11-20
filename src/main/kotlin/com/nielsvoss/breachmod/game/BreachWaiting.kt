@@ -43,13 +43,14 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(context.server))
-                .setTimeOfDay(6000)
+                .setTimeOfDay(config.timeOfDay)
 
             return context.openWithWorld(worldConfig) { activity, world ->
                 GameWaitingLobby.addTo(activity, PlayerConfig(1, 10, 2, PlayerConfig.Countdown.DEFAULT))
                 val waiting = BreachWaiting(activity.gameSpace, world, map, config)
 
                 activity.deny(GameRuleType.HUNGER)
+                activity.deny(GameRuleType.PVP)
 
                 activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })
