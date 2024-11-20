@@ -17,12 +17,12 @@ class BreachMap private constructor(private val template: MapTemplate, val lobby
         fun load(mapId: Identifier, server: MinecraftServer): BreachMap {
             val template: MapTemplate = MapTemplateSerializer.loadFromResource(server, mapId)
             val lobbySpawnRegion = template.metadata.getFirstRegion("lobbySpawn")
-                ?: throw GameOpenException(Text.literal("Provided map did not contain a lobbySpawn region"))
+                ?: throw GameOpenException(Text.of("Provided map did not contain a lobbySpawn region"))
 
             val targetBlocks = mutableListOf<BlockPos>()
             for (region in template.metadata.getRegions("target")) {
                 if (region.bounds.min != region.bounds.max) {
-                    throw GameOpenException(Text.literal("A target region is not 1x1x1"))
+                    throw GameOpenException(Text.of("A target region is not 1x1x1"))
                 }
                 targetBlocks.add(region.bounds.min)
             }

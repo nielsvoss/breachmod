@@ -51,22 +51,17 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
     private val roundTimer: BreachRoundTimer
     init {
-        var prepTicks = config.prepLengthInSeconds * 20;
-        var roundTicks = config.roundLengthInSeconds * 20;
-        if (prepTicks <= 0) {
-            broadcastServerError("Configuration Error: prepLengthInSeconds was a nonpositve number")
-            prepTicks = 1
-        }
-        if (roundTicks <= 0) {
-            broadcastServerError("Configuration Error: roundLengthInSeconds was a nonpositive number")
-            roundTicks = 1
+        val prepTicks = config.prepLengthInSeconds * 20;
+        val roundTicks = config.roundLengthInSeconds * 20;
+        if (prepTicks <= 0 || roundTicks <= 0) {
+            throw GameOpenException(Text.of("prepTicks and roundTicks need to be positive"))
         }
         roundTimer = BreachRoundTimer(prepTicks, roundTicks)
 
         buildSidebar()
 
         if (config.numberOfTargets < 0 || config.numberOfTargets > map.targets.size) {
-            throw GameOpenException(Text.literal("Invalid number of targets"))
+            throw GameOpenException(Text.of("Invalid number of targets"))
         }
     }
 
@@ -84,7 +79,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 }
             }
             it.add { _ ->
-                Text.literal(roundTimer.displayTime())
+                Text.of(roundTimer.displayTime())
             }
         }
     }
@@ -157,11 +152,6 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun broadcast(text: Text) {
         onlineParticipants().forEach { it.sendMessage(text) }
-    }
-
-    private fun broadcastServerError(message: String) {
-        broadcast(Text.literal(message))
-        broadcast(Text.literal("Please contact the server admins."))
     }
 
     private fun canSeeTargets(player: ServerPlayerEntity): Boolean {
