@@ -1,5 +1,6 @@
 {
   "type": "breach:breach",
+  "map": "breach:test",
   "arrowsInstantKill": true,
   "prepLengthInSeconds": 30,
   "roundLengthInSeconds": 180,

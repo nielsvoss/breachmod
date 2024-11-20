@@ -40,7 +40,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
-            val map: BreachMap = BreachMap.load(Identifier.of("breach", "test")!!, context.server)
+            val map: BreachMap = BreachMap.load(config.map, context.server)
 
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(context.server))
