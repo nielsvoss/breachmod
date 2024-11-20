@@ -13,14 +13,15 @@ import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
-import net.minecraft.world.GameRules
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
@@ -53,6 +54,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 activity.deny(GameRuleType.PORTALS)
 
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })
+                activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> breachActive.onPlayerDeath(player) })
 
                 breachActive.start()
             }
@@ -91,6 +93,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 }
             }
             it.add { _ ->
+                Text.of("A: ${players.survivingOnlineAttackers().size} D: ${players.survivingOnlineDefenders().size}")
+            }
+            it.add { _ ->
                 Text.of(roundTimer.displayTime())
             }
         }
@@ -112,7 +117,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun onEndOfPrepPhase() {
         if (targetsState.selected().size < config.numberOfTargets) {
             targetsState.populate(config.numberOfTargets)
-            players.survivingDefenders().broadcast(Text.translatable("text.breach.randomly_selected_targets"))
+            players.survivingOnlineDefenders().broadcast(Text.translatable("text.breach.randomly_selected_targets"))
         }
     }
 
@@ -123,7 +128,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSidebar.addPlayer(player)
         }
 
-        for (player in players.survivingDefenders()) {
+        for (player in players.survivingOnlineDefenders()) {
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
@@ -148,5 +153,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
         targetsState.selectTarget(target)
         player.sendMessage(Text.translatable("text.breach.target_selected"))
+    }
+
+    private fun onPlayerDeath(player: ServerPlayerEntity): ActionResult {
+        players.eliminate(player)
+        // TODO: Players remaining display
+        return ActionResult.PASS
     }
 }

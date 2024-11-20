@@ -22,24 +22,28 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
                 teamManager.addPlayerTo(player, defendingTeam.key)
             }
 
-            return BreachPlayersState(attackingTeam.key, defendingTeam.key, teamManager)
+            val breachPlayersState = BreachPlayersState(attackingTeam.key, defendingTeam.key, teamManager)
+            breachPlayersState.markAllOnlinePlayersAsSurviving()
+            return breachPlayersState
         }
     }
 
-    fun survivingAttackers(): List<ServerPlayerEntity> {
-        return survivingParticipants().filter {
+    private val survivingPlayers: MutableSet<PlayerRef> = mutableSetOf()
+
+    fun survivingOnlineAttackers(): List<ServerPlayerEntity> {
+        return survivingOnlineParticipants().filter {
             it in teamManager.playersIn(attackingTeamKey)
         }
     }
 
-    fun survivingDefenders(): List<ServerPlayerEntity> {
-        return survivingParticipants().filter {
+    fun survivingOnlineDefenders(): List<ServerPlayerEntity> {
+        return survivingOnlineParticipants().filter {
             it in teamManager.playersIn(defendingTeamKey)
         }
     }
 
-    fun survivingParticipants(): List<ServerPlayerEntity> {
-        return onlineParticipants()
+    fun survivingOnlineParticipants(): List<ServerPlayerEntity> {
+        return onlineParticipants().filter (::isSurviving)
     }
 
     fun onlineParticipants(): List<ServerPlayerEntity> {
@@ -54,5 +58,21 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
         players.addAll(teamManager.allPlayersIn(attackingTeamKey))
         players.addAll(teamManager.allPlayersIn(defendingTeamKey))
         return players
+    }
+
+    fun isSurviving(player: ServerPlayerEntity): Boolean {
+        return PlayerRef.of(player) in survivingPlayers
+    }
+
+    fun eliminate(player: PlayerRef): Boolean {
+        return survivingPlayers.remove(player)
+    }
+
+    fun eliminate(player: ServerPlayerEntity): Boolean {
+        return eliminate(PlayerRef.of(player))
+    }
+
+    private fun markAllOnlinePlayersAsSurviving() {
+        survivingPlayers.addAll(onlineParticipants().map { PlayerRef.of(it) })
     }
 }
