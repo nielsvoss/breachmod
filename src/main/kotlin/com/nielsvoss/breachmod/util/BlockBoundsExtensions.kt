@@ -1,4 +1,4 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.util
 
 import net.minecraft.util.math.Vec3d
 import xyz.nucleoid.map_templates.BlockBounds

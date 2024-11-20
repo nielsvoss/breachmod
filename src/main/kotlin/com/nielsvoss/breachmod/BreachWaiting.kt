@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.util.randomBottom
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
@@ -9,7 +10,6 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
-import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.game.GameOpenContext
 import xyz.nucleoid.plasmid.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.game.GameResult
@@ -25,7 +25,6 @@ import xyz.nucleoid.plasmid.game.event.GamePlayerEvents
 import xyz.nucleoid.plasmid.game.player.PlayerOffer
 import xyz.nucleoid.plasmid.game.player.PlayerOfferResult
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
-import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
 import xyz.nucleoid.plasmid.util.PlayerRef
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 

@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.util.toSpaceSeparatedString
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.item.ItemStack
@@ -30,7 +31,7 @@ class TargetSelectorUI(player: ServerPlayerEntity, private val availableTargets:
         for ((pos, target) in availableTargets.withIndex()) {
             val itemStack = ItemStack(target.block.asItem())
             val icon = GuiElementBuilder.from(itemStack)
-            icon.addLoreLine(Text.of(target.pos.toString()))
+            icon.addLoreLine(Text.of(target.pos.toSpaceSeparatedString()))
 
             icon.setCallback(Runnable { onSelectTarget.accept(target) })
 
