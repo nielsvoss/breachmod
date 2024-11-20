@@ -88,13 +88,17 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
     fun getFirstSidebarLine(): Text {
         val team = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
         val n = numSurvivingOnlinePlayers(team)
-        return teamManager.getTeamConfig(team).name.copy().append(Text.of(": $n"))
+        val name = teamManager.getTeamConfig(team).name
+        val nameWithColon = name.copy().append(":") // Colon gets the same color as team name
+        return Text.empty().append(nameWithColon).append(Text.of(" $n"))
     }
 
     fun getSecondSidebarLine(): Text {
         val team = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
         val n = numSurvivingOnlinePlayers(team)
-        return teamManager.getTeamConfig(team).name.copy().append(Text.of(": $n"))
+        val name = teamManager.getTeamConfig(team).name
+        val nameWithColon = name.copy().append(":") // Colon gets the same color as team name
+        return Text.empty().append(nameWithColon).append(Text.of(" $n"))
     }
 
     fun getPopupMessage(): Text {
