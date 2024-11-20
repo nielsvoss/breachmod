@@ -10,7 +10,7 @@ import java.util.function.Consumer
 
 class TargetSelectorUI(player: ServerPlayerEntity, private val availableTargets: List<BreachTarget>,
                        private val onSelectTarget: Consumer<BreachTarget>)
-    : SimpleGui(getType(availableTargets.size), player, availableTargets.size > 53) {
+    : SimpleGui(getType(availableTargets.size), player, false) {
 
     companion object {
         fun open(player: ServerPlayerEntity, availableTargets: List<BreachTarget>, onSelectTarget: Consumer<BreachTarget>): Boolean {
@@ -21,6 +21,9 @@ class TargetSelectorUI(player: ServerPlayerEntity, private val availableTargets:
 
     init {
         this.title = Text.translatable("gui.breach.select_targets")
+        if (availableTargets.size > 53) {
+            throw IllegalArgumentException("Too many targets to be selectable in the GUI")
+        }
     }
 
     override fun onOpen() {
