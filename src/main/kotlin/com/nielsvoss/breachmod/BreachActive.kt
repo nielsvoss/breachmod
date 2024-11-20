@@ -66,7 +66,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun buildSidebar() {
-        gameSidebar.title = Text.translatable("breach.sidebar.title")
+        gameSidebar.title = Text.translatable("sidebar.breach.title")
         gameSidebar.set {
             for (i in 0 until config.numberOfTargets) {
                 it.add { player ->

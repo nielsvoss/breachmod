@@ -20,7 +20,7 @@ class TargetSelectorUI(player: ServerPlayerEntity, private val availableTargets:
     }
 
     init {
-        this.title = Text.translatable("text.breach.select_targets")
+        this.title = Text.translatable("gui.breach.select_targets")
     }
 
     override fun onOpen() {

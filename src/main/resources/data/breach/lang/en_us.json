@@ -1,0 +1,9 @@
+{
+  "gameType.breach.breach": "Breach",
+  "sidebar.breach.title": "Breach",
+  "text.breach.randomly_selected_targets": "Not enough targets were selected, so the remaining were chosen randomly",
+  "text.breach.all_targets_selected": "Cannot select target, since all targets all already selected",
+  "text.breach.target_already_selected": "This target has already been chosen",
+  "text.breach.target_selected": "Selected target",
+  "gui.breach.select_targets": "Select targets to defend"
+}
