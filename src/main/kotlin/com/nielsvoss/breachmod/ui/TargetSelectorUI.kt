@@ -23,9 +23,6 @@ class TargetSelectorUI(player: ServerPlayerEntity, private val availableTargets:
 
     init {
         this.title = Text.translatable("gui.breach.select_targets")
-        if (availableTargets.size > 53) {
-            throw IllegalArgumentException("Too many targets to be selectable in the GUI")
-        }
     }
 
     override fun onOpen() {
