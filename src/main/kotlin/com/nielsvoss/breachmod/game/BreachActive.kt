@@ -9,10 +9,7 @@ import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
 import com.nielsvoss.breachmod.ui.SpawnSelectorUI
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
-import com.nielsvoss.breachmod.util.broadcast
-import com.nielsvoss.breachmod.util.randomBottom
-import com.nielsvoss.breachmod.util.sendTitle
-import com.nielsvoss.breachmod.util.setTitleTimes
+import com.nielsvoss.breachmod.util.*
 import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.block.Blocks
 import net.minecraft.server.network.ServerPlayerEntity
@@ -158,7 +155,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         val attackersSpawn: TemplateRegion = map.attackerSpawnRegions.random()
         for (player in players.survivingOnlineAttackers()) {
             val loc = attackersSpawn.bounds.randomBottom()
-            player.teleport(loc.x, loc.y, loc.z)
+            player.teleportFacingOrigin(loc)
             openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
             player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
         }
@@ -166,7 +163,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
         for (player in players.survivingOnlineDefenders()) {
             val loc = defendersSpawn.bounds.randomBottom()
-            player.teleport(loc.x, loc.y, loc.z)
+            player.teleportFacingOrigin(loc)
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
@@ -183,7 +180,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         SpawnSelectorUI.open(player, locations) { ui, selectedRegion ->
             if (roundTimer.isPrepPhase()) {
                 val loc = selectedRegion.bounds.randomBottom()
-                player.teleport(loc.x, loc.y, loc.z)
+                player.teleportFacingOrigin(loc)
             } else {
                 player.sendMessage(Text.translatable("text.breach.can_only_select_spawn_in_prep_phase"))
             }
@@ -215,7 +212,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         val didEliminate: Boolean = players.eliminate(player)
         val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
         player.health = 20.0F
-        player.teleport(respawnLoc.x, respawnLoc.y, respawnLoc.z)
+        player.teleportFacingOrigin(respawnLoc)
         if (didEliminate && config.remainingPlayersPopup) {
             displayRemainingPlayersPopup()
         }
