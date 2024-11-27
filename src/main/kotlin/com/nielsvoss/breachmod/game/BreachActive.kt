@@ -9,14 +9,17 @@ import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.broadcast
+import com.nielsvoss.breachmod.util.randomBottom
 import com.nielsvoss.breachmod.util.sendTitle
 import com.nielsvoss.breachmod.util.setTitleTimes
 import eu.pb4.sidebars.api.Sidebar
+import net.minecraft.block.Blocks
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
+import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
 import xyz.nucleoid.plasmid.game.common.team.GameTeam
@@ -141,10 +144,23 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSidebar.addPlayer(player)
         }
 
+        val attackersSpawn: TemplateRegion = map.attackerSpawnRegions.random()
+        for (player in players.survivingOnlineAttackers()) {
+            val loc = attackersSpawn.bounds.randomBottom()
+            player.teleport(loc.x, loc.y, loc.z)
+        }
+
+        val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
         for (player in players.survivingOnlineDefenders()) {
+            val loc = defendersSpawn.bounds.randomBottom()
+            player.teleport(loc.x, loc.y, loc.z)
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
+        }
+
+        map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
+            world.setBlockState(blockPos, Blocks.AIR.defaultState)
         }
     }
 
@@ -170,10 +186,13 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun onPlayerDeath(player: ServerPlayerEntity): ActionResult {
         val didEliminate: Boolean = players.eliminate(player)
+        val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
+        player.health = 20.0F
+        player.teleport(respawnLoc.x, respawnLoc.y, respawnLoc.z)
         if (didEliminate && config.remainingPlayersPopup) {
             displayRemainingPlayersPopup()
         }
-        return ActionResult.PASS
+        return ActionResult.FAIL
     }
 
     private fun displayRemainingPlayersPopup() {
