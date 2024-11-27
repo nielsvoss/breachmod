@@ -77,6 +77,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private val targetsState = BreachTargetsState(map.targets)
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
     private val roundTimer: BreachRoundTimer
+    private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()
     init {
         val prepTicks = config.prepLengthInSeconds * 20;
         val roundTicks = config.roundLengthInSeconds * 20;
@@ -119,6 +120,15 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun tick() {
+        for (player in players.onlineParticipants()) {
+            if (player.isSneaking && PlayerRef.of(player) !in sneakingPlayers) {
+                onSneak(player)
+                sneakingPlayers.add(PlayerRef.of(player))
+            } else if (!player.isSneaking && PlayerRef.of(player) in sneakingPlayers) {
+                sneakingPlayers.remove(PlayerRef.of(player))
+            }
+        }
+
         targetsState.updateBrokenTargets(world)
         if (config.outlineTargets) {
             targetsState.updateOutlines(world)
@@ -150,6 +160,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             val loc = attackersSpawn.bounds.randomBottom()
             player.teleport(loc.x, loc.y, loc.z)
             openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
+            player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
         }
 
         val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
@@ -216,6 +227,17 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         for (player in players.onlineParticipants()) {
             player.setTitleTimes(0, 20, 5)
             player.sendTitle(popupMessage)
+        }
+    }
+
+    private fun onSneak(player: ServerPlayerEntity) {
+        if (roundTimer.isPrepPhase() && player in players.survivingOnlineAttackers()) {
+            for (region in map.attackerSpawnRegions) {
+                if (region.bounds.asBox().contains(player.pos)) {
+                    openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
+                    break
+                }
+            }
         }
     }
 }

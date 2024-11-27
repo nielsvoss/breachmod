@@ -9,6 +9,7 @@
   "text.breach.target_selected": "Selected target",
   "text.breach.popup_versus": " vs ",
   "text.breach.can_only_select_spawn_in_prep_phase": "You can only select your spawn point during the prep phase!",
+  "text.breach.can_reopen_spawn_selection": "You can re-open the spawn selection menu by sneaking where you spawned in",
   "gui.breach.select_targets": "Select targets to defend",
   "gui.breach.select_spawn": "Select spawn location",
   "gui.breach.default_spawn_location_name": "Spawn Location #%s",
