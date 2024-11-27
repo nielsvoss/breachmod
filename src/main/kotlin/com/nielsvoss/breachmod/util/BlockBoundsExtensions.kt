@@ -8,7 +8,7 @@ fun BlockBounds.randomBottom(): Vec3d {
     // (rather than the lowest corner of the block)
     val x = lerp(this.min.x.toDouble() + 0.5, this.max.x.toDouble() + 0.5, Math.random())
     val y = this.centerBottom().y
-    val z = lerp(this.min.x.toDouble() + 0.5, this.max.x.toDouble() + 0.5, Math.random())
+    val z = lerp(this.min.z.toDouble() + 0.5, this.max.z.toDouble() + 0.5, Math.random())
     return Vec3d(x, y, z)
 }
 
