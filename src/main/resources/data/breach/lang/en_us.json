@@ -8,5 +8,6 @@
   "text.breach.target_already_selected": "This target has already been chosen",
   "text.breach.target_selected": "Selected target",
   "text.breach.popup_versus": " vs ",
+  "text.breach.can_only_teleport_in_prep_phase": "You can only select your spawn point during the prep phase!",
   "gui.breach.select_targets": "Select targets to defend"
 }

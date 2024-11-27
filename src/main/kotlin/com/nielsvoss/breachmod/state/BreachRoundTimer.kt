@@ -60,4 +60,8 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
             "Time: $timeString"
         }
     }
+
+    fun isPrepPhase(): Boolean {
+        return phase == Phase.PREP_PHASE
+    }
 }

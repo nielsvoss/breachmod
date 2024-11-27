@@ -7,6 +7,7 @@ import com.nielsvoss.breachmod.data.BreachTarget
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
+import com.nielsvoss.breachmod.ui.SpawnSelectorUI
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.broadcast
 import com.nielsvoss.breachmod.util.randomBottom
@@ -148,6 +149,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         for (player in players.survivingOnlineAttackers()) {
             val loc = attackersSpawn.bounds.randomBottom()
             player.teleport(loc.x, loc.y, loc.z)
+            openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
         }
 
         val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
@@ -161,6 +163,20 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
         map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
             world.setBlockState(blockPos, Blocks.AIR.defaultState)
+        }
+    }
+
+    private fun openSpawnSelectorUIIfMoreThanOneLocation(player: ServerPlayerEntity, locations: List<TemplateRegion>) {
+        if (locations.size <= 1) return
+
+        SpawnSelectorUI.open(player, locations) { ui, selectedRegion ->
+            if (roundTimer.isPrepPhase()) {
+                val loc = selectedRegion.bounds.randomBottom()
+                player.teleport(loc.x, loc.y, loc.z)
+            } else {
+                player.sendMessage(Text.translatable("text.breach.can_only_teleport_in_prep_phase"))
+            }
+            ui.close()
         }
     }
 
