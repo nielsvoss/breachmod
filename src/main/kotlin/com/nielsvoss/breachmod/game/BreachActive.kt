@@ -174,7 +174,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 val loc = selectedRegion.bounds.randomBottom()
                 player.teleport(loc.x, loc.y, loc.z)
             } else {
-                player.sendMessage(Text.translatable("text.breach.can_only_teleport_in_prep_phase"))
+                player.sendMessage(Text.translatable("text.breach.can_only_select_spawn_in_prep_phase"))
             }
             ui.close()
         }
