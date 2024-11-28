@@ -1,7 +1,6 @@
 package com.nielsvoss.breachmod.state
 
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.game.GameActivity
@@ -33,23 +32,40 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
             }
 
             val breachPlayersState = BreachPlayersState(attackingTeam.key, defendingTeam.key, teamManager, displayAttackersFirst)
-            breachPlayersState.markAllOnlinePlayersAsSurviving()
             return breachPlayersState
         }
     }
 
     private val survivingPlayers: MutableSet<PlayerRef> = mutableSetOf()
 
+    /**
+     * Includes eliminated attackers. See also isSurvivingAttacker
+     */
+    fun isAnyAttacker(player: ServerPlayerEntity): Boolean {
+        return player in teamManager.playersIn(attackingTeamKey)
+    }
+
+    /**
+     * Includes eliminated defenders. See also isSurvivingDefender
+     */
+    fun isAnyDefender(player: ServerPlayerEntity): Boolean {
+        return player in teamManager.playersIn(defendingTeamKey)
+    }
+
+    fun isSurvivingAttacker(player: ServerPlayerEntity): Boolean {
+        return isAnyAttacker(player) && isSurviving(player)
+    }
+
+    fun isSurvivingDefender(player: ServerPlayerEntity): Boolean {
+        return isAnyDefender(player) && isSurviving(player)
+    }
+
     fun survivingOnlineAttackers(): List<ServerPlayerEntity> {
-        return survivingOnlineParticipants().filter {
-            it in teamManager.playersIn(attackingTeamKey)
-        }
+        return onlineParticipants().filter (::isSurvivingAttacker)
     }
 
     fun survivingOnlineDefenders(): List<ServerPlayerEntity> {
-        return survivingOnlineParticipants().filter {
-            it in teamManager.playersIn(defendingTeamKey)
-        }
+        return onlineParticipants().filter (::isSurvivingDefender)
     }
 
     fun survivingOnlineParticipants(): List<ServerPlayerEntity> {
@@ -82,9 +98,19 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
         return eliminate(PlayerRef.of(player))
     }
 
+    fun markSurviving(player: PlayerRef): Boolean {
+        return survivingPlayers.add(player)
+    }
+
+    fun markSurviving(player: ServerPlayerEntity): Boolean {
+        return markSurviving(PlayerRef.of(player))
+    }
+
+    /*
     private fun markAllOnlinePlayersAsSurviving() {
         survivingPlayers.addAll(onlineParticipants().map { PlayerRef.of(it) })
     }
+     */
 
     fun getFirstSidebarLine(): Text {
         val team = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey

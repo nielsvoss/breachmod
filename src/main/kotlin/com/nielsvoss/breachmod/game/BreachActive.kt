@@ -18,6 +18,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
@@ -156,26 +157,38 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSidebar.addPlayer(player)
         }
 
+        // To ensure all players spawn in the same region
         val attackersSpawn: TemplateRegion = map.attackerSpawnRegions.random()
-        for (player in players.survivingOnlineAttackers()) {
-            val loc = attackersSpawn.bounds.randomBottom()
+        val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
+        for (player in players.onlineParticipants()) {
+            spawnPlayer(player, attackersSpawn, defendersSpawn)
+        }
+
+        map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
+            world.setBlockState(blockPos, Blocks.AIR.defaultState)
+        }
+    }
+
+    /**
+     * attackersSpawn and defendersSpawn let you specify a location (if spawning all players at the same location),
+     * otherwise it will be chosen at random
+     */
+    private fun spawnPlayer(player: ServerPlayerEntity, attackersSpawn: TemplateRegion?, defendersSpawn: TemplateRegion?) {
+        players.markSurviving(player)
+        if (players.isAnyAttacker(player)) {
+            val loc = (attackersSpawn ?: map.attackerSpawnRegions.random()).bounds.randomBottom()
             player.teleportFacingOrigin(loc)
             openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
             player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
-        }
-
-        val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
-        for (player in players.survivingOnlineDefenders()) {
-            val loc = defendersSpawn.bounds.randomBottom()
+        } else if (players.isAnyDefender(player)) {
+            val loc = (defendersSpawn ?: map.defenderSpawnRegions.random()).bounds.randomBottom()
             player.teleportFacingOrigin(loc)
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
         }
 
-        map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
-            world.setBlockState(blockPos, Blocks.AIR.defaultState)
-        }
+        player.changeGameMode(GameMode.SURVIVAL)
     }
 
     private fun openSpawnSelectorUIIfMoreThanOneLocation(player: ServerPlayerEntity, locations: List<TemplateRegion>) {
@@ -232,7 +245,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun onSneak(player: ServerPlayerEntity) {
-        if (roundTimer.isPrepPhase() && player in players.survivingOnlineAttackers()) {
+        if (roundTimer.isPrepPhase() && players.isSurvivingAttacker(player)) {
             for (region in map.attackerSpawnRegions) {
                 if (region.bounds.asBox().contains(player.pos)) {
                     openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
@@ -243,7 +256,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun onBreakBlock(player: ServerPlayerEntity, world : ServerWorld, pos: BlockPos): ActionResult {
-        if (roundTimer.isPrepPhase() && player in players.survivingOnlineAttackers()) {
+        if (roundTimer.isPrepPhase() && players.isSurvivingAttacker(player)) {
             player.sendMessage(Text.translatable("text.breach.attacker_break_block_in_prep_phase")
                 .formatted(Formatting.RED))
             return ActionResult.FAIL
