@@ -17,6 +17,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
+import net.minecraft.util.math.BlockPos
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.game.GameOpenException
 import xyz.nucleoid.plasmid.game.GameSpace
@@ -25,6 +26,7 @@ import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.stimuli.event.block.BlockBreakEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
@@ -65,6 +67,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> breachActive.onPlayerDeath(player) })
+                activity.listen(BlockBreakEvent.EVENT, BlockBreakEvent { player, world, blockPos ->
+                    breachActive.onBreakBlock(player, world, blockPos) })
 
                 breachActive.start()
             }
@@ -236,5 +240,14 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 }
             }
         }
+    }
+
+    private fun onBreakBlock(player: ServerPlayerEntity, world : ServerWorld, pos: BlockPos): ActionResult {
+        if (roundTimer.isPrepPhase() && player in players.survivingOnlineAttackers()) {
+            player.sendMessage(Text.translatable("text.breach.attacker_break_block_in_prep_phase")
+                .formatted(Formatting.RED))
+            return ActionResult.FAIL
+        }
+        return ActionResult.PASS
     }
 }
