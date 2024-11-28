@@ -3,6 +3,7 @@
   "package": "com.nielsvoss.breachmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ArrowEntityMixin",
     "BlockDisplayEntityAccessor",
     "DisplayEntityAccessor",
     "PersistentProjectileEntityMixin"
