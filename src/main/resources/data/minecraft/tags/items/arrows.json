@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "breach:explosive_arrow"
+    "breach:explosive_arrow",
+    "breach:ender_arrow"
   ]
 }

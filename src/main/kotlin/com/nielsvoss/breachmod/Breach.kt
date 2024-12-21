@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod
 
 import com.nielsvoss.breachmod.game.BreachWaiting
+import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
@@ -26,15 +27,25 @@ object Breach : ModInitializer {
 
 	@JvmField
 	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(FabricItemSettings())
+	@JvmField
+	val ENDER_ARROW: Item = EnderArrowItem(FabricItemSettings())
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "explosive_arrow"), EXPLOSIVE_ARROW)
+		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "ender_arrow"), ENDER_ARROW)
 
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
 		DispenserBlock.registerBehavior(EXPLOSIVE_ARROW, object : ProjectileDispenserBehavior() {
+			override fun createProjectile(world: World?, position: Position, stack: ItemStack?): ProjectileEntity {
+				val arrow = ArrowEntity(world, position.x, position.y, position.z, stack)
+				return arrow
+			}
+		})
+
+		DispenserBlock.registerBehavior(ENDER_ARROW, object : ProjectileDispenserBehavior() {
 			override fun createProjectile(world: World?, position: Position, stack: ItemStack?): ProjectileEntity {
 				val arrow = ArrowEntity(world, position.x, position.y, position.z, stack)
 				return arrow

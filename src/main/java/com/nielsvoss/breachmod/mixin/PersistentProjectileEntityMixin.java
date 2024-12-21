@@ -9,7 +9,6 @@ import com.nielsvoss.breachmod.util.ExplosionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -32,6 +31,18 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 
 	private PersistentProjectileEntityMixin(EntityType<? extends ProjectileEntity> entityType, World world) {
 		super(entityType, world);
+	}
+
+	@WrapMethod(method = "tick")
+	private void speedUpEnderArrows(Operation<Void> original) {
+		if (!this.getWorld().isClient && this.getItemStack().isOf(Breach.ENDER_ARROW)) {
+			final int speedMultiplier = 20;
+			for (int i = 0; i < speedMultiplier; i++) {
+				original.call();
+			}
+		} else {
+			original.call();
+		}
 	}
 
 	@WrapOperation(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
