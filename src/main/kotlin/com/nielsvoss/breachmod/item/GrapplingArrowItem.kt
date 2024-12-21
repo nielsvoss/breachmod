@@ -1,5 +1,7 @@
 package com.nielsvoss.breachmod.item
 
+import com.nielsvoss.breachmod.Grapple
+import com.nielsvoss.breachmod.PersistentProjectileEntityDuck
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemUtils
 import net.minecraft.client.item.TooltipContext
@@ -17,7 +19,12 @@ import net.minecraft.world.World
 
 class GrapplingArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem {
     override fun createArrow(world: World, stack: ItemStack, shooter: LivingEntity?): PersistentProjectileEntity {
-        return ArrowEntity(world, shooter, stack.copyWithCount(1))
+        val arrow = ArrowEntity(world, shooter, stack.copyWithCount(1))
+        if (!world.isClient && shooter is ServerPlayerEntity) {
+            val grapple: Grapple = Grapple.create(world, shooter)
+            PersistentProjectileEntityDuck.setGrapple(arrow, grapple)
+        }
+        return arrow
     }
 
     override fun getPolymerItem(stack: ItemStack, player: ServerPlayerEntity?): Item {

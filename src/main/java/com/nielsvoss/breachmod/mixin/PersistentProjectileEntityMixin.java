@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.nielsvoss.breachmod.Breach;
 import com.nielsvoss.breachmod.BreachRuleTypes;
+import com.nielsvoss.breachmod.Grapple;
+import com.nielsvoss.breachmod.PersistentProjectileEntityDuck;
 import com.nielsvoss.breachmod.util.ExplosionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -18,16 +20,32 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.plasmid.game.manager.GameSpaceManager;
 
 @Mixin(PersistentProjectileEntity.class)
-abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
+abstract class PersistentProjectileEntityMixin extends ProjectileEntity implements PersistentProjectileEntityDuck {
 	@Shadow public abstract ItemStack getItemStack();
 
 	@Shadow protected boolean inGround;
+
+	@Unique
+	public @Nullable Grapple grapple;
+
+	@Nullable
+	@Override
+	public Grapple breach_getGrapple() {
+		return grapple;
+	}
+
+	@Override
+	public void breach_setGrapple(@Nullable Grapple grapple) {
+		this.grapple = grapple;
+	}
 
 	private PersistentProjectileEntityMixin(EntityType<? extends ProjectileEntity> entityType, World world) {
 		super(entityType, world);
@@ -44,11 +62,11 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 			original.call();
 		}
 
-		if (!this.getWorld().isClient && this.getItemStack().isOf(Breach.GRAPPLING_ARROW)) {
+		if (!this.getWorld().isClient && this.grapple != null) {
 			Entity owner = this.getOwner();
 			if (owner != null) {
-				// owner.addVelocity(0.01, 0, 0);
-				// owner.velocityModified = true;
+				owner.addVelocity(0.01, 0, 0);
+				owner.velocityModified = true;
 			}
 		}
 	}
@@ -102,7 +120,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 				// this.getWorld().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5F, this.getZ(), 0.0, 0.0, 0.0);
 			}
 
-			if (this.getItemStack().isOf(Breach.GRAPPLING_ARROW)) {
+			if (this.grapple != null) {
 				Entity owner = this.getOwner();
 				if (owner != null) {
 					final double particlesPerBlock = 1.0;
