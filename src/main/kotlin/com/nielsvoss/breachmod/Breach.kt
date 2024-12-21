@@ -3,6 +3,7 @@ package com.nielsvoss.breachmod
 import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
+import com.nielsvoss.breachmod.item.GrapplingArrowItem
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.block.DispenserBlock
@@ -29,6 +30,8 @@ object Breach : ModInitializer {
 	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(FabricItemSettings())
 	@JvmField
 	val ENDER_ARROW: Item = EnderArrowItem(FabricItemSettings())
+	@JvmField
+	val GRAPPLING_ARROW: Item = GrapplingArrowItem(FabricItemSettings())
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -36,6 +39,7 @@ object Breach : ModInitializer {
 		// Proceed with mild caution.
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "explosive_arrow"), EXPLOSIVE_ARROW)
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "ender_arrow"), ENDER_ARROW)
+		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "grappling_arrow"), GRAPPLING_ARROW)
 
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
 		DispenserBlock.registerBehavior(EXPLOSIVE_ARROW, object : ProjectileDispenserBehavior() {

@@ -43,6 +43,14 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 		} else {
 			original.call();
 		}
+
+		if (!this.getWorld().isClient && this.getItemStack().isOf(Breach.GRAPPLING_ARROW)) {
+			Entity owner = this.getOwner();
+			if (owner != null) {
+				// owner.addVelocity(0.01, 0, 0);
+				// owner.velocityModified = true;
+			}
+		}
 	}
 
 	@WrapOperation(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
@@ -75,15 +83,15 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 	}
 
 	@WrapMethod(method = "tick")
-	public void createSmokeParticles(Operation<Void> original) {
+	public void createParticles(Operation<Void> original) {
 		Vec3d beforePos = this.getPos();
 		original.call();
 		Vec3d afterPos = this.getPos();
 
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/2892490771fcf14f32910639c804214688fedd51/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrowEntity.java#L32
 		// Except that code is client-side, and this code is server-side
-		if (this.getWorld() instanceof ServerWorld serverWorld && !this.inGround) {
-			if (this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW)) {
+		if (this.getWorld() instanceof ServerWorld serverWorld) {
+			if (!this.inGround && this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW)) {
 				final int numParticles = 20;
 				for (int i = 0; i < numParticles; i++) {
 					Vec3d pos = beforePos.lerp(afterPos, ((double) i) / numParticles);
@@ -92,6 +100,21 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity {
 
 				// Client-side version
 				// this.getWorld().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5F, this.getZ(), 0.0, 0.0, 0.0);
+			}
+
+			if (this.getItemStack().isOf(Breach.GRAPPLING_ARROW)) {
+				Entity owner = this.getOwner();
+				if (owner != null) {
+					final double particlesPerBlock = 1.0;
+					final int maxParticles = 500;
+					Vec3d sourcePos = owner.getPos();
+					int numParticles = Math.min(maxParticles, (int) (sourcePos.distanceTo(afterPos) * particlesPerBlock));
+
+					for (int i = 0; i < numParticles; i++) {
+						Vec3d pos = sourcePos.lerp(afterPos, ((double) i) / numParticles);
+						serverWorld.spawnParticles(ParticleTypes.HEART, pos.getX(), pos.getY() + 0.5F, pos.getZ(), 1, 0.0, 0.0, 0.0, 2.0);
+					}
+				}
 			}
 		}
 	}

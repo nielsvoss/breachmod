@@ -16,6 +16,7 @@
   "gui.breach.default_spawn_location_name": "Spawn Location #%s",
   "item.breach.explosive_arrow": "Explosive Arrow",
   "item.breach.ender_arrow": "Ender Arrow",
+  "item.breach.grappling_arrow": "Grappling Arrow",
   "map.breach.test.north_spawn": "North Spawn",
   "map.breach.test.east_spawn": "East Spawn",
   "map.breach.test.south_spawn": "South Spawn",
