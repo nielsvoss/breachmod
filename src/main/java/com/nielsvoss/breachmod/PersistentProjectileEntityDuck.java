@@ -5,15 +5,15 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PersistentProjectileEntityDuck {
     @Nullable
-    Grapple breach_getGrapple();
+    GrappleEntity breach_getGrapple();
 
-    void breach_setGrapple(@Nullable Grapple grapple);
+    void breach_setGrapple(@Nullable GrappleEntity grapple);
 
-    static Grapple getGrapple(PersistentProjectileEntity entity) {
+    static GrappleEntity getGrapple(PersistentProjectileEntity entity) {
         return ((PersistentProjectileEntityDuck) entity).breach_getGrapple();
     }
 
-    static void setGrapple(PersistentProjectileEntity entity, @Nullable Grapple grapple) {
+    static void setGrapple(PersistentProjectileEntity entity, @Nullable GrappleEntity grapple) {
         ((PersistentProjectileEntityDuck) entity).breach_setGrapple(grapple);
     }
 }

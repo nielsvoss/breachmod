@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.nielsvoss.breachmod.Breach;
 import com.nielsvoss.breachmod.BreachRuleTypes;
-import com.nielsvoss.breachmod.Grapple;
+import com.nielsvoss.breachmod.GrappleEntity;
 import com.nielsvoss.breachmod.PersistentProjectileEntityDuck;
 import com.nielsvoss.breachmod.util.ExplosionUtils;
 import net.minecraft.entity.Entity;
@@ -34,16 +34,16 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 	@Shadow protected boolean inGround;
 
 	@Unique
-	public @Nullable Grapple grapple;
+	public @Nullable GrappleEntity grapple;
 
 	@Nullable
 	@Override
-	public Grapple breach_getGrapple() {
+	public GrappleEntity breach_getGrapple() {
 		return grapple;
 	}
 
 	@Override
-	public void breach_setGrapple(@Nullable Grapple grapple) {
+	public void breach_setGrapple(@Nullable GrappleEntity grapple) {
 		this.grapple = grapple;
 	}
 
@@ -52,7 +52,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 	}
 
 	@WrapMethod(method = "tick")
-	private void speedUpEnderArrowsAndTickGrapple(Operation<Void> original) {
+	private void speedUpEnderArrows(Operation<Void> original) {
 		if (!this.getWorld().isClient && this.getItemStack().isOf(Breach.ENDER_ARROW)) {
 			final int speedMultiplier = 20;
 			for (int i = 0; i < speedMultiplier; i++) {
@@ -60,10 +60,6 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 			}
 		} else {
 			original.call();
-		}
-
-		if (!this.getWorld().isClient && this.grapple != null) {
-			this.grapple.tick((PersistentProjectileEntity) (Object) this);
 		}
 	}
 

@@ -4,10 +4,15 @@ import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
 import com.nielsvoss.breachmod.item.GrapplingArrowItem
+import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.minecraft.block.DispenserBlock
 import net.minecraft.block.dispenser.ProjectileDispenserBehavior
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.item.Item
@@ -33,6 +38,10 @@ object Breach : ModInitializer {
 	@JvmField
 	val GRAPPLING_ARROW: Item = GrapplingArrowItem(FabricItemSettings())
 
+	@JvmField
+	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
+		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build("grapple")
+
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
@@ -40,6 +49,10 @@ object Breach : ModInitializer {
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "explosive_arrow"), EXPLOSIVE_ARROW)
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "ender_arrow"), ENDER_ARROW)
 		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "grappling_arrow"), GRAPPLING_ARROW)
+
+		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple"), GRAPPLE_ENTITY_TYPE)
+		FabricDefaultAttributeRegistry.register(GRAPPLE_ENTITY_TYPE, MobEntity.createMobAttributes());
+		PolymerEntityUtils.registerType(GRAPPLE_ENTITY_TYPE)
 
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
 		DispenserBlock.registerBehavior(EXPLOSIVE_ARROW, object : ProjectileDispenserBehavior() {
