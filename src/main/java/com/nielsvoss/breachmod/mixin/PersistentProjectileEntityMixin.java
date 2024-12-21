@@ -52,7 +52,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 	}
 
 	@WrapMethod(method = "tick")
-	private void speedUpEnderArrows(Operation<Void> original) {
+	private void speedUpEnderArrowsAndTickGrapple(Operation<Void> original) {
 		if (!this.getWorld().isClient && this.getItemStack().isOf(Breach.ENDER_ARROW)) {
 			final int speedMultiplier = 20;
 			for (int i = 0; i < speedMultiplier; i++) {
@@ -63,11 +63,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 		}
 
 		if (!this.getWorld().isClient && this.grapple != null) {
-			Entity owner = this.getOwner();
-			if (owner != null) {
-				owner.addVelocity(0.01, 0, 0);
-				owner.velocityModified = true;
-			}
+			this.grapple.tick((PersistentProjectileEntity) (Object) this);
 		}
 	}
 
@@ -118,21 +114,6 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 
 				// Client-side version
 				// this.getWorld().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5F, this.getZ(), 0.0, 0.0, 0.0);
-			}
-
-			if (this.grapple != null) {
-				Entity owner = this.getOwner();
-				if (owner != null) {
-					final double particlesPerBlock = 1.0;
-					final int maxParticles = 500;
-					Vec3d sourcePos = owner.getPos();
-					int numParticles = Math.min(maxParticles, (int) (sourcePos.distanceTo(afterPos) * particlesPerBlock));
-
-					for (int i = 0; i < numParticles; i++) {
-						Vec3d pos = sourcePos.lerp(afterPos, ((double) i) / numParticles);
-						serverWorld.spawnParticles(ParticleTypes.HEART, pos.getX(), pos.getY() + 0.5F, pos.getZ(), 1, 0.0, 0.0, 0.0, 2.0);
-					}
-				}
 			}
 		}
 	}
