@@ -1,6 +1,6 @@
 package com.nielsvoss.breachmod.item
 
-import com.nielsvoss.breachmod.GrappleEntity
+import com.nielsvoss.breachmod.entity.GrappleEntity
 import com.nielsvoss.breachmod.PersistentProjectileEntityDuck
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemUtils
@@ -23,7 +23,7 @@ class GrapplingArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem 
         val arrow = ArrowEntity(world, shooter, stack.copyWithCount(1))
         if (!world.isClient && world is ServerWorld && shooter is ServerPlayerEntity) {
             val grapple: GrappleEntity = GrappleEntity.create(world, arrow, shooter)
-            PersistentProjectileEntityDuck.setGrapple(arrow, grapple) // TODO: This should be done in the Grapple class
+            PersistentProjectileEntityDuck.setGrapple(arrow, grapple) // TODO: This should be done in the GrappleEntity class
         }
         return arrow
     }

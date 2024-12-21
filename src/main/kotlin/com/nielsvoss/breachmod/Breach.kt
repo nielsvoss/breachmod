@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.entity.GrappleEntity
 import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem

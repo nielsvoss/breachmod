@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod;
 
+import com.nielsvoss.breachmod.entity.GrappleEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import org.jetbrains.annotations.Nullable;
 

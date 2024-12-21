@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.nielsvoss.breachmod.Breach;
 import com.nielsvoss.breachmod.BreachRuleTypes;
-import com.nielsvoss.breachmod.GrappleEntity;
+import com.nielsvoss.breachmod.entity.GrappleEntity;
 import com.nielsvoss.breachmod.PersistentProjectileEntityDuck;
 import com.nielsvoss.breachmod.util.ExplosionUtils;
 import net.minecraft.entity.Entity;
