@@ -42,7 +42,6 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
     private var shooterId: PlayerRef? = null
     private var projectileId: UUID? = null
     private var timeSinceLastSneak: Int = -1
-    private var grappleLength: Double = Double.NaN
 
     private fun getShooter(): ServerPlayerEntity? {
         val world = this.world
@@ -85,24 +84,10 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
-            val distanceToGrapple = projectile.pos.subtract(shooter.pos).length()
-            if (isInBlock && grappleLength.isNaN()) {
-                grappleLength = distanceToGrapple + 1.0
-            }
-
-            if (!grappleLength.isNaN()) {
-                val maxSpeed = 0.2
-                val speedMultiplier = 0.5
-                if (shooter.isSneaking) {
-                    grappleLength -= 0.2
-                }
-
-                if (distanceToGrapple > grappleLength) {
-                    val speed = (speedMultiplier * (distanceToGrapple - grappleLength)).coerceAtMost(maxSpeed)
-                    val force = projectile.pos.subtract(shooter.pos).normalize().multiply(speed)
-                    shooter.addVelocity(force)
-                    shooter.velocityModified = true
-                }
+            if (isInBlock && shooter.isSneaking) {
+                val force = projectile.pos.subtract(shooter.pos).normalize().multiply(0.2)
+                shooter.addVelocity(force)
+                shooter.velocityModified = true
             }
         }
     }
