@@ -5,6 +5,7 @@
   "mixins": [
     "BlockDisplayEntityAccessor",
     "DisplayEntityAccessor",
+    "PersistentProjectileEntityAccessor",
     "PersistentProjectileEntityMixin"
   ],
   "injectors": {

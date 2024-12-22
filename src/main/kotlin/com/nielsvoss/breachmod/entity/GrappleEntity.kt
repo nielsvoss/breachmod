@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod.entity
 
 import com.nielsvoss.breachmod.Breach
+import com.nielsvoss.breachmod.mixin.PersistentProjectileEntityAccessor
 import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.data.DataTracker
@@ -31,6 +32,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         isInvisible = true
         isInvulnerable = true
         isSilent = true
+        setNoGravity(true)
     }
 
     private var shooterId: PlayerRef? = null
@@ -59,7 +61,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         if (!world.isClient && world is ServerWorld) {
             val shooter: ServerPlayerEntity? = getShooter()
             val projectile: PersistentProjectileEntity? = getProjectile()
-            if (shooter == null || projectile == null) {
+            if (shooter == null || projectile == null || shooter.isDead) {
                 // Detaching leash is needed to prevent it from dropping a lead item
                 this.detachLeash(true, false)
                 this.kill()
@@ -67,7 +69,8 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             }
 
             this.setPosition(projectile.pos)
-            if (projectile.isInsideWall) {
+            val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
+            if (isInBlock && shooter.isSneaking) {
                 shooter.addVelocity((projectile.pos.subtract(shooter.pos)).normalize().multiply(0.1))
                 shooter.velocityModified = true
             }
@@ -75,6 +78,6 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
     }
 
     override fun getPolymerEntityType(player: ServerPlayerEntity?): EntityType<*> {
-        return EntityType.BAT
+        return EntityType.SLIME
     }
 }
