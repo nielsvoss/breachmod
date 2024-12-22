@@ -86,34 +86,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
             if (isInBlock && shooter.isSneaking) {
-                // Vector from the shooter to the grapple
-                val displacement = projectile.pos.subtract(shooter.pos)
-
-                // If v is the velocity, and d is the displacement vector, then this is
-                // proj_d(v) = <v, d> / <d, d> * d if <v, d> < 0
-                // 0 if <v, d> >= 0
-                val opposingVelocityProjected = displacement.multiply(
-                    shooter.velocity.dotProduct(displacement).coerceAtMost(0.0)
-                            / displacement.lengthSquared())
-
-                val maxReelingSpeed = 0.07
-                val reelingSpeedPerBlockDisplacement = 0.02
-                val reelingSpeed = (displacement.length() * reelingSpeedPerBlockDisplacement).coerceAtMost(maxReelingSpeed)
-
-                val reeling = displacement.normalize().multiply(reelingSpeed)
-                val elastic = opposingVelocityProjected.multiply(-0.3)
-
-                // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
-                val antigravity = Vec3d(0.0, 0.04, 0.0)
-
-                shooter.addVelocity(reeling.add(elastic).add(antigravity))
-
-                // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
-                // This cancels some of that.
-                val horizontalAdjustment = 0.91
-                shooter.velocity = Vec3d(shooter.velocity.x / horizontalAdjustment, shooter.velocity.y, shooter.velocity.z / horizontalAdjustment)
-
-                shooter.velocityModified = true
+                pull(shooter, projectile)
             }
         }
     }
@@ -125,6 +98,48 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
     private fun end() {
         // Detaching leash is needed to prevent it from dropping a lead item
         this.detachLeash(true, false)
-        this.kill()
+        this.remove(RemovalReason.DISCARDED)
+
+        val projectile = getProjectile()
+        if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
+            getShooter()?.let { shooter ->
+                val v = shooter.velocity
+                shooter.velocity = Vec3d(v.x * 1.5, v.y + 0.5, v.z * 1.5)
+                shooter.velocityModified = true
+            }
+        }
+    }
+
+    private fun pull(shooter: ServerPlayerEntity, projectile: PersistentProjectileEntity) {
+        // Vector from the shooter to the grapple
+        val displacement = projectile.pos.subtract(shooter.pos)
+
+        // If v is the velocity, and d is the displacement vector, then this is
+        // proj_d(v) = <v, d> / <d, d> * d if <v, d> < 0
+        // 0 if <v, d> >= 0
+        val opposingVelocityProjected = displacement.multiply(
+            shooter.velocity.dotProduct(displacement).coerceAtMost(0.0)
+                    / displacement.lengthSquared())
+
+        val maxReelingSpeed = 0.04
+        val reelingSpeedPerBlockDisplacement = 0.02
+        val reelingSpeed = (displacement.length() * reelingSpeedPerBlockDisplacement).coerceAtMost(maxReelingSpeed)
+
+        val reeling = displacement.normalize().multiply(reelingSpeed)
+        val elastic = opposingVelocityProjected.multiply(-0.5)
+        val elasticAdjusted = Vec3d(elastic.x, elastic.y * 0.4, elastic.z)
+
+        // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
+        val antigravity = Vec3d(0.0, 0.05, 0.0)
+
+        shooter.addVelocity(reeling.add(elasticAdjusted).add(antigravity))
+
+        // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
+        // This cancels some of that.
+        val horizontalAdjustment = 0.91
+        // TODO: If player has multiple grapples, this should only apply once per tick
+        shooter.velocity = Vec3d(shooter.velocity.x / horizontalAdjustment, shooter.velocity.y, shooter.velocity.z / horizontalAdjustment)
+
+        shooter.velocityModified = true
     }
 }
