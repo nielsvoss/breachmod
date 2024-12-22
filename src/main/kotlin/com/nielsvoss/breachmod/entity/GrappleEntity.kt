@@ -8,6 +8,7 @@ import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.PersistentProjectileEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import xyz.nucleoid.plasmid.util.PlayerRef
 import java.util.*
@@ -85,8 +86,33 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
             if (isInBlock && shooter.isSneaking) {
-                val force = projectile.pos.subtract(shooter.pos).normalize().multiply(0.2)
-                shooter.addVelocity(force)
+                // Vector from the shooter to the grapple
+                val displacement = projectile.pos.subtract(shooter.pos)
+
+                // If v is the velocity, and d is the displacement vector, then this is
+                // proj_d(v) = <v, d> / <d, d> * d if <v, d> < 0
+                // 0 if <v, d> >= 0
+                val opposingVelocityProjected = displacement.multiply(
+                    shooter.velocity.dotProduct(displacement).coerceAtMost(0.0)
+                            / displacement.lengthSquared())
+
+                val maxReelingSpeed = 0.07
+                val reelingSpeedPerBlockDisplacement = 0.02
+                val reelingSpeed = (displacement.length() * reelingSpeedPerBlockDisplacement).coerceAtMost(maxReelingSpeed)
+
+                val reeling = displacement.normalize().multiply(reelingSpeed)
+                val elastic = opposingVelocityProjected.multiply(-0.3)
+
+                // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
+                val antigravity = Vec3d(0.0, 0.04, 0.0)
+
+                shooter.addVelocity(reeling.add(elastic).add(antigravity))
+
+                // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
+                // This cancels some of that.
+                val horizontalAdjustment = 0.91
+                shooter.velocity = Vec3d(shooter.velocity.x / horizontalAdjustment, shooter.velocity.y, shooter.velocity.z / horizontalAdjustment)
+
                 shooter.velocityModified = true
             }
         }
