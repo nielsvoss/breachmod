@@ -24,6 +24,7 @@ class GrapplingArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem 
         if (!world.isClient && world is ServerWorld && shooter is ServerPlayerEntity) {
             val grapple: GrappleEntity = GrappleEntity.create(world, arrow, shooter)
             PersistentProjectileEntityDuck.setGrapple(arrow, grapple) // TODO: This should be done in the GrappleEntity class
+            arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED
         }
         return arrow
     }

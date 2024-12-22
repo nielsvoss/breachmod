@@ -4,7 +4,6 @@ import com.nielsvoss.breachmod.Breach
 import com.nielsvoss.breachmod.mixin.PersistentProjectileEntityAccessor
 import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.entity.EntityType
-import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.PersistentProjectileEntity
 import net.minecraft.server.network.ServerPlayerEntity
@@ -25,6 +24,11 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             grapple.projectileId = projectile.uuid
             return grapple
         }
+
+        /**
+         * Max number of ticks since last sneak in order to initiate a cancel
+         */
+        private const val CANCEL_TICKS: Int = 10
     }
 
     init {
@@ -37,6 +41,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
     private var shooterId: PlayerRef? = null
     private var projectileId: UUID? = null
+    private var timeSinceLastSneak: Int = -1
 
     private fun getShooter(): ServerPlayerEntity? {
         val world = this.world
@@ -62,16 +67,26 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             val shooter: ServerPlayerEntity? = getShooter()
             val projectile: PersistentProjectileEntity? = getProjectile()
             if (shooter == null || projectile == null || shooter.isDead) {
-                // Detaching leash is needed to prevent it from dropping a lead item
-                this.detachLeash(true, false)
-                this.kill()
+                end()
                 return
             }
 
             this.setPosition(projectile.pos)
+
+            if (shooter.isSneaking) {
+                if (timeSinceLastSneak in 1..CANCEL_TICKS) {
+                    end()
+                }
+                timeSinceLastSneak = 0
+            } else {
+                if (timeSinceLastSneak != -1) timeSinceLastSneak++
+            }
+
+            // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
             if (isInBlock && shooter.isSneaking) {
-                shooter.addVelocity((projectile.pos.subtract(shooter.pos)).normalize().multiply(0.1))
+                val force = projectile.pos.subtract(shooter.pos).normalize().multiply(0.2)
+                shooter.addVelocity(force)
                 shooter.velocityModified = true
             }
         }
@@ -79,5 +94,11 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
     override fun getPolymerEntityType(player: ServerPlayerEntity?): EntityType<*> {
         return EntityType.SLIME
+    }
+
+    private fun end() {
+        // Detaching leash is needed to prevent it from dropping a lead item
+        this.detachLeash(true, false)
+        this.kill()
     }
 }
