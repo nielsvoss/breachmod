@@ -44,8 +44,10 @@ object Breach : ModInitializer {
 	@JvmField
 	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
 		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build("grapple")
+	@JvmField
 	val SILVERFISH_MORPH_ENTITY_TYPE: EntityType<SilverfishMorphEntity> =
 		EntityType.Builder.create(::SilverfishMorphEntity, SpawnGroup.MISC).build("silverfish_morph")
+	@JvmField
 	val ENDERMITE_MORPH_ENTITY_TYPE: EntityType<EndermiteMorphEntity> =
 		EntityType.Builder.create(::EndermiteMorphEntity, SpawnGroup.MISC).build("endermite_morph")
 
