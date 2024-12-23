@@ -1,10 +1,11 @@
 package com.nielsvoss.breachmod.data
 
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import xyz.nucleoid.plasmid.util.PlayerRef
 
 class Morph private constructor(player: ServerPlayerEntity) {
-    private val playerId: PlayerRef = PlayerRef.of(player)
+    val playerId: PlayerRef = PlayerRef.of(player)
     private val morphData: MorphData = MorphData.loadFrom(player)
     private var hasBeenRestored: Boolean = false
 
@@ -16,6 +17,10 @@ class Morph private constructor(player: ServerPlayerEntity) {
         fun create(player: ServerPlayerEntity): Morph {
             return Morph(player)
         }
+    }
+
+    fun getMorphedPlayer(world: ServerWorld): ServerPlayerEntity? {
+        return playerId.getEntity(world)
     }
 
     /**
