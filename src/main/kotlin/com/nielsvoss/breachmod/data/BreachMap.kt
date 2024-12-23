@@ -19,9 +19,9 @@ class BreachMap private constructor(private val template: MapTemplate, val lobby
         @Throws(GameOpenException::class)
         fun load(mapId: Identifier, server: MinecraftServer): BreachMap {
             val template: MapTemplate = MapTemplateSerializer.loadFromResource(server, mapId)
-            val lobbySpawnRegion = template.metadata.getFirstRegion("lobbySpawn")
-                ?: throw GameOpenException(Text.of("Provided map did not contain a lobbySpawn region"))
-            val lobbyToRemoveRegion = template.metadata.getFirstRegion("lobbyToRemove")
+            val lobbySpawnRegion = template.metadata.getFirstRegion("lobby_spawn")
+                ?: throw GameOpenException(Text.of("Provided map did not contain a lobby_spawn region"))
+            val lobbyToRemoveRegion = template.metadata.getFirstRegion("lobby_to_remove")
 
             val targetBlocks = mutableListOf<BlockPos>()
             for (region in template.metadata.getRegions("target")) {
@@ -32,9 +32,9 @@ class BreachMap private constructor(private val template: MapTemplate, val lobby
             }
             val targets: List<BreachTarget> = targetBlocks.map { BreachTarget(it, template.getBlockState(it).block) }
 
-            val attackerSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("attackerSpawn").toList()
-            val defenderSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("defenderSpawn").toList()
-            val eliminatedSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("eliminatedSpawn").toList()
+            val attackerSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("attacker_spawn").toList()
+            val defenderSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("defender_spawn").toList()
+            val eliminatedSpawnRegions: List<TemplateRegion> = template.metadata.getRegions("eliminated_spawn").toList()
             if (attackerSpawnRegions.isEmpty()) {
                 throw GameOpenException(Text.of("Map did not contain any attacking team spawn regions"))
             }
@@ -42,7 +42,7 @@ class BreachMap private constructor(private val template: MapTemplate, val lobby
                 throw GameOpenException(Text.of("Map did not contain any defending team spawn regions"))
             }
             if (eliminatedSpawnRegions.isEmpty()) {
-                throw GameOpenException(Text.of("Map did not contain any defending team spawn regions"))
+                throw GameOpenException(Text.of("Map did not contain any eliminated spawn regions"))
             }
             return BreachMap(template, lobbySpawnRegion, lobbyToRemoveRegion, targets, attackerSpawnRegions,
                 defenderSpawnRegions, eliminatedSpawnRegions)
