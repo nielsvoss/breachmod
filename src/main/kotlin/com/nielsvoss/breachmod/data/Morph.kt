@@ -11,7 +11,7 @@ data class Morph(val morphEntityId: UUID, val morphData: MorphData) {
     companion object {
         fun create(player: ServerPlayerEntity, morphEntity: AbstractMorphEntity): Morph {
             val morph = Morph(morphEntity.uuid, MorphData.loadFrom(player))
-            MorphData.applyMorphData(player)
+            MorphData.applyMorphData(player, morphEntity)
             return morph
         }
     }
