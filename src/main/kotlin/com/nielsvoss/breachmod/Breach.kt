@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import com.nielsvoss.breachmod.entity.EndermiteMorphEntity
 import com.nielsvoss.breachmod.entity.GrappleEntity
 import com.nielsvoss.breachmod.entity.SilverfishMorphEntity
@@ -64,8 +65,8 @@ object Breach : ModInitializer {
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "silverfish_morph"), SILVERFISH_MORPH_ENTITY_TYPE)
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "endermite_morph"), ENDERMITE_MORPH_ENTITY_TYPE)
 		FabricDefaultAttributeRegistry.register(GRAPPLE_ENTITY_TYPE, MobEntity.createMobAttributes());
-		FabricDefaultAttributeRegistry.register(SILVERFISH_MORPH_ENTITY_TYPE, MobEntity.createMobAttributes());
-		FabricDefaultAttributeRegistry.register(ENDERMITE_MORPH_ENTITY_TYPE, MobEntity.createMobAttributes());
+		FabricDefaultAttributeRegistry.register(SILVERFISH_MORPH_ENTITY_TYPE, AbstractMorphEntity.createMorphEntityAttributes());
+		FabricDefaultAttributeRegistry.register(ENDERMITE_MORPH_ENTITY_TYPE, AbstractMorphEntity.createMorphEntityAttributes());
 		PolymerEntityUtils.registerType(GRAPPLE_ENTITY_TYPE, SILVERFISH_MORPH_ENTITY_TYPE, ENDERMITE_MORPH_ENTITY_TYPE)
 
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
