@@ -22,6 +22,9 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
             if (!didPop) return false
         }
         this.morph = morph
+        if (morph != null) {
+            morph.morphEntityId = this.uuid
+        }
         return true
     }
 
@@ -50,10 +53,5 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
             }
         }
         return super.interactMob(player, hand)
-    }
-
-    override fun remove(reason: RemovalReason?) {
-        tryPopMorph()
-        super.remove(reason)
     }
 }

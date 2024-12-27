@@ -25,6 +25,7 @@ import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Position
 import net.minecraft.world.World
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import xyz.nucleoid.plasmid.game.GameType
 
@@ -32,7 +33,7 @@ import xyz.nucleoid.plasmid.game.GameType
 object Breach : ModInitializer {
 	const val MOD_ID: String = "breach"
 
-    private val logger = LoggerFactory.getLogger(MOD_ID)
+    val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
 
 	@JvmField
 	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(FabricItemSettings())
