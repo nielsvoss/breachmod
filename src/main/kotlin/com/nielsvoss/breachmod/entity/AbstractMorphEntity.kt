@@ -43,7 +43,7 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
             if (hand == Hand.MAIN_HAND) {
                 morph = Morph.create(player)
                 val result = trySetMorph(morph)
-                if (result) {
+                if (!result) {
                     player.sendMessage(Text.of("Temporary message (cannot morph because occupied)"))
                 }
                 return ActionResult.CONSUME
