@@ -4,9 +4,11 @@ import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
+import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
+import com.nielsvoss.breachmod.state.MorphManager
 import com.nielsvoss.breachmod.ui.SpawnSelectorUI
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.*
@@ -28,6 +30,7 @@ import xyz.nucleoid.plasmid.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.util.PlayerRef
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent
+import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
@@ -71,6 +74,14 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 activity.listen(BlockBreakEvent.EVENT, BlockBreakEvent { player, world, blockPos ->
                     breachActive.onBreakBlock(player, world, blockPos) })
 
+                activity.listen(PlayerAttackEntityEvent.EVENT, PlayerAttackEntityEvent { attacker, hand, attacked, hitResult ->
+                    if (attacked is AbstractMorphEntity && attacker is ServerPlayerEntity) {
+                        breachActive.morphManager.morphPlayer(attacker, attacked)
+                        ActionResult.CONSUME
+                    }
+                    ActionResult.PASS
+                })
+
                 breachActive.start()
             }
         }
@@ -79,6 +90,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private val targetsState = BreachTargetsState(map.targets)
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
     private val roundTimer: BreachRoundTimer
+    private val morphManager: MorphManager = MorphManager()
     private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()
     init {
         val prepTicks = config.prepLengthInSeconds * 20;
@@ -122,6 +134,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun tick() {
+        morphManager.tick(world)
+
         for (player in players.onlineParticipants()) {
             if (player.isSneaking && PlayerRef.of(player) !in sneakingPlayers) {
                 onSneak(player)

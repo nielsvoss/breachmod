@@ -6,8 +6,7 @@
     "BlockDisplayEntityAccessor",
     "DisplayEntityAccessor",
     "PersistentProjectileEntityAccessor",
-    "PersistentProjectileEntityMixin",
-    "ServerPlayerEntityMixin"
+    "PersistentProjectileEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
