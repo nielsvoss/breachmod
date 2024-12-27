@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.nielsvoss.breachmod.ServerPlayerEntityDuck;
 import com.nielsvoss.breachmod.data.Morph;
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity;
+import com.nielsvoss.breachmod.util.MorphManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,7 +46,7 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
         if (morph != null) {
             AbstractMorphEntity morphedEntity = morph.getMorphedEntity(this.getServerWorld());
             if (morphedEntity == null || morphedEntity.isDead() || morphedEntity.getHealth() <= 0.0001) {
-                morph.pop((ServerPlayerEntity) (Object) this);
+                MorphManager.popMorph((ServerPlayerEntity) (Object) this);
             }
         }
     }
