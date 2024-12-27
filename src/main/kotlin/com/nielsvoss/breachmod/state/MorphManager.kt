@@ -37,6 +37,8 @@ class MorphManager {
             if (player != null) {
                 if (morphedEntity == null || morphedEntity.isDead || morphedEntity.health <= 0.0001) {
                     popMorph(player)
+                } else {
+                    morphedEntity.synchronizeWith(player)
                 }
             }
         }
