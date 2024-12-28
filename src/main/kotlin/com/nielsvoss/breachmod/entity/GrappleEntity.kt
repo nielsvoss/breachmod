@@ -13,6 +13,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import xyz.nucleoid.plasmid.util.PlayerRef
 import java.util.*
+import kotlin.math.abs
 
 class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
     : MobEntity(entityType, world), PolymerEntity {
@@ -26,11 +27,6 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             grapple.projectileId = projectile.uuid
             return grapple
         }
-
-        /**
-         * Max number of ticks since last sneak in order to initiate a cancel
-         */
-        private const val CANCEL_TICKS: Int = 10
     }
 
     init {
@@ -43,7 +39,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
     private var shooterId: PlayerRef? = null
     private var projectileId: UUID? = null
-    private var timeSinceLastSneak: Int = -1
+    private var hasBeenEnded: Boolean = false
 
     private fun getShooter(): ServerPlayerEntity? {
         val world = this.world
@@ -68,21 +64,15 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         if (!world.isClient && world is ServerWorld) {
             val shooter: ServerPlayerEntity? = getShooter()
             val projectile: PersistentProjectileEntity? = getProjectile()
-            if (shooter == null || projectile == null || shooter.isDead) {
-                end()
+            if (shooter == null || projectile == null || shooter.isDead || !this.isLeashed) {
+                end(false)
+                return
+            } else if (this.age > 5 && (shooter as ServerPlayerEntityDuck).breach_rightClickedWithBowRecently()) {
+                end (true)
                 return
             }
 
             this.setPosition(projectile.pos)
-
-            if (shooter.isSneaking) {
-                if (timeSinceLastSneak in 1..CANCEL_TICKS) {
-                    end()
-                }
-                timeSinceLastSneak = 0
-            } else {
-                if (timeSinceLastSneak != -1) timeSinceLastSneak++
-            }
 
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
@@ -96,18 +86,25 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         return EntityType.SLIME
     }
 
-    private fun end() {
-        // Detaching leash is needed to prevent it from dropping a lead item
-        this.detachLeash(true, false)
-        this.remove(RemovalReason.DISCARDED)
+    private fun end(manual: Boolean) {
+        if (!hasBeenEnded) {
+            // Detaching leash is needed to prevent it from dropping a lead item
+            this.detachLeash(true, false)
+            this.remove(RemovalReason.DISCARDED)
 
-        val projectile = getProjectile()
-        if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
-            getShooter()?.let { shooter ->
-                val v = shooter.velocity
-                shooter.velocity = Vec3d(v.x * 1.2, v.y + 1.0, v.z * 1.2)
-                shooter.velocityModified = true
+            if (manual) {
+                val projectile = getProjectile()
+                if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
+                    getShooter()?.let { shooter ->
+                        if (!shooter.isOnGround) {
+                            val v = shooter.velocity
+                            shooter.velocity = Vec3d(v.x * 1.2, v.y + 1.0, v.z * 1.2)
+                            shooter.velocityModified = true
+                        }
+                    }
+                }
             }
+            hasBeenEnded = true
         }
     }
 
@@ -124,7 +121,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
         val maxVReelingSpeed = 0.09
         val vReelingSpeedPerBlockDisplacement = 0.07
-        val vReelingSpeed = (displacement.y * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed)
+        val vReelingSpeed = (abs(displacement.y) * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed).coerceAtLeast(-maxVReelingSpeed)
 
         val maxHReelingSpeed = 0.05
         val hReelingSpeedPerBlockDisplacement = 0.0025

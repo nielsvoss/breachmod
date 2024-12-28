@@ -21,11 +21,24 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
     }
 
     @Unique
+    private int bowRightClickTimer = 0;
+
+    @Unique
     private boolean wasGrappleActiveSinceLastTouchingGround = false;
 
     @Override
     public void breach_setWasGrappleActiveSinceLastTouchingGround(boolean b) {
         this.wasGrappleActiveSinceLastTouchingGround = b;
+    }
+
+    @Override
+    public boolean breach_rightClickedWithBowRecently() {
+        return this.bowRightClickTimer > 0;
+    }
+
+    @Override
+    public void breach_setJustRightClickedWithBow() {
+        this.bowRightClickTimer = 2;
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;increaseTravelMotionStats(DDD)V"))
@@ -55,9 +68,11 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
     }
 
     @Inject(method = "tick", at = @At("RETURN"))
-    public void clearActiveGrapple(CallbackInfo ci) {
+    public void endOfTick(CallbackInfo ci) {
         if (wasGrappleActiveSinceLastTouchingGround && this.isOnGround()) {
             this.wasGrappleActiveSinceLastTouchingGround = false;
         }
+
+        if (bowRightClickTimer > 0) bowRightClickTimer--;
     }
 }

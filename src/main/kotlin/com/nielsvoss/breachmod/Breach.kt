@@ -10,6 +10,7 @@ import com.nielsvoss.breachmod.item.ExplosiveArrowItem
 import com.nielsvoss.breachmod.item.GrapplingArrowItem
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.minecraft.block.DispenserBlock
@@ -21,14 +22,18 @@ import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraft.util.TypedActionResult
 import net.minecraft.util.math.Position
 import net.minecraft.world.World
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import xyz.nucleoid.plasmid.game.GameType
+import xyz.nucleoid.stimuli.Stimuli
 
 
 object Breach : ModInitializer {
@@ -85,5 +90,15 @@ object Breach : ModInitializer {
 		})
 
 		GameType.register(Identifier.of(MOD_ID, "breach"), BreachGameConfig.CODEC, BreachWaiting::open)
+
+		UseItemCallback.EVENT.register(UseItemCallback { player, world, hand ->
+			if (!world.isClient && player is ServerPlayerEntity) {
+				val heldItem = player.getStackInHand(hand).item
+				if (heldItem == Items.BOW || heldItem == Items.CROSSBOW) {
+					(player as ServerPlayerEntityDuck).breach_setJustRightClickedWithBow()
+				}
+			}
+			TypedActionResult.pass(player.getStackInHand(hand))
+		})
 	}
 }
