@@ -9,10 +9,13 @@ import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.PersistentProjectileEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import xyz.nucleoid.plasmid.util.PlayerRef
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
     : MobEntity(entityType, world), PolymerEntity {
@@ -122,17 +125,19 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         shooter.addVelocity(elastic)
 
         if (isActive) {
-            val maxVReelingSpeed = 0.09
-            val vReelingSpeedPerBlockDisplacement = 0.07
-            val vReelingSpeed = (abs(displacement.y) * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed)
+            val maxVReelingVelocity = 0.4
+            val vReelingAcceleration = max(0.04, abs(displacement.y) * 0.06)
 
-            val maxHReelingSpeed = 0.05
-            val hReelingSpeedPerBlockDisplacement = 0.0025
-            val hReelingSpeed =
-                (displacement.horizontalLength() * hReelingSpeedPerBlockDisplacement).coerceAtMost(maxHReelingSpeed)
+            val maxHReelingVelocity = 0.2
+            val hReelingAcceleration = max(0.01, displacement.horizontalLength() * 0.0025)
 
-            val reeling = displacement.normalize().multiply(hReelingSpeed, vReelingSpeed, hReelingSpeed)
-            shooter.addVelocity(reeling)
+            val reeling = displacement.normalize().multiply(hReelingAcceleration, vReelingAcceleration, hReelingAcceleration)
+
+            val v = shooter.velocity
+            val newVx = increaseCapped(v.x, reeling.x, maxHReelingVelocity)
+            val newVy = increaseCapped(v.y, reeling.y, maxVReelingVelocity)
+            val newVz = increaseCapped(v.z, reeling.z, maxHReelingVelocity)
+            shooter.velocity = Vec3d(newVx, newVy, newVz)
 
             // val look = shooter.rotationVector.normalize().multiply(0.1)
             // shooter.addVelocity(look)
@@ -150,3 +155,12 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         shooter.velocityModified = true
     }
 }
+
+/**
+ * Increases current by increase, but won't increase it beyond maxAbsIfIncrease, and won't increase its absolute value
+ * it if it already has an absolute value >= maxAbsIfIncrease.
+ */
+private fun increaseCapped(current: Double, increase: Double, maxAbsIfIncrease: Double): Double =
+    if (current > maxAbsIfIncrease) min(current, current + increase)
+    else if (current < -maxAbsIfIncrease) max(current, current + increase)
+    else (current + increase).coerceIn(-maxAbsIfIncrease, maxAbsIfIncrease)
