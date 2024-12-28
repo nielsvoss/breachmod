@@ -1,0 +1,46 @@
+package com.nielsvoss.breachmod.mixin;
+
+import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(ServerPlayerEntity.class)
+abstract class ServerPlayerEntityMixin extends PlayerEntity {
+    private ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
+        super(world, pos, yaw, gameProfile);
+    }
+
+    @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;increaseTravelMotionStats(DDD)V"))
+    public void removeDrag(Vec3d movementInput, CallbackInfo ci) {
+        if (!this.getWorld().isClient()) {
+            if (!this.isOnGround()) {
+                // Re-create the code that is run on the client to determine if the player experiences drag.
+                // Each boolean below corresponds to the condition of an if statement, and only if all four of them are
+                // false does the statement
+                // this.setVelocity(vec3d6.x * (double)f, q * 0.9800000190734863, vec3d6.z * (double)f);
+                // end up running.
+                FluidState fluidState = this.getWorld().getFluidState(this.getBlockPos());
+                boolean b1 = this.isTouchingWater() && this.shouldSwimInFluids() && !this.canWalkOnFluid(fluidState);
+                boolean b2 = this.isInLava() && this.shouldSwimInFluids() && !this.canWalkOnFluid(fluidState);
+                boolean b3 = this.isFallFlying();
+                boolean b4 = this.hasNoDrag();
+
+                if (!b1 && !b2 && !b3 && !b4) {
+                    double horizontalDragConstant = 0.91;
+                    double verticalDragConstant = 0.9800000190734863;
+                    Vec3d v = this.getVelocity();
+                    this.setVelocity(v.x / horizontalDragConstant, v.y / verticalDragConstant, v.z / horizontalDragConstant);
+                    this.velocityModified = true;
+                }
+            }
+        }
+    }
+}
