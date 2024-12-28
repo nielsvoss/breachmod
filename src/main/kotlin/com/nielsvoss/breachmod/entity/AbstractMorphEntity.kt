@@ -33,6 +33,7 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
             this.attributes.getBaseValue(EntityAttributes.GENERIC_MAX_HEALTH)
         this.teleport(player.x, player.y, player.z)
         this.setRotation(player.yaw, player.pitch)
+        this.fallDistance = player.fallDistance
 
         if (thisHealthChanged) {
             // The change in this entity's health takes priority over player health changes
