@@ -147,6 +147,10 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             // shooter.addVelocity(antigravity)
         }
 
+        // Drag is between 0.91 (vanilla) at 0 blocks, and 1.0 (none) at >= 5 blocks
+        val horizontalDragFactor = 0.91 + 0.09 * min(1.0, displacement.length() * 0.2)
+        shooter.velocity = shooter.velocity.multiply(horizontalDragFactor, 1.0, horizontalDragFactor)
+
         // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
         if (!shooter.isOnGround) {
             (shooter as ServerPlayerEntityDuck).breach_setWasGrappleActiveSinceLastTouchingGround(true);
