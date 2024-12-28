@@ -105,7 +105,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
             getShooter()?.let { shooter ->
                 val v = shooter.velocity
-                shooter.velocity = Vec3d(v.x * 1.5, v.y + 0.5, v.z * 1.5)
+                shooter.velocity = Vec3d(v.x * 1.2, v.y + 1.0, v.z * 1.2)
                 shooter.velocityModified = true
             }
         }
@@ -122,18 +122,22 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             shooter.velocity.dotProduct(displacement).coerceAtMost(0.0)
                     / displacement.lengthSquared())
 
-        val maxReelingSpeed = 0.04
-        val reelingSpeedPerBlockDisplacement = 0.02
-        val reelingSpeed = (displacement.length() * reelingSpeedPerBlockDisplacement).coerceAtMost(maxReelingSpeed)
+        val maxVReelingSpeed = 0.09
+        val vReelingSpeedPerBlockDisplacement = 0.07
+        val vReelingSpeed = (displacement.y * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed)
 
-        val reeling = displacement.normalize().multiply(reelingSpeed)
+        val maxHReelingSpeed = 0.05
+        val hReelingSpeedPerBlockDisplacement = 0.0025
+        val hReelingSpeed = (displacement.horizontalLength() * hReelingSpeedPerBlockDisplacement).coerceAtMost(maxHReelingSpeed)
+
+        val reeling = displacement.normalize().multiply(hReelingSpeed, vReelingSpeed, hReelingSpeed)
         val elastic = opposingVelocityProjected.multiply(-0.5)
-        val elasticAdjusted = Vec3d(elastic.x, elastic.y * 0.4, elastic.z)
+        val elasticAdjusted = Vec3d(elastic.x, elastic.y, elastic.z)
 
         // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
-        val antigravity = Vec3d(0.0, 0.05, 0.0)
+        // val antigravity = Vec3d(0.0, 0.05, 0.0)
 
-        shooter.addVelocity(reeling.add(elasticAdjusted).add(antigravity))
+        shooter.addVelocity(reeling.add(elasticAdjusted)/*.add(antigravity)*/)
 
         // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
         if (!shooter.isOnGround) {
