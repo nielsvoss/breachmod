@@ -9,7 +9,6 @@ import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.projectile.PersistentProjectileEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import xyz.nucleoid.plasmid.util.PlayerRef
 import java.util.*
@@ -76,8 +75,8 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
             val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
-            if (isInBlock && shooter.isSneaking) {
-                pull(shooter, projectile)
+            if (isInBlock) {
+                pull(shooter, projectile, shooter.isSneaking)
             }
         }
     }
@@ -97,8 +96,8 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
                 if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
                     getShooter()?.let { shooter ->
                         if (!shooter.isOnGround) {
-                            val v = shooter.velocity
-                            shooter.velocity = Vec3d(v.x * 1.2, v.y + 1.0, v.z * 1.2)
+                            val v = shooter.rotationVector.normalize().multiply(0.2, 0.7, 0.2)
+                            shooter.addVelocity(v)
                             shooter.velocityModified = true
                         }
                     }
@@ -108,7 +107,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         }
     }
 
-    private fun pull(shooter: ServerPlayerEntity, projectile: PersistentProjectileEntity) {
+    private fun pull(shooter: ServerPlayerEntity, projectile: PersistentProjectileEntity, isActive: Boolean) {
         // Vector from the shooter to the grapple
         val displacement = projectile.pos.subtract(shooter.pos)
 
@@ -119,22 +118,29 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             shooter.velocity.dotProduct(displacement).coerceAtMost(0.0)
                     / displacement.lengthSquared())
 
-        val maxVReelingSpeed = 0.09
-        val vReelingSpeedPerBlockDisplacement = 0.07
-        val vReelingSpeed = (abs(displacement.y) * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed).coerceAtLeast(-maxVReelingSpeed)
+        val elastic = opposingVelocityProjected.multiply(-0.7)
+        shooter.addVelocity(elastic)
 
-        val maxHReelingSpeed = 0.05
-        val hReelingSpeedPerBlockDisplacement = 0.0025
-        val hReelingSpeed = (displacement.horizontalLength() * hReelingSpeedPerBlockDisplacement).coerceAtMost(maxHReelingSpeed)
+        if (isActive) {
+            val maxVReelingSpeed = 0.09
+            val vReelingSpeedPerBlockDisplacement = 0.07
+            val vReelingSpeed = (abs(displacement.y) * vReelingSpeedPerBlockDisplacement).coerceAtMost(maxVReelingSpeed)
 
-        val reeling = displacement.normalize().multiply(hReelingSpeed, vReelingSpeed, hReelingSpeed)
-        val elastic = opposingVelocityProjected.multiply(-0.5)
-        val elasticAdjusted = Vec3d(elastic.x, elastic.y, elastic.z)
+            val maxHReelingSpeed = 0.05
+            val hReelingSpeedPerBlockDisplacement = 0.0025
+            val hReelingSpeed =
+                (displacement.horizontalLength() * hReelingSpeedPerBlockDisplacement).coerceAtMost(maxHReelingSpeed)
 
-        // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
-        // val antigravity = Vec3d(0.0, 0.05, 0.0)
+            val reeling = displacement.normalize().multiply(hReelingSpeed, vReelingSpeed, hReelingSpeed)
+            shooter.addVelocity(reeling)
 
-        shooter.addVelocity(reeling.add(elasticAdjusted)/*.add(antigravity)*/)
+            // val look = shooter.rotationVector.normalize().multiply(0.1)
+            // shooter.addVelocity(look)
+
+            // Gravity in minecraft is 0.08 blocks/tick^2, this cancels some of that
+            // val antigravity = Vec3d(0.0, 0.05, 0.0)
+            // shooter.addVelocity(antigravity)
+        }
 
         // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
         if (!shooter.isOnGround) {
