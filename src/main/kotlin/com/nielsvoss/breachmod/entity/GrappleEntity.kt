@@ -128,7 +128,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             val maxVReelingVelocity = 0.4
             val vReelingAcceleration = max(0.04, abs(displacement.y) * 0.06)
 
-            val maxHReelingVelocity = 0.2
+            val maxHReelingVelocity = 0.8
             val hReelingAcceleration = max(0.01, displacement.horizontalLength() * 0.0025)
 
             val reeling = displacement.normalize().multiply(hReelingAcceleration, vReelingAcceleration, hReelingAcceleration)
