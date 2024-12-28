@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod.mixin;
 
 import com.mojang.authlib.GameProfile;
+import com.nielsvoss.breachmod.ServerPlayerEntityDuck;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -8,20 +9,29 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-abstract class ServerPlayerEntityMixin extends PlayerEntity {
+abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPlayerEntityDuck {
     private ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
+    }
+
+    @Unique
+    private boolean wasGrappleActiveSinceLastTouchingGround = false;
+
+    @Override
+    public void breach_setWasGrappleActiveSinceLastTouchingGround(boolean b) {
+        this.wasGrappleActiveSinceLastTouchingGround = b;
     }
 
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;increaseTravelMotionStats(DDD)V"))
     public void removeDrag(Vec3d movementInput, CallbackInfo ci) {
         if (!this.getWorld().isClient()) {
-            if (!this.isOnGround()) {
+            if (!this.isOnGround() && wasGrappleActiveSinceLastTouchingGround) {
                 // Re-create the code that is run on the client to determine if the player experiences drag.
                 // Each boolean below corresponds to the condition of an if statement, and only if all four of them are
                 // false does the statement
@@ -41,6 +51,13 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity {
                     this.velocityModified = true;
                 }
             }
+        }
+    }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    public void clearActiveGrapple(CallbackInfo ci) {
+        if (wasGrappleActiveSinceLastTouchingGround && this.isOnGround()) {
+            this.wasGrappleActiveSinceLastTouchingGround = false;
         }
     }
 }

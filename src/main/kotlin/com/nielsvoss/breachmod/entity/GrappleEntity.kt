@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod.entity
 
 import com.nielsvoss.breachmod.Breach
+import com.nielsvoss.breachmod.ServerPlayerEntityDuck
 import com.nielsvoss.breachmod.mixin.PersistentProjectileEntityAccessor
 import eu.pb4.polymer.core.api.entity.PolymerEntity
 import net.minecraft.entity.EntityType
@@ -135,10 +136,9 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         shooter.addVelocity(reeling.add(elasticAdjusted).add(antigravity))
 
         // Undo horizontal drag. Vanilla minecraft multiplies horizontal movement by 0.91 every tick.
-        // This cancels some of that.
-        val horizontalAdjustment = 0.91
-        // TODO: If player has multiple grapples, this should only apply once per tick
-        shooter.velocity = Vec3d(shooter.velocity.x / horizontalAdjustment, shooter.velocity.y, shooter.velocity.z / horizontalAdjustment)
+        if (!shooter.isOnGround) {
+            (shooter as ServerPlayerEntityDuck).breach_setWasGrappleActiveSinceLastTouchingGround(true);
+        }
 
         shooter.velocityModified = true
     }
