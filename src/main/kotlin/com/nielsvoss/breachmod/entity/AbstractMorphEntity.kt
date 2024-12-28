@@ -25,9 +25,6 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
      * Run every tick while morphed by the morphManager
      */
     fun synchronizeWith(player: ServerPlayerEntity) {
-        // Freeze value to avoid NPE in case it is changed from another thread (very unlikely)
-        val previousPlayerHealth = previousPlayerHealth
-
         val thisHealthChanged: Boolean = health != previousHealth
         val playerHealthChanged: Boolean = previousPlayerHealth != null &&
                 previousPlayerHealth != player.health
@@ -37,21 +34,11 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
         this.teleport(player.x, player.y, player.z)
         this.setRotation(player.yaw, player.pitch)
 
-        if (thisHealthChanged && !playerHealthChanged) {
+        if (thisHealthChanged) {
+            // The change in this entity's health takes priority over player health changes
             player.health = this.health
-        } else if (playerHealthChanged && !thisHealthChanged) {
+        } else if (playerHealthChanged) {
             this.health = player.health
-        } else if (thisHealthChanged) { // if both changed
-            val amountThisHealthChanged = health - previousHealth
-            val amountPlayerHealthChanged = player.health - previousPlayerHealth!!
-            val newHealth: Float =
-                if (amountThisHealthChanged > 0 && amountPlayerHealthChanged > 0)
-                    this.health + max(amountThisHealthChanged, amountPlayerHealthChanged)
-                else if (amountThisHealthChanged < 0 && amountPlayerHealthChanged < 0)
-                    this.health + min(amountThisHealthChanged, amountPlayerHealthChanged)
-                else this.health + amountThisHealthChanged + amountPlayerHealthChanged
-            this.health = newHealth
-            player.health = newHealth
         }
 
         this.previousHealth = health
