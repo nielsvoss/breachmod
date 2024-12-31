@@ -3,11 +3,11 @@ package com.nielsvoss.breachmod.state
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.Formatting
-import xyz.nucleoid.plasmid.game.GameActivity
-import xyz.nucleoid.plasmid.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
-import xyz.nucleoid.plasmid.game.common.team.TeamManager
-import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.plasmid.api.game.GameActivity
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
+import xyz.nucleoid.plasmid.api.game.common.team.TeamManager
+import xyz.nucleoid.plasmid.api.util.PlayerRef
 
 class BreachPlayersState private constructor(private val attackingTeamKey: GameTeamKey,
                                              private val defendingTeamKey: GameTeamKey,

@@ -11,29 +11,22 @@ import com.nielsvoss.breachmod.item.GrapplingArrowItem
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.player.UseItemCallback
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
-import net.minecraft.block.DispenserBlock
-import net.minecraft.block.dispenser.ProjectileDispenserBehavior
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.mob.MobEntity
-import net.minecraft.entity.projectile.ArrowEntity
-import net.minecraft.entity.projectile.ProjectileEntity
 import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
+import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
-import net.minecraft.util.TypedActionResult
-import net.minecraft.util.math.Position
-import net.minecraft.world.World
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import xyz.nucleoid.plasmid.game.GameType
-import xyz.nucleoid.stimuli.Stimuli
+import xyz.nucleoid.plasmid.api.game.GameType
 
 
 object Breach : ModInitializer {
@@ -42,21 +35,24 @@ object Breach : ModInitializer {
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
 
 	@JvmField
-	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(FabricItemSettings())
+	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(Item.Settings())
 	@JvmField
-	val ENDER_ARROW: Item = EnderArrowItem(FabricItemSettings())
+	val ENDER_ARROW: Item = EnderArrowItem(Item.Settings())
 	@JvmField
-	val GRAPPLING_ARROW: Item = GrapplingArrowItem(FabricItemSettings())
+	val GRAPPLING_ARROW: Item = GrapplingArrowItem(Item.Settings())
 
 	@JvmField
 	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
-		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build("grapple")
+		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build(
+			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple")))
 	@JvmField
 	val SILVERFISH_MORPH_ENTITY_TYPE: EntityType<SilverfishMorphEntity> =
-		EntityType.Builder.create(::SilverfishMorphEntity, SpawnGroup.MISC).build("silverfish_morph")
+		EntityType.Builder.create(::SilverfishMorphEntity, SpawnGroup.MISC).build(
+			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "silverfish_morph")))
 	@JvmField
 	val ENDERMITE_MORPH_ENTITY_TYPE: EntityType<EndermiteMorphEntity> =
-		EntityType.Builder.create(::EndermiteMorphEntity, SpawnGroup.MISC).build("endermite_morph")
+		EntityType.Builder.create(::EndermiteMorphEntity, SpawnGroup.MISC).build(
+			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "endermite_morph")))
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -74,6 +70,7 @@ object Breach : ModInitializer {
 		FabricDefaultAttributeRegistry.register(ENDERMITE_MORPH_ENTITY_TYPE, AbstractMorphEntity.createMorphEntityAttributes());
 		PolymerEntityUtils.registerType(GRAPPLE_ENTITY_TYPE, SILVERFISH_MORPH_ENTITY_TYPE, ENDERMITE_MORPH_ENTITY_TYPE)
 
+		/*
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
 		DispenserBlock.registerBehavior(EXPLOSIVE_ARROW, object : ProjectileDispenserBehavior() {
 			override fun createProjectile(world: World?, position: Position, stack: ItemStack?): ProjectileEntity {
@@ -88,6 +85,7 @@ object Breach : ModInitializer {
 				return arrow
 			}
 		})
+		 */
 
 		GameType.register(Identifier.of(MOD_ID, "breach"), BreachGameConfig.CODEC, BreachWaiting::open)
 
@@ -98,7 +96,7 @@ object Breach : ModInitializer {
 					(player as ServerPlayerEntityDuck).breach_setJustRightClickedWithBow()
 				}
 			}
-			TypedActionResult.pass(player.getStackInHand(hand))
+			ActionResult.PASS
 		})
 	}
 }

@@ -11,7 +11,8 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
-import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.packettweaker.PacketContext
+import xyz.nucleoid.plasmid.api.util.PlayerRef
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
@@ -84,14 +85,14 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         }
     }
 
-    override fun getPolymerEntityType(player: ServerPlayerEntity?): EntityType<*> {
+    override fun getPolymerEntityType(context: PacketContext?): EntityType<*> {
         return EntityType.SLIME
     }
 
     private fun end(manual: Boolean) {
         if (!hasBeenEnded) {
             // Detaching leash is needed to prevent it from dropping a lead item
-            this.detachLeash(true, false)
+            this.detachLeashWithoutDrop()
             this.remove(RemovalReason.DISCARDED)
 
             if (manual) {

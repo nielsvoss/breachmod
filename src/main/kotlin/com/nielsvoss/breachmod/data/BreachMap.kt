@@ -7,8 +7,8 @@ import net.minecraft.util.math.BlockPos
 import xyz.nucleoid.map_templates.MapTemplate
 import xyz.nucleoid.map_templates.MapTemplateSerializer
 import xyz.nucleoid.map_templates.TemplateRegion
-import xyz.nucleoid.plasmid.game.GameOpenException
-import xyz.nucleoid.plasmid.game.world.generator.TemplateChunkGenerator
+import xyz.nucleoid.plasmid.api.game.GameOpenException
+import xyz.nucleoid.plasmid.api.game.world.generator.TemplateChunkGenerator
 
 class BreachMap private constructor(private val template: MapTemplate, val lobbySpawnRegion: TemplateRegion,
                                     val lobbyToRemoveRegion: TemplateRegion?, val targets: List<BreachTarget>,

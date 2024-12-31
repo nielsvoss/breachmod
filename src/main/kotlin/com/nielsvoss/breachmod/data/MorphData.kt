@@ -2,7 +2,9 @@ package com.nielsvoss.breachmod.data
 
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 
 class MorphData private constructor(
@@ -15,7 +17,7 @@ class MorphData private constructor(
 ) {
     companion object {
         fun loadFrom(player: ServerPlayerEntity): MorphData {
-            val oldBaseMaxHealth: Double = player.attributes.getBaseValue(EntityAttributes.GENERIC_MAX_HEALTH)
+            val oldBaseMaxHealth: Double = player.attributes.getBaseValue(EntityAttributes.MAX_HEALTH)
             val oldHealth: Float = player.health
             val oldWasInvisible = player.isInvisible
             val oldWasInvulnerable = player.isInvulnerable
@@ -32,26 +34,32 @@ class MorphData private constructor(
 
         fun applyMorphData(player: ServerPlayerEntity, morphEntity: AbstractMorphEntity) {
             // TODO for 1.21 - Adjust player size scale
+            val morphEntityWorld = morphEntity.world
+            if (!morphEntityWorld.isClient && morphEntityWorld is ServerWorld) {
+                player.attributes.getCustomInstance(EntityAttributes.MAX_HEALTH)?.baseValue =
+                    morphEntity.attributes.getBaseValue(EntityAttributes.MAX_HEALTH)
+                player.health = morphEntity.health
+                // player.markHealthDirty()
+                if (!player.isInvisible) {
+                    player.isInvisible = true
+                }
+                if (!player.isInvulnerable) {
+                    player.isInvulnerable = true
+                }
+                if (!player.isSilent) {
+                    player.isSilent = true
+                }
 
-            player.attributes.getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.baseValue =
-                morphEntity.attributes.getBaseValue(EntityAttributes.GENERIC_MAX_HEALTH)
-            player.health = morphEntity.health
-            // player.markHealthDirty()
-            if (!player.isInvisible) {
-                player.isInvisible = true
+                player.teleport(
+                    morphEntityWorld, morphEntity.x, morphEntity.y, morphEntity.z, PositionFlag.VALUES,
+                    morphEntity.yaw, morphEntity.pitch, true
+                )
             }
-            if (!player.isInvulnerable) {
-                player.isInvulnerable = true
-            }
-            if (!player.isSilent) {
-                player.isSilent = true
-            }
-            player.teleport(morphEntity.x, morphEntity.y, morphEntity.z)
         }
     }
 
     fun restore(player: ServerPlayerEntity) {
-        player.attributes.getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH)?.baseValue = oldBaseMaxHealth
+        player.attributes.getCustomInstance(EntityAttributes.MAX_HEALTH)?.baseValue = oldBaseMaxHealth
         player.health = oldHealth
         // player.markHealthDirty() - Not sure if necessary
 
@@ -65,6 +73,8 @@ class MorphData private constructor(
             player.isSilent = oldWasSilent
         }
 
-        player.teleport(oldPos.x, oldPos.y, oldPos.z)
+        // TODO: Store yaw and pitch
+        player.teleport(player.serverWorld, oldPos.x, oldPos.y, oldPos.z, PositionFlag.VALUES,
+            0F, 0F, true)
     }
 }

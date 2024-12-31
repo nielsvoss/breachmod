@@ -22,13 +22,14 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
-import xyz.nucleoid.plasmid.game.GameOpenException
-import xyz.nucleoid.plasmid.game.GameSpace
-import xyz.nucleoid.plasmid.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.game.common.team.GameTeamKey
-import xyz.nucleoid.plasmid.game.event.GameActivityEvents
-import xyz.nucleoid.plasmid.game.rule.GameRuleType
-import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.plasmid.api.game.GameOpenException
+import xyz.nucleoid.plasmid.api.game.GameSpace
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
+import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
+import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
+import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
+import xyz.nucleoid.plasmid.api.util.PlayerRef
+import xyz.nucleoid.stimuli.event.EventResult
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent
 import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
@@ -79,7 +80,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                         breachActive.morphManager.morphPlayer(attacker, attacked)
                         ActionResult.CONSUME
                     }
-                    ActionResult.PASS
+                    EventResult.PASS
                 })
 
                 breachActive.start()
@@ -191,12 +192,12 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         players.markSurviving(player)
         if (players.isAnyAttacker(player)) {
             val loc = (attackersSpawn ?: map.attackerSpawnRegions.random()).bounds.randomBottom()
-            player.teleportFacingOrigin(loc)
+            player.teleportFacingOrigin(world, loc)
             openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
             player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
         } else if (players.isAnyDefender(player)) {
             val loc = (defendersSpawn ?: map.defenderSpawnRegions.random()).bounds.randomBottom()
-            player.teleportFacingOrigin(loc)
+            player.teleportFacingOrigin(world, loc)
             TargetSelectorUI.open(player, map.targets) { target ->
                 trySelectTarget(player, target)
             }
@@ -211,7 +212,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         SpawnSelectorUI.open(player, locations) { ui, selectedRegion ->
             if (roundTimer.isPrepPhase()) {
                 val loc = selectedRegion.bounds.randomBottom()
-                player.teleportFacingOrigin(loc)
+                player.teleportFacingOrigin(world, loc)
             } else {
                 player.sendMessage(Text.translatable("text.breach.can_only_select_spawn_in_prep_phase"))
             }
@@ -239,15 +240,15 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         player.sendMessage(Text.translatable("text.breach.target_selected"))
     }
 
-    private fun onPlayerDeath(player: ServerPlayerEntity): ActionResult {
+    private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
         val didEliminate: Boolean = players.eliminate(player)
         val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
         player.health = 20.0F
-        player.teleportFacingOrigin(respawnLoc)
+        player.teleportFacingOrigin(world, respawnLoc)
         if (didEliminate && config.remainingPlayersPopup) {
             displayRemainingPlayersPopup()
         }
-        return ActionResult.FAIL
+        return EventResult.DENY
     }
 
     private fun displayRemainingPlayersPopup() {
@@ -269,12 +270,12 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
     }
 
-    private fun onBreakBlock(player: ServerPlayerEntity, world : ServerWorld, pos: BlockPos): ActionResult {
+    private fun onBreakBlock(player: ServerPlayerEntity, world : ServerWorld, pos: BlockPos): EventResult {
         if (roundTimer.isPrepPhase() && players.isSurvivingAttacker(player)) {
             player.sendMessage(Text.translatable("text.breach.attacker_break_block_in_prep_phase")
                 .formatted(Formatting.RED))
-            return ActionResult.FAIL
+            return EventResult.DENY
         }
-        return ActionResult.PASS
+        return EventResult.PASS
     }
 }

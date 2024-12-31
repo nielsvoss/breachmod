@@ -47,7 +47,7 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
                     outlineEntities[target] = blockDisplayEntity
                 }
             } else {
-                outlineEntities.remove(target)?.kill()
+                outlineEntities.remove(target)?.kill(world)
             }
         }
     }

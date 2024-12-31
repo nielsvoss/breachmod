@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import xyz.nucleoid.codecs.MoreCodecs
-import xyz.nucleoid.plasmid.util.ItemStackBuilder
+import xyz.nucleoid.plasmid.api.util.ItemStackBuilder
 
 /**
  * Originally based on https://github.com/NucleoidMC/skywars/blob/main/src/main/java/us/potatoboy/skywars/kit/Kit.java

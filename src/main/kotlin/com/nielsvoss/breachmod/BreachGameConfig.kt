@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod
 
 import com.mojang.serialization.Codec
+import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.util.Identifier
 
@@ -14,7 +15,7 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
                             val remainingPlayersPopup: Boolean) {
     companion object {
         @JvmStatic
-        val CODEC : Codec<BreachGameConfig> = RecordCodecBuilder.create { instance ->
+        val CODEC : MapCodec<BreachGameConfig> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
                 Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
                 Identifier.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),

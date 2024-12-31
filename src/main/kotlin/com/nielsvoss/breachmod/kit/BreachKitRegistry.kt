@@ -2,7 +2,7 @@ package com.nielsvoss.breachmod.kit
 
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
 import net.minecraft.resource.ResourceType
-import xyz.nucleoid.plasmid.registry.TinyRegistry
+import xyz.nucleoid.plasmid.api.util.TinyRegistry
 
 /**
  * Originally based on

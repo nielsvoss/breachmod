@@ -4,7 +4,7 @@ import com.nielsvoss.breachmod.data.Morph
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import xyz.nucleoid.plasmid.util.PlayerRef
+import xyz.nucleoid.plasmid.api.util.PlayerRef
 
 class MorphManager {
     private val morphs: MutableMap<PlayerRef, Morph> = mutableMapOf()
