@@ -10,6 +10,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import net.minecraft.util.math.Vec3d
+import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
 import xyz.nucleoid.plasmid.api.game.GameOpenContext
 import xyz.nucleoid.plasmid.api.game.GameOpenProcedure
@@ -24,6 +25,7 @@ import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.game.common.team.TeamAllocator
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
+import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 import xyz.nucleoid.stimuli.event.EventResult
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
@@ -66,22 +68,15 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 activity.deny(GameRuleType.FLUID_FLOW)
                 activity.deny(GameRuleType.DISPENSER_ACTIVATE)
 
-                // activity.listen(GamePlayerEvents.OFFER, GamePlayerEvents.Offer { waiting.offer(it) })
+                activity.listen(GamePlayerEvents.ACCEPT, GamePlayerEvents.Accept { offer ->
+                    offer.teleport(world, map.lobbySpawnRegion.bounds.randomBottom())
+                        .thenRunForEach { player -> player.changeGameMode(GameMode.ADVENTURE) }
+                })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })
                 activity.listen(GameActivityEvents.REQUEST_START, GameActivityEvents.RequestStart { waiting.requestStart() })
             }
         }
     }
-
-    /*
-    private fun offer(offer: JoinOffer): JoinOfferResult {
-        val player: ServerPlayerEntity = offer.playey
-        val spawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
-        return offer.accept(world, spawnLocation).and {
-            player.changeGameMode(GameMode.ADVENTURE)
-        }
-    }
-    */
 
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
         player.health = 20.0F
