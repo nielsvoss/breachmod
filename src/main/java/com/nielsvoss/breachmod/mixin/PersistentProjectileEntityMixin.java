@@ -31,8 +31,7 @@ import xyz.nucleoid.stimuli.event.EventResult;
 @Mixin(PersistentProjectileEntity.class)
 abstract class PersistentProjectileEntityMixin extends ProjectileEntity implements PersistentProjectileEntityDuck {
 	@Shadow public abstract ItemStack getItemStack();
-
-	@Shadow protected boolean inGround;
+	@Shadow protected abstract boolean isInGround();
 
 	@Unique
 	public @Nullable GrappleEntity grapple;
@@ -64,7 +63,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 		}
 	}
 
-	@WrapOperation(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+	@WrapOperation(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;sidedDamage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
 	private boolean increaseDamageAndHandleExplosions(Entity instance, DamageSource source, float amount, Operation<Boolean> original) {
 		boolean isExplosive = this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW);
 
@@ -102,7 +101,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/2892490771fcf14f32910639c804214688fedd51/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrowEntity.java#L32
 		// Except that code is client-side, and this code is server-side
 		if (this.getWorld() instanceof ServerWorld serverWorld) {
-			if (!this.inGround && this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW)) {
+			if (!this.isInGround() && this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW)) {
 				final int numParticles = 20;
 				for (int i = 0; i < numParticles; i++) {
 					Vec3d pos = beforePos.lerp(afterPos, ((double) i) / numParticles);
