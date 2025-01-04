@@ -35,11 +35,28 @@ object Breach : ModInitializer {
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
 
 	@JvmField
-	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(Item.Settings())
+	val EXPLOSIVE_ARROW_REGKEY: RegistryKey<Item> =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "explosive_arrow"))
 	@JvmField
-	val ENDER_ARROW: Item = EnderArrowItem(Item.Settings())
+	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(Item.Settings()
+		.useItemPrefixedTranslationKey()
+		.registryKey(EXPLOSIVE_ARROW_REGKEY))
+
 	@JvmField
-	val GRAPPLING_ARROW: Item = GrapplingArrowItem(Item.Settings())
+	val ENDER_ARROW_REGKEY: RegistryKey<Item> =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "ender_arrow"))
+	@JvmField
+	val ENDER_ARROW: Item = EnderArrowItem(Item.Settings()
+		.useItemPrefixedTranslationKey()
+		.registryKey(ENDER_ARROW_REGKEY))
+
+	@JvmField
+	val GRAPPLING_ARROW_REGKEY: RegistryKey<Item> =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "grappling_arrow"))
+	@JvmField
+	val GRAPPLING_ARROW: Item = GrapplingArrowItem(Item.Settings()
+		.useItemPrefixedTranslationKey()
+		.registryKey(GRAPPLING_ARROW_REGKEY))
 
 	@JvmField
 	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
@@ -58,9 +75,9 @@ object Breach : ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "explosive_arrow"), EXPLOSIVE_ARROW)
-		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "ender_arrow"), ENDER_ARROW)
-		Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "grappling_arrow"), GRAPPLING_ARROW)
+		Registry.register(Registries.ITEM, EXPLOSIVE_ARROW_REGKEY, EXPLOSIVE_ARROW)
+		Registry.register(Registries.ITEM, ENDER_ARROW_REGKEY, ENDER_ARROW)
+		Registry.register(Registries.ITEM, GRAPPLING_ARROW_REGKEY, GRAPPLING_ARROW)
 
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple"), GRAPPLE_ENTITY_TYPE)
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "silverfish_morph"), SILVERFISH_MORPH_ENTITY_TYPE)
