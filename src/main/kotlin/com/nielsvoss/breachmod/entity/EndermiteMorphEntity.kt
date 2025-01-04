@@ -1,7 +1,6 @@
 package com.nielsvoss.breachmod.entity
 
 import net.minecraft.entity.EntityType
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext
 

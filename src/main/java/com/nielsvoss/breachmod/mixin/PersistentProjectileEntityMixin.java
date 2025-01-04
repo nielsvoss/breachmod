@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import xyz.nucleoid.plasmid.api.game.GameSpaceManager;
+import xyz.nucleoid.stimuli.event.EventResult;
 
 @Mixin(PersistentProjectileEntity.class)
 abstract class PersistentProjectileEntityMixin extends ProjectileEntity implements PersistentProjectileEntityDuck {
@@ -68,7 +69,7 @@ abstract class PersistentProjectileEntityMixin extends ProjectileEntity implemen
 		boolean isExplosive = this.getItemStack().isOf(Breach.EXPLOSIVE_ARROW);
 
 		var gameSpace = GameSpaceManager.get().byWorld(instance.getWorld());
-		if (gameSpace != null && gameSpace.getBehavior().testRule(BreachRuleTypes.ARROWS_INSTANT_KILL) == ActionResult.SUCCESS) {
+		if (gameSpace != null && gameSpace.getBehavior().testRule(BreachRuleTypes.ARROWS_INSTANT_KILL) == EventResult.ALLOW) {
 			if (!isExplosive && this.getType() == EntityType.ARROW) {
 				float newDamageAmount = 1_000_000.0F; // Arbitrary large number
 				return original.call(instance, source, newDamageAmount);

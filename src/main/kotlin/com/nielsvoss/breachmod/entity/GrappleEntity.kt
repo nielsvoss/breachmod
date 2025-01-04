@@ -78,7 +78,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
             this.setPosition(projectile.pos)
 
             // TODO: Once updated to 1.21.4 (which uses datatracker), use isInGround instead
-            val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).inGround
+            val isInBlock: Boolean = (projectile as PersistentProjectileEntityAccessor).invokeIsInGround()
             if (isInBlock) {
                 pull(shooter, projectile, shooter.isSneaking)
             }
@@ -97,7 +97,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
 
             if (manual) {
                 val projectile = getProjectile()
-                if (projectile != null && (projectile as PersistentProjectileEntityAccessor).inGround) {
+                if (projectile != null && (projectile as PersistentProjectileEntityAccessor).invokeIsInGround()) {
                     getShooter()?.let { shooter ->
                         if (!shooter.isOnGround) {
                             val v = shooter.rotationVector.normalize().multiply(0.2, 0.7, 0.2)

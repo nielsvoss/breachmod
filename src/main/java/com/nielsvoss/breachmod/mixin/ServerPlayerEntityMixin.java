@@ -41,6 +41,8 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
         this.bowRightClickTimer = 2;
     }
 
+    /*
+    // This worked in 1.20.4
     @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;increaseTravelMotionStats(DDD)V"))
     public void removeDrag(Vec3d movementInput, CallbackInfo ci) {
         if (!this.getWorld().isClient()) {
@@ -66,6 +68,7 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
             }
         }
     }
+     */
 
     @Inject(method = "tick", at = @At("RETURN"))
     public void endOfTick(CallbackInfo ci) {
