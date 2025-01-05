@@ -11,6 +11,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.tooltip.TooltipType
+import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext
 
@@ -22,6 +23,10 @@ class ExplosiveArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem 
 
     override fun getPolymerItem(stack: ItemStack, context: PacketContext?): Item {
         return Items.TIPPED_ARROW
+    }
+
+    override fun getPolymerItemModel(stack: ItemStack?, context: PacketContext?): Identifier? {
+        return null
     }
 
     override fun getPolymerItemStack(itemStack: ItemStack, tooltipType: TooltipType?, packetContext: PacketContext?):
