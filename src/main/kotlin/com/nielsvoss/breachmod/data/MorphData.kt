@@ -26,7 +26,7 @@ class MorphData private constructor(
                 oldBaseMaxHealth,
                 oldHealth,
                 player.pos,
-                oldWasInvulnerable,
+                oldWasInvisible,
                 oldWasInvulnerable,
                 oldWasSilent
             )
@@ -51,7 +51,7 @@ class MorphData private constructor(
                 }
 
                 player.teleport(
-                    morphEntityWorld, morphEntity.x, morphEntity.y, morphEntity.z, PositionFlag.VALUES,
+                    morphEntityWorld, morphEntity.x, morphEntity.y, morphEntity.z, setOf(),
                     morphEntity.yaw, morphEntity.pitch, true
                 )
             }
@@ -74,7 +74,7 @@ class MorphData private constructor(
         }
 
         // TODO: Store yaw and pitch
-        player.teleport(player.serverWorld, oldPos.x, oldPos.y, oldPos.z, PositionFlag.VALUES,
+        player.teleport(player.serverWorld, oldPos.x, oldPos.y, oldPos.z, setOf(),
             0F, 0F, true)
     }
 }

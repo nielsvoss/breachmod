@@ -33,7 +33,7 @@ abstract class AbstractMorphEntity(entityType: EntityType<out AbstractMorphEntit
 
             player.attributes.getCustomInstance(EntityAttributes.MAX_HEALTH)?.baseValue =
                 this.attributes.getBaseValue(EntityAttributes.MAX_HEALTH)
-            this.teleport(world, player.x, player.y, player.z, PositionFlag.VALUES, player.yaw, player.pitch, false)
+            this.teleport(world, player.x, player.y, player.z, setOf(), player.yaw, player.pitch, false)
             this.setRotation(player.yaw, player.pitch)
             this.fallDistance = player.fallDistance
 

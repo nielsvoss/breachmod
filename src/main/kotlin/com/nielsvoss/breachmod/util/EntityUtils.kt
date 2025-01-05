@@ -18,6 +18,8 @@ private fun vector2ToYaw(x: Double, z: Double): Float {
 
 fun Entity.teleportFacingOrigin(world: ServerWorld, pos: Vec3d) {
     // this.teleport(world, pos.x, pos.y, pos.z, vector2ToYaw(-this.x, -this.z), 0F)
-    this.teleport(world, pos.x, pos.y, pos.z, PositionFlag.VALUES, 0F, 0F, true)
+
+    // The setOf() indicates that no coordinates are relative
+    this.teleport(world, pos.x, pos.y, pos.z, setOf(), 0F, 0F, true)
     this.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, Vec3d(0.0, this.eyeY, 0.0))
 }
