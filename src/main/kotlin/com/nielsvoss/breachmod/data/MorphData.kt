@@ -13,7 +13,8 @@ class MorphData private constructor(
     private val oldPos: Vec3d,
     private val oldWasInvisible: Boolean,
     private val oldWasInvulnerable: Boolean,
-    private val oldWasSilent: Boolean
+    private val oldWasSilent: Boolean,
+    private val oldScale: Double
 ) {
     companion object {
         fun loadFrom(player: ServerPlayerEntity): MorphData {
@@ -22,13 +23,15 @@ class MorphData private constructor(
             val oldWasInvisible = player.isInvisible
             val oldWasInvulnerable = player.isInvulnerable
             val oldWasSilent = player.isSilent
+            val oldScale = player.attributes.getBaseValue(EntityAttributes.SCALE)
             return MorphData(
                 oldBaseMaxHealth,
                 oldHealth,
                 player.pos,
                 oldWasInvisible,
                 oldWasInvulnerable,
-                oldWasSilent
+                oldWasSilent,
+                oldScale
             )
         }
 
@@ -49,6 +52,8 @@ class MorphData private constructor(
                 if (!player.isSilent) {
                     player.isSilent = true
                 }
+
+                player.attributes.getCustomInstance(EntityAttributes.SCALE)?.baseValue = 0.3
 
                 player.teleport(
                     morphEntityWorld, morphEntity.x, morphEntity.y, morphEntity.z, setOf(),
@@ -72,6 +77,8 @@ class MorphData private constructor(
         if (player.isSilent != oldWasSilent) {
             player.isSilent = oldWasSilent
         }
+
+        player.attributes.getCustomInstance(EntityAttributes.SCALE)?.baseValue = oldScale
 
         // TODO: Store yaw and pitch
         player.teleport(player.serverWorld, oldPos.x, oldPos.y, oldPos.z, setOf(),
