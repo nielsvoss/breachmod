@@ -2,6 +2,7 @@ package com.nielsvoss.breachmod.item
 
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemUtils
+import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.projectile.ArrowEntity
@@ -14,6 +15,7 @@ import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext
+import java.util.*
 
 class ExplosiveArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem {
     override fun createArrow(world: World, stack: ItemStack, shooter: LivingEntity?, shotFrom: ItemStack?):
@@ -29,10 +31,9 @@ class ExplosiveArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem 
         return null
     }
 
-    override fun getPolymerItemStack(itemStack: ItemStack, tooltipType: TooltipType?, packetContext: PacketContext?):
-            ItemStack {
-        val stack: ItemStack = PolymerItemUtils.createItemStack(itemStack, tooltipType, packetContext)
-        // return PotionUtil.setPotion(stack, Potions.HEALING)
-        return stack
+    override fun modifyBasePolymerItemStack(out: ItemStack, stack: ItemStack?, context: PacketContext?) {
+        val color = 0xA40000 // dark-ish red
+        val potion = PotionContentsComponent(Optional.empty(), Optional.of(color), listOf(), Optional.of("breach_explosive_arrow"))
+        out.set(DataComponentTypes.POTION_CONTENTS, potion)
     }
 }

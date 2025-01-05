@@ -4,6 +4,8 @@ import com.nielsvoss.breachmod.entity.GrappleEntity
 import com.nielsvoss.breachmod.PersistentProjectileEntityDuck
 import eu.pb4.polymer.core.api.item.PolymerItem
 import eu.pb4.polymer.core.api.item.PolymerItemUtils
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.PersistentProjectileEntity
@@ -12,11 +14,13 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.tooltip.TooltipType
+import net.minecraft.potion.Potions
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext
+import java.util.*
 
 class GrapplingArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem {
     override fun createArrow(world: World, stack: ItemStack, shooter: LivingEntity?, shotFrom: ItemStack?): PersistentProjectileEntity {
@@ -37,10 +41,9 @@ class GrapplingArrowItem(settings: Settings) : ArrowItem(settings), PolymerItem 
         return null
     }
 
-    override fun getPolymerItemStack(itemStack: ItemStack, tooltipType: TooltipType?, packetContext: PacketContext?):
-            ItemStack {
-        val stack: ItemStack = PolymerItemUtils.createItemStack(itemStack, tooltipType, packetContext)
-        // return PotionUtil.setPotion(stack, Potions.LEAPING)
-        return stack
+    override fun modifyBasePolymerItemStack(out: ItemStack, stack: ItemStack?, context: PacketContext?) {
+        val color = 0x804000 // brown
+        val potion = PotionContentsComponent(Optional.empty(), Optional.of(color), listOf(), Optional.of("breach_grappling_arrow"))
+        out.set(DataComponentTypes.POTION_CONTENTS, potion)
     }
 }
