@@ -8,6 +8,7 @@ import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
 import com.nielsvoss.breachmod.item.GrapplingArrowItem
+import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.player.UseItemCallback
@@ -115,5 +116,7 @@ object Breach : ModInitializer {
 			}
 			ActionResult.PASS
 		})
+
+		BreachKitRegistry.register()
 	}
 }
