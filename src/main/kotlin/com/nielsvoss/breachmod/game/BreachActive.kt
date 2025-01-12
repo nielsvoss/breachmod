@@ -93,6 +93,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private val targetsState = BreachTargetsState(map.targets)
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
+    private val spawnLogic = BreachActiveSpawnLogic(world, map, players)
     private val roundTimer: BreachRoundTimer
     private val morphManager: MorphManager = MorphManager()
     private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()
@@ -197,34 +198,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSidebar.addPlayer(player)
         }
 
-        // To ensure all players spawn in the same region
-        val attackersSpawn: TemplateRegion = map.attackerSpawnRegions.random()
-        val defendersSpawn: TemplateRegion = map.defenderSpawnRegions.random()
-        for (player in players.onlineParticipants()) {
-            spawnPlayer(player, attackersSpawn, defendersSpawn)
-        }
+        spawnLogic.spawnPlayers()
 
         map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
             world.setBlockState(blockPos, Blocks.AIR.defaultState)
         }
-    }
-
-    /**
-     * attackersSpawn and defendersSpawn let you specify a location (if spawning all players at the same location),
-     * otherwise it will be chosen at random
-     */
-    private fun spawnPlayer(player: ServerPlayerEntity, attackersSpawn: TemplateRegion?, defendersSpawn: TemplateRegion?) {
-        players.markSurviving(player)
-        if (players.isAnyAttacker(player)) {
-            val loc = (attackersSpawn ?: map.attackerSpawnRegions.random()).bounds.randomBottom()
-            player.teleportFacingOrigin(world, loc)
-        } else if (players.isAnyDefender(player)) {
-            val loc = (defendersSpawn ?: map.defenderSpawnRegions.random()).bounds.randomBottom()
-            player.teleportFacingOrigin(world, loc)
-        }
-
-        player.changeGameMode(GameMode.SURVIVAL)
-        BreachKitRegistry.KITS.get(Identifier.of("breach", "simple"))!!.equipPlayer(player)
     }
 
     private fun openSpawnSelectorUIIfMoreThanOneLocation(player: ServerPlayerEntity, locations: List<TemplateRegion>) {
@@ -263,9 +241,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
         val didEliminate: Boolean = players.eliminate(player)
-        val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
-        player.health = 20.0F
-        player.teleportFacingOrigin(world, respawnLoc)
+        spawnLogic.spawnEliminatedPlayer(player)
         if (didEliminate && config.remainingPlayersPopup) {
             displayRemainingPlayersPopup()
         }
