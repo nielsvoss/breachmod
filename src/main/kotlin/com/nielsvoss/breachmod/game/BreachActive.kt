@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod.game
 
+import com.nielsvoss.breachmod.Breach
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
@@ -95,6 +96,12 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private val roundTimer: BreachRoundTimer
     private val morphManager: MorphManager = MorphManager()
     private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()
+
+    /**
+     * Used to open UI on first tick instead of during start(). See tick() for explanation.
+     */
+    private var shouldDisplayUIsNextTick = true
+
     init {
         val prepTicks = config.prepLengthInSeconds * 20;
         val roundTicks = config.roundLengthInSeconds * 20;
@@ -138,6 +145,22 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun tick() {
         morphManager.tick(world)
+
+        // This code used to belong to start(), but for some reason the update to 1.21.4 caused the UIs to no longer
+        // open. This hack opens the UIs on the first tick instead, which fixes it for some reason.
+        if (shouldDisplayUIsNextTick) {
+            for (player in players.onlineParticipants()) {
+                if (players.isAnyAttacker(player)) {
+                    openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
+                    player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
+                } else if (players.isAnyDefender(player)) {
+                    TargetSelectorUI.open(player, map.targets) { target ->
+                        trySelectTarget(player, target)
+                    }
+                }
+            }
+            shouldDisplayUIsNextTick = false
+        }
 
         for (player in players.onlineParticipants()) {
             if (player.isSneaking && PlayerRef.of(player) !in sneakingPlayers) {
@@ -195,14 +218,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         if (players.isAnyAttacker(player)) {
             val loc = (attackersSpawn ?: map.attackerSpawnRegions.random()).bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
-            openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
-            player.sendMessage(Text.translatable("text.breach.can_reopen_spawn_selection"))
         } else if (players.isAnyDefender(player)) {
             val loc = (defendersSpawn ?: map.defenderSpawnRegions.random()).bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
-            TargetSelectorUI.open(player, map.targets) { target ->
-                trySelectTarget(player, target)
-            }
         }
 
         player.changeGameMode(GameMode.SURVIVAL)
