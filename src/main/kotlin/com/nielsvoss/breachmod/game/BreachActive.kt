@@ -5,6 +5,7 @@ import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
+import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
@@ -19,6 +20,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
@@ -204,6 +206,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
 
         player.changeGameMode(GameMode.SURVIVAL)
+        BreachKitRegistry.KITS.get(Identifier.of("breach", "simple"))!!.equipPlayer(player)
     }
 
     private fun openSpawnSelectorUIIfMoreThanOneLocation(player: ServerPlayerEntity, locations: List<TemplateRegion>) {
