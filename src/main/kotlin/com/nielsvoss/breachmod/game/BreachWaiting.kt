@@ -15,6 +15,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
 import xyz.nucleoid.plasmid.api.game.GameOpenContext
+import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.GameOpenProcedure
 import xyz.nucleoid.plasmid.api.game.GameSpace
 import xyz.nucleoid.plasmid.api.game.common.GameWaitingLobby
@@ -35,11 +36,10 @@ import java.util.*
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
-                    private val config: BreachGameConfig
+                    private val config: BreachGameConfig, private val persistentState: RoundPersistentState
 ) {
     private val availableAttackerKits = config.attackerKits.getKits()
     private val availableDefenderKits = config.defenderKits.getKits()
-    private val persistentState = RoundPersistentState()
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -49,15 +49,17 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(context.server))
                 .setTimeOfDay(config.timeOfDay)
+            if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
 
             return context.openWithWorld(worldConfig) { activity, world ->
-                GameWaitingLobby.addTo(activity, WaitingLobbyConfig(
+                val lobby: GameWaitingLobby = GameWaitingLobby.addTo(activity, WaitingLobbyConfig(
                     PlayerLimiterConfig(
                         OptionalInt.of(20), true),
                         1,
                         2,
                         WaitingLobbyConfig.Countdown.DEFAULT))
-                val waiting = BreachWaiting(activity.gameSpace, world, map, config)
+                val persistentState = RoundPersistentState(config.scoreNeededToWin)
+                val waiting = BreachWaiting(activity.gameSpace, world, map, config, persistentState)
 
                 activity.deny(GameRuleType.HUNGER)
                 activity.deny(GameRuleType.PVP)
@@ -80,6 +82,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT,
                     GameWaitingLobbyEvents.BuildUiLayout { layout, player -> waiting.onBuildUiLayout(layout, player) })
+
             }
         }
     }

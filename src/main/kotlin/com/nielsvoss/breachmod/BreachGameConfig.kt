@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier
 
 @JvmRecord
 data class BreachGameConfig(val arrowsInstantKill: Boolean,
-                            val map: Identifier, val timeOfDay: Long,
+                            val map: Identifier, val timeOfDay: Long, val scoreNeededToWin: Int,
                             val attackerKits: AvailableKitsConfig, val defenderKits: AvailableKitsConfig,
                             val disableHunger: Boolean, val disableNaturalRegeneration: Boolean,
                             val disableTileDrops: Boolean, val disableFireTick: Boolean,
@@ -22,6 +22,7 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
                 Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
                 Identifier.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),
                 Codec.LONG.fieldOf("timeOfDay").forGetter(BreachGameConfig::timeOfDay),
+                Codec.INT.fieldOf("scoreNeededToWin").forGetter(BreachGameConfig::scoreNeededToWin),
                 AvailableKitsConfig.CODEC.fieldOf("attackerKits").forGetter(BreachGameConfig::attackerKits),
                 AvailableKitsConfig.CODEC.fieldOf("defenderKits").forGetter(BreachGameConfig::defenderKits),
                 Codec.BOOL.fieldOf("disableHunger").forGetter(BreachGameConfig::disableHunger),
