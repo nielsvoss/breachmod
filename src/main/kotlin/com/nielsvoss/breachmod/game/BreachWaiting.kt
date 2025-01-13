@@ -8,6 +8,7 @@ import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.PositionFlag
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
@@ -44,21 +45,26 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
-            val map: BreachMap = BreachMap.load(config.map, context.server)
-
-            val worldConfig = RuntimeWorldConfig()
-                .setGenerator(map.generator(context.server))
-                .setTimeOfDay(config.timeOfDay)
             if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
+            val persistentState = RoundPersistentState(config.scoreNeededToWin)
+            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, context.server, config, persistentState) }
+       }
 
-            return context.openWithWorld(worldConfig) { activity, world ->
+        private fun openInSpace(gameSpace: GameSpace, server: MinecraftServer, config: BreachGameConfig, persistentState: RoundPersistentState) {
+            val map: BreachMap = BreachMap.load(config.map, server)
+            val worldConfig = RuntimeWorldConfig()
+                .setGenerator(map.generator(server))
+                .setTimeOfDay(config.timeOfDay)
+
+            val world: ServerWorld = gameSpace.worlds.add(worldConfig)
+
+            gameSpace.setActivity { activity ->
                 val lobby: GameWaitingLobby = GameWaitingLobby.addTo(activity, WaitingLobbyConfig(
                     PlayerLimiterConfig(
                         OptionalInt.of(20), true),
-                        1,
-                        2,
-                        WaitingLobbyConfig.Countdown.DEFAULT))
-                val persistentState = RoundPersistentState(config.scoreNeededToWin)
+                    1,
+                    2,
+                    WaitingLobbyConfig.Countdown.DEFAULT))
                 val waiting = BreachWaiting(activity.gameSpace, world, map, config, persistentState)
 
                 activity.deny(GameRuleType.HUNGER)
@@ -82,7 +88,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT,
                     GameWaitingLobbyEvents.BuildUiLayout { layout, player -> waiting.onBuildUiLayout(layout, player) })
-
             }
         }
     }
