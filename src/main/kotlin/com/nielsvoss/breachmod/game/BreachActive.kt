@@ -1,12 +1,11 @@
 package com.nielsvoss.breachmod.game
 
-import com.nielsvoss.breachmod.Breach
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
+import com.nielsvoss.breachmod.data.RoundPersistentState
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
-import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer
 import com.nielsvoss.breachmod.state.BreachTargetsState
@@ -21,14 +20,10 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.GameSpace
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.api.util.PlayerRef
@@ -40,20 +35,23 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
 class BreachActive private constructor(private val gameSpace: GameSpace, private val world: ServerWorld,
                                        private val map: BreachMap, private val config: BreachGameConfig,
+                                       private val persistentState: RoundPersistentState,
                                        private val players: BreachPlayersState) {
     companion object {
         @Throws(GameOpenException::class)
         fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
-                 attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>,
-                 teamToDisplayFirst: GameTeamKey
+                 persistentState: RoundPersistentState, attackers: List<PlayerRef>, defenders: List<PlayerRef>
         ) {
-            if (teamToDisplayFirst != attackingTeam.key && teamToDisplayFirst != defendingTeam.key) {
-                throw IllegalArgumentException("teamToDisplayFirst needs to be either the attacking or defending team")
-            }
-
             gameSpace.setActivity { activity ->
-                val breachPlayersState: BreachPlayersState = BreachPlayersState.create(activity, attackingTeam, defendingTeam, attackers, defenders, teamToDisplayFirst)
-                val breachActive = BreachActive(gameSpace, world, map, config, breachPlayersState)
+                val breachPlayersState: BreachPlayersState = BreachPlayersState.create(
+                    activity,
+                    persistentState.getAttackingTeam(),
+                    persistentState.getDefendingTeam(),
+                    attackers,
+                    defenders,
+                    persistentState.getTeamToDisplayFirst().key
+                )
+                val breachActive = BreachActive(gameSpace, world, map, config, persistentState, breachPlayersState)
 
                 if (config.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)

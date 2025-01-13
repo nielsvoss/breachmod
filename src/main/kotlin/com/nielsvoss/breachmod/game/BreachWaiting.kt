@@ -2,18 +2,15 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
-import com.nielsvoss.breachmod.data.KitSelections
-import com.nielsvoss.breachmod.kit.BreachKitRegistry
+import com.nielsvoss.breachmod.data.RoundPersistentState
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.PositionFlag
-import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
-import net.minecraft.util.DyeColor
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
@@ -26,8 +23,6 @@ import xyz.nucleoid.plasmid.api.game.GameResult
 import xyz.nucleoid.plasmid.api.game.common.config.PlayerLimiterConfig
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.game.common.team.TeamAllocator
 import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiLayout
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
@@ -42,11 +37,9 @@ import java.util.*
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
                     private val config: BreachGameConfig
 ) {
-    private val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
-    private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
     private val availableAttackerKits = config.attackerKits.getKits()
     private val availableDefenderKits = config.defenderKits.getKits()
-    private val kitSelections = KitSelections()
+    private val persistentState = RoundPersistentState()
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -105,7 +98,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 .setCallback { _, _, _, _ ->
                     KitSelectorUI.open(player, availableAttackerKits, Text.translatable("gui.breach.select_attacker_kit")) { _, kit ->
                         player.sendMessage(Text.translatable("text.breach.selected_attacker_kit").append(kit.getName()))
-                        kitSelections.setAttackerKit(player, kit)
+                        persistentState.kitSelections.setAttackerKit(player, kit)
                     }
                 }
                 .build()
@@ -117,7 +110,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 .setCallback { _, _, _, _ ->
                     KitSelectorUI.open(player, availableDefenderKits, Text.translatable("gui.breach.select_defender_kit")) { _, kit ->
                         player.sendMessage(Text.translatable("text.breach.selected_defender_kit").append(kit.getName()))
-                        kitSelections.setDefenderKit(player, kit)
+                        persistentState.kitSelections.setDefenderKit(player, kit)
                     }
                 }
                 .build()
@@ -125,7 +118,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     }
 
     private fun requestStart(): GameResult {
-        val teamAllocator = TeamAllocator<GameTeam, ServerPlayerEntity>(listOf(team1, team2))
+        val teamAllocator = TeamAllocator<GameTeam, ServerPlayerEntity>(listOf(persistentState.team1, persistentState.team2))
         for (player in gameSpace.players) {
             teamAllocator.add(player, null)
         }
@@ -135,22 +128,14 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         val defenders = mutableListOf<PlayerRef>()
         teamAllocator.allocate { team, player ->
             when (team.key) {
-                team1.key -> attackers.add(PlayerRef.of(player))
-                team2.key -> defenders.add(PlayerRef.of(player))
+                persistentState.team1.key -> attackers.add(PlayerRef.of(player))
+                persistentState.team2.key -> defenders.add(PlayerRef.of(player))
                 else -> throw AssertionError("Player was not allocated to a team")
             }
         }
 
-        BreachActive.open(gameSpace, world, map, config, team1, team2, attackers, defenders, team1.key)
+        BreachActive.open(gameSpace, world, map, config, persistentState, attackers, defenders)
         return GameResult.ok()
     }
 
-    private fun createTeam(id: String, name: Text, color: DyeColor): GameTeam {
-        return GameTeam(GameTeamKey(id),
-            GameTeamConfig.builder()
-                .setCollision(AbstractTeam.CollisionRule.NEVER)
-                .setColors(GameTeamConfig.Colors.from(color))
-                .setName(name)
-                .build())
-    }
 }
