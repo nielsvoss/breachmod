@@ -37,6 +37,18 @@ class RoundPersistentState(private val scoreNeededToWin: Int) {
     fun swapRoles() {
         isTeam1Attacking = !isTeam1Attacking
     }
+
+    fun incrementAttackerScore() {
+        if (isTeam1Attacking) team1Score++ else team2Score++
+    }
+
+    fun incrementDefenderScore() {
+        if (isTeam1Attacking) team2Score++ else team1Score++
+    }
+
+    fun getScoreDisplay(): Text {
+        return Text.of("Current score: $team1Score - $team2Score")
+    }
 }
 
 private fun createTeam(id: String, name: Text, color: DyeColor): GameTeam {

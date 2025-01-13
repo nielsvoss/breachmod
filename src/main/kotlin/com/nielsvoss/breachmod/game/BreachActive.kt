@@ -186,13 +186,16 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             val defendersMeetWinCondition: Boolean =
                 phaseThatJustEnded == BreachRoundTimer.Phase.MAIN_PHASE || players.survivingOnlineAttackers().isEmpty()
             val attackersMeetWinCondition: Boolean =
-                targetsState.allBroken() || players.survivingOnlineDefenders().isEmpty()
+                (targetsState.allBroken() && !roundTimer.isPrepPhase()) || players.survivingOnlineDefenders().isEmpty()
 
             if (attackersMeetWinCondition && defendersMeetWinCondition) {
+                onTie()
                 onGameEnd()
             } else if (attackersMeetWinCondition) {
+                onAttackersWin()
                 onGameEnd()
             } else if (defendersMeetWinCondition) {
+                onDefendersWin()
                 onGameEnd()
             }
         }
@@ -205,8 +208,30 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
     }
 
+    private fun onTie() {
+        announceGameEnd(Text.translatable("text.breach.tie"))
+    }
+
+    private fun onAttackersWin() {
+        announceGameEnd(Text.translatable("text.breach.attackers_win").formatted(players.getAttackerFormatting()))
+        persistentState.incrementAttackerScore()
+    }
+
+    private fun onDefendersWin() {
+        announceGameEnd(Text.translatable("text.breach.defenders_win").formatted(players.getDefenderFormatting()))
+        persistentState.incrementDefenderScore()
+    }
+
     private fun onGameEnd() {
         roundTimer.setGameEnd()
+    }
+
+    private fun announceGameEnd(message: Text) {
+        for (player in players.onlineParticipants()) {
+            player.setTitleTimes(0, 60, 20)
+            player.sendTitle(message)
+            player.sendSubtitle(persistentState.getScoreDisplay())
+        }
     }
 
     /**
@@ -269,7 +294,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
         val didEliminate: Boolean = players.eliminate(player)
         spawnLogic.spawnEliminatedPlayer(player)
-        if (didEliminate && config.remainingPlayersPopup) {
+        if (didEliminate && config.remainingPlayersPopup && !roundTimer.isGameEnded()) {
             displayRemainingPlayersPopup()
         }
         return EventResult.DENY
