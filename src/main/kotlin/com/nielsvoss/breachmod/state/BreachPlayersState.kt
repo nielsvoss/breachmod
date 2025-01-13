@@ -128,14 +128,6 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
         return Text.empty().append(nameWithColon).append(Text.of(" $n"))
     }
 
-    fun getAttackerFormatting(): Formatting {
-        return teamManager.getTeamConfig(attackingTeamKey).colors.chatFormatting
-    }
-
-    fun getDefenderFormatting(): Formatting {
-        return teamManager.getTeamConfig(defendingTeamKey).colors.chatFormatting
-    }
-
     fun getPopupMessage(): Text {
         val firstTeam = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
         val secondTeam = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
