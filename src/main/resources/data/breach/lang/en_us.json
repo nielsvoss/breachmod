@@ -14,6 +14,10 @@
   "gui.breach.select_targets": "Select targets to defend",
   "gui.breach.select_spawn": "Select spawn location",
   "gui.breach.default_spawn_location_name": "Spawn Location #%s",
+  "gui.breach.attacker_kit_selection_item": "Attacker Kit Selection",
+  "gui.breach.defender_kit_selection_item": "Defender Kit Selection",
+  "gui.breach.select_attacker_kit": "Select Attacker Kit",
+  "gui.breach.select_defender_kit": "Select Defender Kit",
   "item.breach.explosive_arrow": "Explosive Arrow",
   "item.minecraft.tipped_arrow.effect.breach_explosive_arrow": "Explosive Arrow",
   "item.breach.ender_arrow": "Ender Arrow",
@@ -23,5 +27,6 @@
   "map.breach.test.north_spawn": "North Spawn",
   "map.breach.test.east_spawn": "East Spawn",
   "map.breach.test.south_spawn": "South Spawn",
-  "map.breach.test.west_spawn": "West Spawn"
+  "map.breach.test.west_spawn": "West Spawn",
+  "kit.breach.simple": "Simple"
 }

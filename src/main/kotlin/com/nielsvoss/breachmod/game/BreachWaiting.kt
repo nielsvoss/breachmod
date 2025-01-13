@@ -6,16 +6,13 @@ import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
-import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
-import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
-import net.minecraft.util.Hand
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
@@ -46,8 +43,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 ) {
     private val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
     private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
-    private val availableAttackerKits = BreachKitRegistry.getKits(listOf(), listOf("attackers"))
-    private val availableDefenderKits = BreachKitRegistry.getKits(listOf(), listOf("defenders"))
+    private val availableAttackerKits = BreachKitRegistry.getKits(listOf(), listOf("attacker"))
+    private val availableDefenderKits = BreachKitRegistry.getKits(listOf(), listOf("defender"))
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -102,9 +99,21 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     private fun onBuildUiLayout(layout: WaitingLobbyUiLayout, player: ServerPlayerEntity) {
         layout.addLeading {
             GuiElementBuilder(Items.BOW)
-                .setCallback { index, type, action, gui ->
+                .setItemName(Text.translatable("gui.breach.attacker_kit_selection_item"))
+                .setCallback { _, _, _, _ ->
                     KitSelectorUI.open(player, availableAttackerKits, Text.translatable("gui.breach.select_attacker_kit")) { _, kit ->
                        println(kit)
+                    }
+                }
+                .build()
+        }
+
+        layout.addLeading {
+            GuiElementBuilder(Items.IRON_DOOR)
+                .setItemName(Text.translatable("gui.breach.defender_kit_selection_item"))
+                .setCallback { _, _, _, _ ->
+                    KitSelectorUI.open(player, availableDefenderKits, Text.translatable("gui.breach.select_defender_kit")) { _, kit ->
+                        println(kit)
                     }
                 }
                 .build()
