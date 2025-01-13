@@ -40,15 +40,15 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     companion object {
         @Throws(GameOpenException::class)
         fun open(gameSpace: GameSpace, world: ServerWorld, map: BreachMap, config: BreachGameConfig,
-                 persistentState: RoundPersistentState, attackers: List<PlayerRef>, defenders: List<PlayerRef>
+                 persistentState: RoundPersistentState
         ) {
             gameSpace.setActivity { activity ->
                 val breachPlayersState: BreachPlayersState = BreachPlayersState.create(
                     activity,
                     persistentState.getAttackingTeam(),
                     persistentState.getDefendingTeam(),
-                    attackers,
-                    defenders,
+                    persistentState.getAttackingTeamMembers(),
+                    persistentState.getDefendingTeamMembers(),
                     persistentState.getTeamToDisplayFirst().key
                 )
                 val breachActive = BreachActive(gameSpace, world, map, config, persistentState, breachPlayersState)

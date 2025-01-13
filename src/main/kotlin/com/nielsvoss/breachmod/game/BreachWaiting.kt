@@ -141,10 +141,12 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 else -> throw AssertionError("Player was not allocated to a team")
             }
         }
+        persistentState.getAttackingTeamMembers().clear()
+        persistentState.getAttackingTeamMembers().addAll(attackers)
+        persistentState.getDefendingTeamMembers().clear()
+        persistentState.getDefendingTeamMembers().addAll(defenders)
 
-        BreachActive.open(gameSpace, world, map, config, persistentState,
-            persistentState.getAttackingTeamMembers(),
-            persistentState.getDefendingTeamMembers())
+        BreachActive.open(gameSpace, world, map, config, persistentState)
         return GameResult.ok()
     }
 }
