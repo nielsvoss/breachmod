@@ -47,13 +47,13 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             val config: BreachGameConfig = context.config()
             if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
             val persistentState = RoundPersistentState(config.scoreNeededToWin)
-            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, context.server, config, persistentState) }
+            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState) }
        }
 
-        private fun openInSpace(gameSpace: GameSpace, server: MinecraftServer, config: BreachGameConfig, persistentState: RoundPersistentState) {
-            val map: BreachMap = BreachMap.load(config.map, server)
+        fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState) {
+            val map: BreachMap = BreachMap.load(config.map, gameSpace.server)
             val worldConfig = RuntimeWorldConfig()
-                .setGenerator(map.generator(server))
+                .setGenerator(map.generator(gameSpace.server))
                 .setTimeOfDay(config.timeOfDay)
 
             val world: ServerWorld = gameSpace.worlds.add(worldConfig)

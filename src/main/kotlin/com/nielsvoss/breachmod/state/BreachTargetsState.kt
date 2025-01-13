@@ -73,6 +73,10 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
         return target in brokenTargets
     }
 
+    fun allBroken(): Boolean {
+        return selectedTargets.stream().allMatch { it in brokenTargets }
+    }
+
     override fun toString(): String {
         return "BreachTargetsState{available: $availableTargets, selected: $selectedTargets, broken: $brokenTargets}"
     }

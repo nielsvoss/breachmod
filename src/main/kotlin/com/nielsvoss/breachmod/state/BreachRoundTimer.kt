@@ -3,7 +3,8 @@ package com.nielsvoss.breachmod.state
 class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLengthInTicks : Int) {
     enum class Phase {
         PREP_PHASE,
-        MAIN_PHASE;
+        MAIN_PHASE,
+        GAME_END;
     }
 
     private var phase : Phase? = Phase.PREP_PHASE
@@ -27,9 +28,14 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
                     return Phase.PREP_PHASE
                 }
                 Phase.MAIN_PHASE -> {
+                    phase = Phase.GAME_END
+                    ticksRemainingInPhase = 100
+                    return Phase.MAIN_PHASE
+                }
+                Phase.GAME_END -> {
                     phase = null
                     ticksRemainingInPhase = 0
-                    return Phase.MAIN_PHASE
+                    return Phase.GAME_END
                 }
                 null -> {
                     ticksRemainingInPhase = 0
@@ -49,13 +55,20 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
         return (ticksRemainingInPhase + 20 - 1) / 20
     }
 
+    fun setGameEnd() {
+        phase = Phase.GAME_END
+    }
+
     fun displayTime(): String {
         val totalSecondsLeft = secondsRemainingInPhase()
         val min = totalSecondsLeft / 60
         val sec = totalSecondsLeft % 60
         val timeString = String.format("%02d:%02d", min, sec)
+        // TODO: Localization
         return if (phase == Phase.PREP_PHASE) {
             "Prep: $timeString"
+        } else if (phase == Phase.GAME_END) {
+            "Returning in $timeString"
         } else {
             "Time: $timeString"
         }
