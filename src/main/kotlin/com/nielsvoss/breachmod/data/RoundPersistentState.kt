@@ -6,6 +6,7 @@ import net.minecraft.util.DyeColor
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
+import xyz.nucleoid.plasmid.api.util.PlayerRef
 
 /**
  * The state that persists between rounds of a Breach game (but not between games)
@@ -17,8 +18,13 @@ class RoundPersistentState {
     private var isTeam1Attacking: Boolean = true
     private val displayTeam1First: Boolean = true
 
+    private val team1Members: MutableList<PlayerRef> = mutableListOf()
+    private val team2Members: MutableList<PlayerRef> = mutableListOf()
+
     fun getAttackingTeam(): GameTeam = if (isTeam1Attacking) team1 else team2
     fun getDefendingTeam(): GameTeam = if (isTeam1Attacking) team2 else team1
+    fun getAttackingTeamMembers(): MutableList<PlayerRef> = if (isTeam1Attacking) team1Members else team2Members
+    fun getDefendingTeamMembers(): MutableList<PlayerRef> = if (isTeam1Attacking) team2Members else team1Members
     fun getTeamToDisplayFirst(): GameTeam = if (displayTeam1First) team1 else team2
     fun getTeamToDisplaySecond(): GameTeam = if (displayTeam1First) team2 else team1
     fun swapRoles() {

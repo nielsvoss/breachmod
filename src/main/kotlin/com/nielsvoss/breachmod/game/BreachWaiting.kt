@@ -134,8 +134,9 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             }
         }
 
-        BreachActive.open(gameSpace, world, map, config, persistentState, attackers, defenders)
+        BreachActive.open(gameSpace, world, map, config, persistentState,
+            persistentState.getAttackingTeamMembers(),
+            persistentState.getDefendingTeamMembers())
         return GameResult.ok()
     }
-
 }
