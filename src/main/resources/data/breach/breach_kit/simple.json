@@ -1,4 +1,8 @@
 {
+  "name": "kit.breach.simple",
+  "icon": {
+    "id": "minecraft:crossbow"
+  },
   "items": [
     {
       "id": "minecraft:crossbow"

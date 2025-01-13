@@ -2,13 +2,19 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
+import eu.pb4.sgui.api.elements.GuiElementBuilder
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
+import net.minecraft.util.ActionResult
 import net.minecraft.util.DyeColor
+import net.minecraft.util.Hand
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
@@ -24,10 +30,13 @@ import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.game.common.team.TeamAllocator
+import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiLayout
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents
+import xyz.nucleoid.plasmid.api.game.event.GameWaitingLobbyEvents
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 import xyz.nucleoid.stimuli.event.EventResult
+import xyz.nucleoid.stimuli.event.item.ItemUseEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 import java.util.*
 
@@ -74,6 +83,11 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })
                 activity.listen(GameActivityEvents.REQUEST_START, GameActivityEvents.RequestStart { waiting.requestStart() })
+
+                activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT,
+                    GameWaitingLobbyEvents.BuildUiLayout { layout, player -> waiting.onBuildUiLayout(layout, player) })
+
+                // activity.listen(ItemUseEvent.EVENT, ItemUseEvent { player, hand -> waiting.onUseItem(player, hand) })
             }
         }
     }
@@ -83,6 +97,27 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         val respawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
         player.teleport(world, respawnLocation.x, respawnLocation.y, respawnLocation.z, PositionFlag.VALUES, 0.0F, 0.0F, true)
         return EventResult.DENY
+    }
+
+    /*
+    private fun onUseItem(player: ServerPlayerEntity, hand: Hand): ActionResult {
+        if (player.inventory.mainHandStack.item == Items.BOW) {
+            println("hi")
+            KitSelectorUI.test(player)
+        }
+
+        return ActionResult.PASS
+    }
+     */
+
+    private fun onBuildUiLayout(layout: WaitingLobbyUiLayout, player: ServerPlayerEntity) {
+        layout.addLeading {
+            GuiElementBuilder(Items.BOW)
+                .setCallback { index, type, action, gui ->
+                    KitSelectorUI.test(player)
+                }
+                .build()
+        }
     }
 
     private fun requestStart(): GameResult {
