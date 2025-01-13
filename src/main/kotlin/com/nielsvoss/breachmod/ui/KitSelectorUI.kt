@@ -20,13 +20,6 @@ class KitSelectorUI private constructor(
             val ui = KitSelectorUI(player, kits, title, onSelectKit)
             return ui.open()
         }
-
-        fun test(player: ServerPlayerEntity): Boolean {
-            val kits = BreachKitRegistry.KITS.values().toList()
-            return open(player, kits, Text.of("Select kit")) { ui, kit ->
-                println(kit)
-            }
-        }
     }
 
     init {

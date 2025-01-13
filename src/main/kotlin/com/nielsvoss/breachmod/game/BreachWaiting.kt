@@ -2,6 +2,7 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
@@ -36,7 +37,6 @@ import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents
 import xyz.nucleoid.plasmid.api.game.event.GameWaitingLobbyEvents
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 import xyz.nucleoid.stimuli.event.EventResult
-import xyz.nucleoid.stimuli.event.item.ItemUseEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 import java.util.*
 
@@ -46,6 +46,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 ) {
     private val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
     private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
+    private val availableAttackerKits = BreachKitRegistry.getKits(listOf(), listOf("attackers"))
+    private val availableDefenderKits = BreachKitRegistry.getKits(listOf(), listOf("defenders"))
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -86,8 +88,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT,
                     GameWaitingLobbyEvents.BuildUiLayout { layout, player -> waiting.onBuildUiLayout(layout, player) })
-
-                // activity.listen(ItemUseEvent.EVENT, ItemUseEvent { player, hand -> waiting.onUseItem(player, hand) })
             }
         }
     }
@@ -99,22 +99,13 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         return EventResult.DENY
     }
 
-    /*
-    private fun onUseItem(player: ServerPlayerEntity, hand: Hand): ActionResult {
-        if (player.inventory.mainHandStack.item == Items.BOW) {
-            println("hi")
-            KitSelectorUI.test(player)
-        }
-
-        return ActionResult.PASS
-    }
-     */
-
     private fun onBuildUiLayout(layout: WaitingLobbyUiLayout, player: ServerPlayerEntity) {
         layout.addLeading {
             GuiElementBuilder(Items.BOW)
                 .setCallback { index, type, action, gui ->
-                    KitSelectorUI.test(player)
+                    KitSelectorUI.open(player, availableAttackerKits, Text.translatable("gui.breach.select_attacker_kit")) { _, kit ->
+                       println(kit)
+                    }
                 }
                 .build()
         }

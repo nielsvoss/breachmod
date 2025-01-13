@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.ResourceType
 import net.minecraft.util.Identifier
+import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.util.TinyRegistry
 import java.io.BufferedReader
 import java.io.IOException
@@ -50,6 +51,27 @@ object BreachKitRegistry {
                 }
             }
         }
+    }
+
+    fun getKits(identifiers: List<Identifier>, categories: List<String>): List<BreachKit> {
+        val kits: MutableList<BreachKit> = mutableListOf()
+        for (id in identifiers) {
+            val kit: BreachKit? = KITS.get(id)
+            if (kit != null) {
+               kits.add(kit)
+            } else {
+                Breach.LOGGER.error("Kit {} not found", id)
+            }
+        }
+
+        for (category in categories) {
+            KITS.values().filter { kit -> category in kit.categories }
+                .filter { it !in kits }
+                .sortedBy { it.nameTranslationKey }
+                .forEach { kits.add(it) }
+        }
+
+        return kits
     }
 }
 
