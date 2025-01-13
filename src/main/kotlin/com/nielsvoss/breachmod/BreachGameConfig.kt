@@ -3,11 +3,13 @@ package com.nielsvoss.breachmod
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import com.nielsvoss.breachmod.kit.AvailableKitsConfig
 import net.minecraft.util.Identifier
 
 @JvmRecord
 data class BreachGameConfig(val arrowsInstantKill: Boolean,
                             val map: Identifier, val timeOfDay: Long,
+                            val attackerKits: AvailableKitsConfig, val defenderKits: AvailableKitsConfig,
                             val disableHunger: Boolean, val disableNaturalRegeneration: Boolean,
                             val disableTileDrops: Boolean, val disableFireTick: Boolean,
                             val prepLengthInSeconds: Int, val roundLengthInSeconds: Int,
@@ -20,6 +22,8 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
                 Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
                 Identifier.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),
                 Codec.LONG.fieldOf("timeOfDay").forGetter(BreachGameConfig::timeOfDay),
+                AvailableKitsConfig.CODEC.fieldOf("attackerKits").forGetter(BreachGameConfig::attackerKits),
+                AvailableKitsConfig.CODEC.fieldOf("defenderKits").forGetter(BreachGameConfig::defenderKits),
                 Codec.BOOL.fieldOf("disableHunger").forGetter(BreachGameConfig::disableHunger),
                 Codec.BOOL.fieldOf("disableNaturalRegeneration").forGetter(BreachGameConfig::disableNaturalRegeneration),
                 Codec.BOOL.fieldOf("disableTileDrops").forGetter(BreachGameConfig::disableTileDrops),

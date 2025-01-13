@@ -2,6 +2,14 @@
   "type": "breach:breach",
   "map": "breach:test",
   "timeOfDay": 18000,
+  "attackerKits": {
+    "kits": [],
+    "categories": ["attacker"]
+  },
+  "defenderKits": {
+    "kits": [],
+    "categories": ["defender"]
+  },
   "disableHunger": true,
   "disableNaturalRegeneration": true,
   "disableTileDrops": true,

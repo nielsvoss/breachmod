@@ -43,8 +43,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 ) {
     private val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
     private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
-    private val availableAttackerKits = BreachKitRegistry.getKits(listOf(), listOf("attacker"))
-    private val availableDefenderKits = BreachKitRegistry.getKits(listOf(), listOf("defender"))
+    private val availableAttackerKits = config.attackerKits.getKits()
+    private val availableDefenderKits = config.defenderKits.getKits()
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
