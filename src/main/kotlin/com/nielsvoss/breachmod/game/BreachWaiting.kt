@@ -47,10 +47,10 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             val config: BreachGameConfig = context.config()
             if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
             val persistentState = RoundPersistentState(config.scoreNeededToWin)
-            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState) }
+            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState, listOf()) }
        }
 
-        fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState) {
+        fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState, playersToJoin: List<ServerPlayerEntity>) {
             val map: BreachMap = BreachMap.load(config.map, gameSpace.server)
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(gameSpace.server))
@@ -79,17 +79,31 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 activity.deny(GameRuleType.FLUID_FLOW)
                 activity.deny(GameRuleType.DISPENSER_ACTIVATE)
 
-                activity.listen(GamePlayerEvents.ACCEPT, GamePlayerEvents.Accept { offer ->
-                    offer.teleport(world, map.lobbySpawnRegion.bounds.randomBottom())
-                        .thenRunForEach { player -> player.changeGameMode(GameMode.ADVENTURE) }
-                })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> waiting.onPlayerDeath(player) })
                 activity.listen(GameActivityEvents.REQUEST_START, GameActivityEvents.RequestStart { waiting.requestStart() })
 
                 activity.listen(GameWaitingLobbyEvents.BUILD_UI_LAYOUT,
                     GameWaitingLobbyEvents.BuildUiLayout { layout, player -> waiting.onBuildUiLayout(layout, player) })
+
+                activity.listen(GamePlayerEvents.ACCEPT, GamePlayerEvents.Accept { offer ->
+                    offer.teleport(world, waiting.spawnLocation())
+                        .thenRunForEach { player -> waiting.spawnPlayer(player) }
+                })
+
+                val spawnLocation = waiting.spawnLocation()
+                for (player in playersToJoin) {
+                    player.teleport(world, spawnLocation.x, spawnLocation.y, spawnLocation.z, setOf(), 0F, 0F, true)
+                }
             }
         }
+    }
+
+    private fun spawnLocation(): Vec3d {
+        return map.lobbySpawnRegion.bounds.randomBottom()
+    }
+
+    private fun spawnPlayer(player: ServerPlayerEntity) {
+        player.changeGameMode(GameMode.ADVENTURE)
     }
 
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {

@@ -56,6 +56,7 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
     }
 
     fun setGameEnd() {
+        ticksRemainingInPhase = 100
         phase = Phase.GAME_END
     }
 
@@ -68,7 +69,7 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
         return if (phase == Phase.PREP_PHASE) {
             "Prep: $timeString"
         } else if (phase == Phase.GAME_END) {
-            "Returning in $timeString"
+            "Ending: $timeString"
         } else {
             "Time: $timeString"
         }
@@ -76,5 +77,9 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
 
     fun isPrepPhase(): Boolean {
         return phase == Phase.PREP_PHASE
+    }
+
+    fun isGameEnded(): Boolean {
+        return phase == Phase.GAME_END || phase == null
     }
 }

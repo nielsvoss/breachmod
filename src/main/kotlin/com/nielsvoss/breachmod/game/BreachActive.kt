@@ -182,17 +182,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             null -> {}
         }
 
-        val defendersMeetWinCondition: Boolean =
-            phaseThatJustEnded == BreachRoundTimer.Phase.MAIN_PHASE || players.survivingOnlineAttackers().isEmpty()
-        val attackersMeetWinCondition: Boolean =
-            targetsState.allBroken() || players.survivingOnlineDefenders().isEmpty()
+        if (!roundTimer.isGameEnded()) {
+            val defendersMeetWinCondition: Boolean =
+                phaseThatJustEnded == BreachRoundTimer.Phase.MAIN_PHASE || players.survivingOnlineAttackers().isEmpty()
+            val attackersMeetWinCondition: Boolean =
+                targetsState.allBroken() || players.survivingOnlineDefenders().isEmpty()
 
-        if (attackersMeetWinCondition && defendersMeetWinCondition) {
-            onGameEnd()
-        } else if (attackersMeetWinCondition) {
-            onGameEnd()
-        } else if (defendersMeetWinCondition) {
-            onGameEnd()
+            if (attackersMeetWinCondition && defendersMeetWinCondition) {
+                onGameEnd()
+            } else if (attackersMeetWinCondition) {
+                onGameEnd()
+            } else if (defendersMeetWinCondition) {
+                onGameEnd()
+            }
         }
     }
 
@@ -212,7 +214,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
      */
     private fun finish() {
         persistentState.swapRoles()
-        BreachWaiting.openInSpace(gameSpace, config, persistentState)
+        BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants())
+        gameSpace.worlds.remove(this.world)
     }
 
     private fun start() {
