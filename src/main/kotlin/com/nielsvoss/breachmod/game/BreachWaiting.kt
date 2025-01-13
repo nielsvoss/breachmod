@@ -2,6 +2,7 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.data.KitSelections
 import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
@@ -45,6 +46,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     private val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
     private val availableAttackerKits = config.attackerKits.getKits()
     private val availableDefenderKits = config.defenderKits.getKits()
+    private val kitSelections = KitSelections()
 
     companion object {
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
@@ -102,7 +104,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 .setItemName(Text.translatable("gui.breach.attacker_kit_selection_item"))
                 .setCallback { _, _, _, _ ->
                     KitSelectorUI.open(player, availableAttackerKits, Text.translatable("gui.breach.select_attacker_kit")) { _, kit ->
-                       println(kit)
+                        player.sendMessage(Text.translatable("text.breach.selected_attacker_kit").append(kit.getName()))
+                        kitSelections.setAttackerKit(player, kit)
                     }
                 }
                 .build()
@@ -113,7 +116,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 .setItemName(Text.translatable("gui.breach.defender_kit_selection_item"))
                 .setCallback { _, _, _, _ ->
                     KitSelectorUI.open(player, availableDefenderKits, Text.translatable("gui.breach.select_defender_kit")) { _, kit ->
-                        println(kit)
+                        player.sendMessage(Text.translatable("text.breach.selected_defender_kit").append(kit.getName()))
+                        kitSelections.setDefenderKit(player, kit)
                     }
                 }
                 .build()
