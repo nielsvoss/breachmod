@@ -104,10 +104,12 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
     private fun spawnPlayer(player: ServerPlayerEntity) {
         player.changeGameMode(GameMode.ADVENTURE)
+        player.health = 20.0F
+        player.inventory.clear()
     }
 
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
-        player.health = 20.0F
+        spawnPlayer(player)
         val respawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
         player.teleport(world, respawnLocation.x, respawnLocation.y, respawnLocation.z, PositionFlag.VALUES, 0.0F, 0.0F, true)
         return EventResult.DENY
