@@ -44,6 +44,7 @@ class BreachActiveSpawnLogic(
         }
 
         player.changeGameMode(GameMode.SURVIVAL)
+        player.fallDistance = 0F
         BreachKitRegistry.KITS.get(Identifier.of("breach", "simple"))!!.equipPlayer(player)
     }
 
