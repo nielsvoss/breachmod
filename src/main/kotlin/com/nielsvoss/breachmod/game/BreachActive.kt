@@ -213,19 +213,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun onAttackersWin() {
+        persistentState.incrementAttackerScore()
         val text = persistentState.getAttackingTeam().config.name.copy()
             .append(Text.translatable("text.breach.win"))
             .formatted(persistentState.getAttackingTeam().config.chatFormatting())
         announceGameEnd(text)
-        persistentState.incrementAttackerScore()
     }
 
     private fun onDefendersWin() {
+        persistentState.incrementDefenderScore()
         val text = persistentState.getDefendingTeam().config.name.copy()
             .append(Text.translatable("text.breach.win"))
             .formatted(persistentState.getDefendingTeam().config.chatFormatting())
         announceGameEnd(text)
-        persistentState.incrementDefenderScore()
     }
 
     private fun onGameEnd() {
