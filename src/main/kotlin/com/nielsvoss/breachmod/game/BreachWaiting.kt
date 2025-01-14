@@ -13,6 +13,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.GameMode
+import net.minecraft.world.GameRules
 import xyz.nucleoid.fantasy.RuntimeWorldConfig
 import xyz.nucleoid.plasmid.api.game.GameOpenContext
 import xyz.nucleoid.plasmid.api.game.GameOpenException
@@ -53,6 +54,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(gameSpace.server))
                 .setTimeOfDay(config.map.timeOfDay)
+                .setGameRule(GameRules.NATURAL_REGENERATION, !config.gameplayOptions.disableNaturalRegeneration)
 
             val world: ServerWorld = gameSpace.worlds.add(worldConfig)
 

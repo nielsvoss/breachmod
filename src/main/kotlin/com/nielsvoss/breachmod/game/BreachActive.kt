@@ -58,8 +58,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 }
                 if (config.gameplayOptions.disableHunger) {
                     activity.deny(GameRuleType.HUNGER)
-                }
-                if (config.gameplayOptions.disableNaturalRegeneration) {
+                    // Slows down natural regeneration, but does not stop it
                     activity.deny(GameRuleType.SATURATED_REGENERATION)
                 }
                 if (config.gameplayOptions.disableTileDrops) {
