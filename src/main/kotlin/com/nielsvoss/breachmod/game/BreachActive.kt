@@ -253,12 +253,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSpace.worlds.remove(this.world)
         } else {
             // If a team has won enough games
-            for (player in players.onlineParticipants()) {
-                player.changeGameMode(GameMode.SPECTATOR)
-                player.setTitleTimes(0, 60, 20)
-                player.sendTitle(Text.translatable("text.breach.game_over"))
-                player.sendSubtitle(winningTeam.config.name.copy().append(Text.translatable("text.breach.has_won")))
-            }
+            BreachVictory.open(gameSpace, world, config, persistentState, winningTeam)
         }
     }
 
