@@ -1,6 +1,6 @@
 package com.nielsvoss.breachmod.game
 
-import com.nielsvoss.breachmod.BreachGameConfig
+import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
@@ -21,7 +21,6 @@ import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.GameSpace

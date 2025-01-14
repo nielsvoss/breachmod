@@ -1,6 +1,6 @@
 package com.nielsvoss.breachmod.game
 
-import com.nielsvoss.breachmod.BreachGameConfig
+import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.RoundPersistentState
 import com.nielsvoss.breachmod.ui.KitSelectorUI
@@ -8,7 +8,6 @@ import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.item.Items
 import net.minecraft.network.packet.s2c.play.PositionFlag
-import net.minecraft.server.MinecraftServer
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
@@ -24,8 +23,6 @@ import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
 import xyz.nucleoid.plasmid.api.game.GameResult
 import xyz.nucleoid.plasmid.api.game.common.config.PlayerLimiterConfig
 import xyz.nucleoid.plasmid.api.game.common.config.WaitingLobbyConfig
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
-import xyz.nucleoid.plasmid.api.game.common.team.TeamAllocator
 import xyz.nucleoid.plasmid.api.game.common.ui.WaitingLobbyUiLayout
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.api.game.event.GamePlayerEvents
@@ -51,10 +48,10 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
        }
 
         fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState, playersToJoin: List<ServerPlayerEntity>) {
-            val map: BreachMap = BreachMap.load(config.map, gameSpace.server)
+            val map: BreachMap = BreachMap.load(config.map.id, gameSpace.server)
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(gameSpace.server))
-                .setTimeOfDay(config.timeOfDay)
+                .setTimeOfDay(config.map.timeOfDay)
 
             val world: ServerWorld = gameSpace.worlds.add(worldConfig)
 
@@ -184,7 +181,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
         // If there are 7 or 8 players, each team can support 4 players
         val enoughSpace: Boolean = persistentState.team1Members.size < (world.players.size + 1) / 2
-        if (config.removeTeamRestrictions || enoughSpace) {
+        if (config.teamOptions.removeTeamRestrictions || enoughSpace) {
             persistentState.team2Members.remove(PlayerRef.of(player))
             persistentState.team1Members.add(PlayerRef.of(player))
             player.sendMessage(Text.translatable("text.breach.joined_red_team"))
@@ -200,7 +197,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         }
 
         val enoughSpace: Boolean = persistentState.team2Members.size < (world.players.size + 1) / 2
-        if (config.removeTeamRestrictions || enoughSpace) {
+        if (config.teamOptions.removeTeamRestrictions || enoughSpace) {
             persistentState.team1Members.remove(PlayerRef.of(player))
             persistentState.team2Members.add(PlayerRef.of(player))
             player.sendMessage(Text.translatable("text.breach.joined_blue_team"))

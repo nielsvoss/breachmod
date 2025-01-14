@@ -1,7 +1,9 @@
-package com.nielsvoss.breachmod.kit
+package com.nielsvoss.breachmod.config
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import com.nielsvoss.breachmod.kit.BreachKit
+import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import net.minecraft.util.Identifier
 
 @JvmRecord

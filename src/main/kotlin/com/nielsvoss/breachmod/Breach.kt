@@ -1,5 +1,6 @@
 package com.nielsvoss.breachmod
 
+import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import com.nielsvoss.breachmod.entity.EndermiteMorphEntity
 import com.nielsvoss.breachmod.entity.GrappleEntity

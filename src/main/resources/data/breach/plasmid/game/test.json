@@ -1,7 +1,9 @@
 {
   "type": "breach:breach",
-  "map": "breach:test",
-  "timeOfDay": 18000,
+  "map": {
+    "id": "breach:test",
+    "timeOfDay": 18000
+  },
   "scoreNeededToWin": 3,
   "attackerKits": {
     "kits": [],
@@ -11,7 +13,9 @@
     "kits": [],
     "categories": ["defender"]
   },
-  "removeTeamRestrictions": false,
+  "teams": {
+    "removeTeamRestrictions": false
+  },
   "disableHunger": true,
   "disableNaturalRegeneration": true,
   "disableTileDrops": true,

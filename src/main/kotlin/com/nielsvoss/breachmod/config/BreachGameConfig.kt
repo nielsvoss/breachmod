@@ -1,16 +1,14 @@
-package com.nielsvoss.breachmod
+package com.nielsvoss.breachmod.config
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import com.nielsvoss.breachmod.kit.AvailableKitsConfig
-import net.minecraft.util.Identifier
 
 @JvmRecord
 data class BreachGameConfig(val arrowsInstantKill: Boolean,
-                            val map: Identifier, val timeOfDay: Long, val scoreNeededToWin: Int,
+                            val map: MapConfig, val scoreNeededToWin: Int,
                             val attackerKits: AvailableKitsConfig, val defenderKits: AvailableKitsConfig,
-                            val removeTeamRestrictions: Boolean,
+                            val teamOptions: TeamsConfig,
                             val disableHunger: Boolean, val disableNaturalRegeneration: Boolean,
                             val disableTileDrops: Boolean, val disableFireTick: Boolean,
                             val prepLengthInSeconds: Int, val roundLengthInSeconds: Int,
@@ -21,12 +19,11 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
         val CODEC : MapCodec<BreachGameConfig> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
                 Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
-                Identifier.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),
-                Codec.LONG.fieldOf("timeOfDay").forGetter(BreachGameConfig::timeOfDay),
+                MapConfig.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),
                 Codec.INT.fieldOf("scoreNeededToWin").forGetter(BreachGameConfig::scoreNeededToWin),
                 AvailableKitsConfig.CODEC.fieldOf("attackerKits").forGetter(BreachGameConfig::attackerKits),
                 AvailableKitsConfig.CODEC.fieldOf("defenderKits").forGetter(BreachGameConfig::defenderKits),
-                Codec.BOOL.fieldOf("removeTeamRestrictions").forGetter(BreachGameConfig::removeTeamRestrictions),
+                TeamsConfig.CODEC.fieldOf("teams").forGetter(BreachGameConfig::teamOptions),
                 Codec.BOOL.fieldOf("disableHunger").forGetter(BreachGameConfig::disableHunger),
                 Codec.BOOL.fieldOf("disableNaturalRegeneration").forGetter(BreachGameConfig::disableNaturalRegeneration),
                 Codec.BOOL.fieldOf("disableTileDrops").forGetter(BreachGameConfig::disableTileDrops),

@@ -1,6 +1,6 @@
 package com.nielsvoss.breachmod.game
 
-import com.nielsvoss.breachmod.BreachGameConfig
+import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.RoundPersistentState
 import com.nielsvoss.breachmod.util.sendSubtitle
 import com.nielsvoss.breachmod.util.sendTitle
