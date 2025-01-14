@@ -84,7 +84,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                     EventResult.PASS
                 })
 
-                breachActive.start()
+                activity.listen(GameActivityEvents.ENABLE, GameActivityEvents.Enable { breachActive.start() })
+                activity.listen(GameActivityEvents.DISABLE, GameActivityEvents.Disable { breachActive.onDisable() })
             }
         }
     }
@@ -268,6 +269,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         map.lobbyToRemoveRegion?.bounds?.forEach { blockPos ->
             world.setBlockState(blockPos, Blocks.AIR.defaultState)
         }
+    }
+
+    private fun onDisable() {
+        gameSidebar.hide()
     }
 
     private fun openSpawnSelectorUIIfMoreThanOneLocation(player: ServerPlayerEntity, locations: List<TemplateRegion>) {
