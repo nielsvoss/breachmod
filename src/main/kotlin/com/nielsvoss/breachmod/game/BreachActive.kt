@@ -248,6 +248,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         val winningTeam = persistentState.getWinningTeam()
         if (winningTeam == null) {
             // If no one has reached winning score yet
+            for (player in world.players) {
+                // For some reason clearing in BreachWaiting doesn't work
+                player.inventory.clear()
+            }
+
             persistentState.swapRoles()
             BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants(), false)
             gameSpace.worlds.remove(this.world)
