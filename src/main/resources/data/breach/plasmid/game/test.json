@@ -11,6 +11,7 @@
     "kits": [],
     "categories": ["defender"]
   },
+  "removeTeamRestrictions": false,
   "disableHunger": true,
   "disableNaturalRegeneration": true,
   "disableTileDrops": true,

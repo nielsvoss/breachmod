@@ -3,11 +3,11 @@ package com.nielsvoss.breachmod.data
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
-import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.util.PlayerRef
+import kotlin.random.Random
 
 /**
  * The state that persists between rounds of a Breach game (but not between games)
@@ -16,13 +16,13 @@ class RoundPersistentState(private val scoreNeededToWin: Int) {
     val kitSelections = KitSelections()
     val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
     val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
-    var team1Score: Int = 0
-    var team2Score: Int = 0
-    private var isTeam1Attacking: Boolean = true
+    private var team1Score: Int = 0
+    private var team2Score: Int = 0
+    private var isTeam1Attacking: Boolean = Random.nextBoolean()
     private val displayTeam1First: Boolean = true
 
-    private val team1Members: MutableList<PlayerRef> = mutableListOf()
-    private val team2Members: MutableList<PlayerRef> = mutableListOf()
+    val team1Members: MutableList<PlayerRef> = mutableListOf()
+    val team2Members: MutableList<PlayerRef> = mutableListOf()
 
     init {
         if (scoreNeededToWin <= 0) throw IllegalArgumentException("scoreNeededToWin must be positive")

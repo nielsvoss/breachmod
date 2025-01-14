@@ -139,30 +139,104 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                 }
                 .build()
         }
+
+        layout.addLeading { GuiElementBuilder(Items.AIR).build() }
+
+        layout.addLeading {
+            GuiElementBuilder(Items.RED_DYE)
+                .setItemName(Text.translatable("gui.breach.join_red_team"))
+                .setCallback { _, clickType, _, _ ->
+                    if (clickType.isRight) {
+                        tryJoinTeam1(player)
+                    }
+                }
+                .build()
+        }
+
+        layout.addLeading {
+            GuiElementBuilder(Items.BLUE_DYE)
+                .setItemName(Text.translatable("gui.breach.join_blue_team"))
+                .setCallback { _, clickType, _, _ ->
+                    if (clickType.isRight) {
+                        tryJoinTeam2(player)
+                    }
+                }
+                .build()
+        }
+
+        layout.addLeading {
+            GuiElementBuilder(Items.GRAY_DYE)
+                .setItemName(Text.translatable("gui.breach.clear_team"))
+                .setCallback { _, clickType, _, _ ->
+                    if (clickType.isRight) {
+                        clearTeam(player)
+                    }
+                }
+                .build()
+        }
+    }
+
+    private fun tryJoinTeam1(player: ServerPlayerEntity) {
+        if (persistentState.team1Members.contains(PlayerRef.of(player))) {
+            player.sendMessage(Text.translatable("text.breach.already_in_team"))
+            return
+        }
+
+        // If there are 7 or 8 players, each team can support 4 players
+        val enoughSpace: Boolean = persistentState.team1Members.size < (world.players.size + 1) / 2
+        if (config.removeTeamRestrictions || enoughSpace) {
+            persistentState.team2Members.remove(PlayerRef.of(player))
+            persistentState.team1Members.add(PlayerRef.of(player))
+            player.sendMessage(Text.translatable("text.breach.joined_red_team"))
+        } else {
+            player.sendMessage(Text.translatable("text.breach.team_full"))
+        }
+    }
+
+    private fun tryJoinTeam2(player: ServerPlayerEntity) {
+        if (persistentState.team2Members.contains(PlayerRef.of(player))) {
+            player.sendMessage(Text.translatable("text.breach.already_in_team"))
+            return
+        }
+
+        val enoughSpace: Boolean = persistentState.team2Members.size < (world.players.size + 1) / 2
+        if (config.removeTeamRestrictions || enoughSpace) {
+            persistentState.team1Members.remove(PlayerRef.of(player))
+            persistentState.team2Members.add(PlayerRef.of(player))
+            player.sendMessage(Text.translatable("text.breach.joined_blue_team"))
+        } else {
+            player.sendMessage(Text.translatable("text.breach.team_full"))
+        }
+    }
+
+    private fun clearTeam(player: ServerPlayerEntity) {
+        persistentState.team1Members.remove(PlayerRef.of(player))
+        persistentState.team2Members.remove(PlayerRef.of(player))
+        player.sendMessage(Text.translatable("text.breach.cleared_team_selection"))
     }
 
     private fun requestStart(): GameResult {
-        val teamAllocator = TeamAllocator<GameTeam, ServerPlayerEntity>(listOf(persistentState.team1, persistentState.team2))
-        for (player in gameSpace.players) {
-            teamAllocator.add(player, null)
-        }
-
-        // TODO: Make it so that team1 isn't always attacking
-        val attackers = mutableListOf<PlayerRef>()
-        val defenders = mutableListOf<PlayerRef>()
-        teamAllocator.allocate { team, player ->
-            when (team.key) {
-                persistentState.team1.key -> attackers.add(PlayerRef.of(player))
-                persistentState.team2.key -> defenders.add(PlayerRef.of(player))
-                else -> throw AssertionError("Player was not allocated to a team")
-            }
-        }
-        persistentState.getAttackingTeamMembers().clear()
-        persistentState.getAttackingTeamMembers().addAll(attackers)
-        persistentState.getDefendingTeamMembers().clear()
-        persistentState.getDefendingTeamMembers().addAll(defenders)
+        assignUnassignedPlayers()
 
         BreachActive.open(gameSpace, world, map, config, persistentState)
         return GameResult.ok()
+    }
+
+    private fun assignUnassignedPlayers() {
+        for (player in gameSpace.players) {
+            if (PlayerRef.of(player) !in persistentState.team1Members && PlayerRef.of(player) !in persistentState.team2Members) {
+                if (persistentState.team1Members.size < persistentState.team2Members.size) {
+                    persistentState.team1Members.add(PlayerRef.of(player))
+                } else if (persistentState.team1Members.size > persistentState.team2Members.size) {
+                    persistentState.team2Members.add(PlayerRef.of(player))
+                } else {
+                    if (kotlin.random.Random.nextBoolean()) {
+                        persistentState.team1Members.add(PlayerRef.of(player))
+                    } else {
+                        persistentState.team2Members.add(PlayerRef.of(player))
+                    }
+                }
+            }
+        }
     }
 }
