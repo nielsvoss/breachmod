@@ -249,7 +249,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         if (winningTeam == null) {
             // If no one has reached winning score yet
             persistentState.swapRoles()
-            BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants())
+            BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants(), false)
             gameSpace.worlds.remove(this.world)
         } else {
             // If a team has won enough games

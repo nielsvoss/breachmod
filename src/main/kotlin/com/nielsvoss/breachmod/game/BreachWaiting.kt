@@ -34,7 +34,8 @@ import java.util.*
 
 // Design inspired by https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsWaiting.java
 class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerWorld, private val map: BreachMap,
-                    private val config: BreachGameConfig, private val persistentState: RoundPersistentState
+                    private val config: BreachGameConfig, private val persistentState: RoundPersistentState,
+                    private val isFirstRound: Boolean
 ) {
     private val availableAttackerKits = config.attackerKits.getKits()
     private val availableDefenderKits = config.defenderKits.getKits()
@@ -44,10 +45,10 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             val config: BreachGameConfig = context.config()
             if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
             val persistentState = RoundPersistentState(config.scoreNeededToWin)
-            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState, listOf()) }
+            return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState, listOf(), true) }
        }
 
-        fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState, playersToJoin: List<ServerPlayerEntity>) {
+        fun openInSpace(gameSpace: GameSpace, config: BreachGameConfig, persistentState: RoundPersistentState, playersToJoin: List<ServerPlayerEntity>, isFirstRound: Boolean) {
             val map: BreachMap = BreachMap.load(config.map.id, gameSpace.server)
             val worldConfig = RuntimeWorldConfig()
                 .setGenerator(map.generator(gameSpace.server))
@@ -62,7 +63,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                     1,
                     2,
                     WaitingLobbyConfig.Countdown.DEFAULT))
-                val waiting = BreachWaiting(activity.gameSpace, world, map, config, persistentState)
+                val waiting = BreachWaiting(activity.gameSpace, world, map, config, persistentState, isFirstRound)
 
                 activity.deny(GameRuleType.HUNGER)
                 activity.deny(GameRuleType.PVP)
@@ -139,37 +140,44 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
         layout.addLeading { GuiElementBuilder(Items.AIR).build() }
 
-        layout.addLeading {
-            GuiElementBuilder(Items.RED_DYE)
-                .setItemName(Text.translatable("gui.breach.join_red_team"))
-                .setCallback { _, clickType, _, _ ->
-                    if (clickType.isRight) {
-                        tryJoinTeam1(player)
+        if (isFirstRound || config.teamOptions.allowTeamChangesAfterFirstRound) {
+            layout.addLeading {
+                GuiElementBuilder(Items.RED_DYE)
+                    .setItemName(Text.translatable("gui.breach.join_red_team"))
+                    .setCallback { _, clickType, _, _ ->
+                        if (clickType.isRight) {
+                            tryJoinTeam1(player)
+                        }
                     }
-                }
-                .build()
-        }
+                    .build()
+            }
 
-        layout.addLeading {
-            GuiElementBuilder(Items.BLUE_DYE)
-                .setItemName(Text.translatable("gui.breach.join_blue_team"))
-                .setCallback { _, clickType, _, _ ->
-                    if (clickType.isRight) {
-                        tryJoinTeam2(player)
+            layout.addLeading {
+                GuiElementBuilder(Items.BLUE_DYE)
+                    .setItemName(Text.translatable("gui.breach.join_blue_team"))
+                    .setCallback { _, clickType, _, _ ->
+                        if (clickType.isRight) {
+                            tryJoinTeam2(player)
+                        }
                     }
-                }
-                .build()
-        }
+                    .build()
+            }
 
-        layout.addLeading {
-            GuiElementBuilder(Items.GRAY_DYE)
-                .setItemName(Text.translatable("gui.breach.clear_team"))
-                .setCallback { _, clickType, _, _ ->
-                    if (clickType.isRight) {
-                        clearTeam(player)
+            layout.addLeading {
+                GuiElementBuilder(Items.GRAY_DYE)
+                    .setItemName(Text.translatable("gui.breach.clear_team"))
+                    .setCallback { _, clickType, _, _ ->
+                        if (clickType.isRight) {
+                            clearTeam(player)
+                        }
                     }
-                }
-                .build()
+                    .build()
+            }
+        } else {
+            // Placeholders to take the space of team selection items in case more stuff is added to the right of them
+            layout.addLeading { GuiElementBuilder(Items.AIR).build() }
+            layout.addLeading { GuiElementBuilder(Items.AIR).build() }
+            layout.addLeading { GuiElementBuilder(Items.AIR).build() }
         }
     }
 

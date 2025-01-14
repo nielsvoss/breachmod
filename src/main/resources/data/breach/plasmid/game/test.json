@@ -14,7 +14,8 @@
     "categories": ["defender"]
   },
   "teams": {
-    "removeTeamRestrictions": false
+    "removeTeamRestrictions": false,
+    "allowTeamChangesAfterFirstRound": false
   },
   "disableHunger": true,
   "disableNaturalRegeneration": true,
