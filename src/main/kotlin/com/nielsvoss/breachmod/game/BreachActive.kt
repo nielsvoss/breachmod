@@ -53,19 +53,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 )
                 val breachActive = BreachActive(gameSpace, world, map, config, persistentState, breachPlayersState)
 
-                if (config.arrowsInstantKill) {
+                if (config.gameplayOptions.arrowsInstantKill) {
                     activity.allow(BreachRuleTypes.ARROWS_INSTANT_KILL)
                 }
-                if (config.disableHunger) {
+                if (config.gameplayOptions.disableHunger) {
                     activity.deny(GameRuleType.HUNGER)
                 }
-                if (config.disableNaturalRegeneration) {
+                if (config.gameplayOptions.disableNaturalRegeneration) {
                     activity.deny(GameRuleType.SATURATED_REGENERATION)
                 }
-                if (config.disableTileDrops) {
+                if (config.gameplayOptions.disableTileDrops) {
                     activity.deny(GameRuleType.BLOCK_DROPS)
                 }
-                if (config.disableFireTick) {
+                if (config.gameplayOptions.disableFireTick) {
                     activity.deny(GameRuleType.FIRE_TICK)
                 }
 

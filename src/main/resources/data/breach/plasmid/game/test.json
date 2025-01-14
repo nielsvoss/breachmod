@@ -17,11 +17,13 @@
     "remove_team_restrictions": false,
     "allow_team_changes_after_first_round": false
   },
-  "disable_hunger": true,
-  "disable_natural_regeneration": true,
-  "disable_tile_drops": true,
-  "disable_fire_tick": true,
-  "arrows_instant_kill": true,
+  "gameplay": {
+    "disable_hunger": true,
+    "disable_natural_regeneration": true,
+    "disable_tile_drops": true,
+    "disable_fire_tick": true,
+    "arrows_instant_kill": true
+  },
   "prep_length_in_seconds": 30,
   "round_length_in_seconds": 180,
   "number_of_targets": 3,
