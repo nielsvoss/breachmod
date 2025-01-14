@@ -49,6 +49,12 @@ class RoundPersistentState(private val scoreNeededToWin: Int) {
     fun getScoreDisplay(): Text {
         return Text.of("Current score: $team1Score - $team2Score")
     }
+
+    fun getWinningTeam(): GameTeam? {
+        return if (team1Score >= scoreNeededToWin) team1
+        else if (team2Score >= scoreNeededToWin) team2
+        else null
+    }
 }
 
 private fun createTeam(id: String, name: Text, color: DyeColor): GameTeam {

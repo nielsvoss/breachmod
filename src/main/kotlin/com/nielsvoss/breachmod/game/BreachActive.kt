@@ -21,6 +21,7 @@ import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.GameSpace
@@ -244,9 +245,21 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
      * Called several seconds after the game ends
      */
     private fun finish() {
-        persistentState.swapRoles()
-        BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants())
-        gameSpace.worlds.remove(this.world)
+        val winningTeam = persistentState.getWinningTeam()
+        if (winningTeam == null) {
+            // If no one has reached winning score yet
+            persistentState.swapRoles()
+            BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants())
+            gameSpace.worlds.remove(this.world)
+        } else {
+            // If a team has won enough games
+            for (player in players.onlineParticipants()) {
+                player.changeGameMode(GameMode.SPECTATOR)
+                player.setTitleTimes(0, 60, 20)
+                player.sendTitle(Text.translatable("text.breach.game_over"))
+                player.sendSubtitle(winningTeam.config.name.copy().append(Text.translatable("text.breach.has_won")))
+            }
+        }
     }
 
     private fun start() {
