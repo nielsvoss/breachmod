@@ -18,21 +18,21 @@ data class BreachGameConfig(val arrowsInstantKill: Boolean,
         @JvmStatic
         val CODEC : MapCodec<BreachGameConfig> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
-                Codec.BOOL.fieldOf("arrowsInstantKill").forGetter(BreachGameConfig::arrowsInstantKill),
+                Codec.BOOL.fieldOf("arrows_instant_kill").forGetter(BreachGameConfig::arrowsInstantKill),
                 MapConfig.CODEC.fieldOf("map").forGetter(BreachGameConfig::map),
-                Codec.INT.fieldOf("scoreNeededToWin").forGetter(BreachGameConfig::scoreNeededToWin),
-                AvailableKitsConfig.CODEC.fieldOf("attackerKits").forGetter(BreachGameConfig::attackerKits),
-                AvailableKitsConfig.CODEC.fieldOf("defenderKits").forGetter(BreachGameConfig::defenderKits),
+                Codec.INT.fieldOf("score_needed_to_win").forGetter(BreachGameConfig::scoreNeededToWin),
+                AvailableKitsConfig.CODEC.fieldOf("attacker_kits").forGetter(BreachGameConfig::attackerKits),
+                AvailableKitsConfig.CODEC.fieldOf("defender_kits").forGetter(BreachGameConfig::defenderKits),
                 TeamsConfig.CODEC.fieldOf("teams").forGetter(BreachGameConfig::teamOptions),
-                Codec.BOOL.fieldOf("disableHunger").forGetter(BreachGameConfig::disableHunger),
-                Codec.BOOL.fieldOf("disableNaturalRegeneration").forGetter(BreachGameConfig::disableNaturalRegeneration),
-                Codec.BOOL.fieldOf("disableTileDrops").forGetter(BreachGameConfig::disableTileDrops),
-                Codec.BOOL.fieldOf("disableFireTick").forGetter(BreachGameConfig::disableFireTick),
-                Codec.INT.fieldOf("prepLengthInSeconds").forGetter(BreachGameConfig::prepLengthInSeconds),
-                Codec.INT.fieldOf("roundLengthInSeconds").forGetter(BreachGameConfig::roundLengthInSeconds),
-                Codec.INT.fieldOf("numberOfTargets").forGetter(BreachGameConfig::numberOfTargets),
-                Codec.BOOL.fieldOf("outlineTargets").forGetter(BreachGameConfig::outlineTargets),
-                Codec.BOOL.fieldOf("remainingPlayersPopup").forGetter(BreachGameConfig::remainingPlayersPopup)
+                Codec.BOOL.fieldOf("disable_hunger").forGetter(BreachGameConfig::disableHunger),
+                Codec.BOOL.fieldOf("disable_natural_regeneration").forGetter(BreachGameConfig::disableNaturalRegeneration),
+                Codec.BOOL.fieldOf("disable_tile_drops").forGetter(BreachGameConfig::disableTileDrops),
+                Codec.BOOL.fieldOf("disable_fire_tick").forGetter(BreachGameConfig::disableFireTick),
+                Codec.INT.fieldOf("prep_length_in_seconds").forGetter(BreachGameConfig::prepLengthInSeconds),
+                Codec.INT.fieldOf("round_length_in_seconds").forGetter(BreachGameConfig::roundLengthInSeconds),
+                Codec.INT.fieldOf("number_of_targets").forGetter(BreachGameConfig::numberOfTargets),
+                Codec.BOOL.fieldOf("outline_targets").forGetter(BreachGameConfig::outlineTargets),
+                Codec.BOOL.fieldOf("remaining_players_popup").forGetter(BreachGameConfig::remainingPlayersPopup)
             ).apply(instance, ::BreachGameConfig)
         }
     }

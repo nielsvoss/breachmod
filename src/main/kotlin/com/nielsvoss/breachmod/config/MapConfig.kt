@@ -10,7 +10,7 @@ data class MapConfig(val id: Identifier, val timeOfDay: Long) {
         val CODEC: Codec<MapConfig> = RecordCodecBuilder.create { instance ->
             instance.group(
                 Identifier.CODEC.fieldOf("id").forGetter(MapConfig::id),
-                Codec.LONG.fieldOf("timeOfDay").forGetter(MapConfig::timeOfDay)
+                Codec.LONG.fieldOf("time_of_day").forGetter(MapConfig::timeOfDay)
             ).apply(instance, ::MapConfig)
         }
     }

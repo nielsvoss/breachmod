@@ -8,8 +8,8 @@ data class TeamsConfig(val removeTeamRestrictions: Boolean, val allowTeamChanges
     companion object {
         val CODEC: Codec<TeamsConfig> = RecordCodecBuilder.create { instance ->
             instance.group(
-                Codec.BOOL.fieldOf("removeTeamRestrictions").forGetter(TeamsConfig::removeTeamRestrictions),
-                Codec.BOOL.fieldOf("allowTeamChangesAfterFirstRound").forGetter(TeamsConfig::allowTeamChangesAfterFirstRound)
+                Codec.BOOL.fieldOf("remove_team_restrictions").forGetter(TeamsConfig::removeTeamRestrictions),
+                Codec.BOOL.fieldOf("allow_team_changes_after_first_round").forGetter(TeamsConfig::allowTeamChangesAfterFirstRound)
             ).apply(instance, ::TeamsConfig)
         }
     }
