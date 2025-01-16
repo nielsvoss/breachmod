@@ -17,7 +17,8 @@
     "remove_team_restrictions": false,
     "allow_team_changes_after_first_round": false,
     "randomize_first_attacking_team": true,
-    "swap_roles_after_each_round": true
+    "swap_roles_after_each_round": true,
+    "give_helmets": true
   },
   "gameplay": {
     "disable_hunger": true,

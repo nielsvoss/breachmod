@@ -1,6 +1,13 @@
 package com.nielsvoss.breachmod.data
 
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.DyedColorComponent
+import net.minecraft.component.type.UnbreakableComponent
+import net.minecraft.entity.EquipmentSlot
+import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.scoreboard.AbstractTeam
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
@@ -21,6 +28,9 @@ class RoundPersistentState(private val scoreNeededToWin: Int, private var isTeam
 
     val team1Members: MutableList<PlayerRef> = mutableListOf()
     val team2Members: MutableList<PlayerRef> = mutableListOf()
+
+    private val team1ArmorColor: Int = 0xFF0000
+    private val team2ArmorColor: Int = 0x0000FF
 
     init {
         if (scoreNeededToWin <= 0) throw IllegalArgumentException("scoreNeededToWin must be positive")
@@ -52,6 +62,38 @@ class RoundPersistentState(private val scoreNeededToWin: Int, private var isTeam
         return if (team1Score >= scoreNeededToWin) team1
         else if (team2Score >= scoreNeededToWin) team2
         else null
+    }
+
+    fun giveTeamArmor(player: ServerPlayerEntity, includeHelmet: Boolean) {
+        if (PlayerRef.of(player) in team1Members || PlayerRef.of(player) in team2Members) {
+            val armorColor: Int = if (PlayerRef.of(player) in team1Members) team1ArmorColor else team2ArmorColor
+
+            val helmet = ItemStack(Items.LEATHER_HELMET)
+            helmet.set(DataComponentTypes.UNBREAKABLE, UnbreakableComponent(true))
+            helmet.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(armorColor, false))
+
+            val chestplate = ItemStack(Items.LEATHER_CHESTPLATE)
+            chestplate.set(DataComponentTypes.UNBREAKABLE, UnbreakableComponent(true))
+            chestplate.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(armorColor, false))
+
+            val leggings = ItemStack(Items.LEATHER_LEGGINGS)
+            leggings.set(DataComponentTypes.UNBREAKABLE, UnbreakableComponent(true))
+            leggings.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(armorColor, false))
+
+            val boots = ItemStack(Items.LEATHER_BOOTS)
+            boots.set(DataComponentTypes.UNBREAKABLE, UnbreakableComponent(true))
+            boots.set(DataComponentTypes.DYED_COLOR, DyedColorComponent(armorColor, false))
+
+            if (includeHelmet) player.equipStack(EquipmentSlot.HEAD, helmet)
+            player.equipStack(EquipmentSlot.CHEST, chestplate)
+            player.equipStack(EquipmentSlot.LEGS, leggings)
+            player.equipStack(EquipmentSlot.FEET, boots)
+        } else {
+            if (includeHelmet) player.equipStack(EquipmentSlot.HEAD, ItemStack(Items.AIR))
+            player.equipStack(EquipmentSlot.CHEST, ItemStack(Items.AIR))
+            player.equipStack(EquipmentSlot.LEGS, ItemStack(Items.AIR))
+            player.equipStack(EquipmentSlot.FEET, ItemStack(Items.AIR))
+        }
     }
 }
 

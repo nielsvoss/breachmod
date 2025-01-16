@@ -14,7 +14,7 @@ import xyz.nucleoid.map_templates.TemplateRegion
 class BreachActiveSpawnLogic(
     private val world: ServerWorld,
     private val map: BreachMap,
-    private val playersState: BreachPlayersState
+    private val playersState: BreachPlayersState,
 ) {
     fun spawnPlayers() {
         // To ensure all players spawn in the same region
