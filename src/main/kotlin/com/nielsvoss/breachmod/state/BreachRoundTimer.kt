@@ -1,6 +1,10 @@
 package com.nielsvoss.breachmod.state
 
-class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLengthInTicks : Int) {
+class BreachRoundTimer(
+    prepPhaseLengthInTicks: Int,
+    private val mainPhaseLengthInTicks: Int,
+    private val ticksBeforeNextRound: Int
+) {
     enum class Phase {
         PREP_PHASE,
         MAIN_PHASE,
@@ -29,7 +33,7 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
                 }
                 Phase.MAIN_PHASE -> {
                     phase = Phase.GAME_END
-                    ticksRemainingInPhase = 100
+                    ticksRemainingInPhase = ticksBeforeNextRound
                     return Phase.MAIN_PHASE
                 }
                 Phase.GAME_END -> {
@@ -56,7 +60,7 @@ class BreachRoundTimer(prepPhaseLengthInTicks : Int, private val mainPhaseLength
     }
 
     fun setGameEnd() {
-        ticksRemainingInPhase = 100
+        ticksRemainingInPhase = ticksBeforeNextRound
         phase = Phase.GAME_END
     }
 

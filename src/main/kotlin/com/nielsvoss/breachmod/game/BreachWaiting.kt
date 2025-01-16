@@ -66,7 +66,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                         OptionalInt.of(20), true),
                     1,
                     2,
-                    WaitingLobbyConfig.Countdown.DEFAULT))
+                    WaitingLobbyConfig.Countdown(config.timesConfig.lobbyReadySeconds, config.timesConfig.lobbyFullSeconds)))
                 val waiting = BreachWaiting(activity.gameSpace, world, map, config, persistentState, isFirstRound)
 
                 activity.deny(GameRuleType.HUNGER)

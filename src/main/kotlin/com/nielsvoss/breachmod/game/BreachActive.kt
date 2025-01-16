@@ -104,10 +104,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     init {
         val prepTicks = config.timesConfig.prepLengthInSeconds * 20;
         val roundTicks = config.timesConfig.roundLengthInSeconds * 20;
-        if (prepTicks <= 0 || roundTicks <= 0) {
-            throw GameOpenException(Text.of("prepTicks and roundTicks need to be positive"))
+        val ticksBeforeNextRound = config.timesConfig.secondsAfterRoundEndBeforeNext * 20;
+        if (prepTicks <= 0 || roundTicks <= 0 || ticksBeforeNextRound <= 0) {
+            throw GameOpenException(Text.of("prepTicks, roundTicks, and secondsAfterRoundEndBeforeNext need to be positive"))
         }
-        roundTimer = BreachRoundTimer(prepTicks, roundTicks)
+        roundTimer = BreachRoundTimer(prepTicks, roundTicks, ticksBeforeNextRound)
 
         buildSidebar()
 
