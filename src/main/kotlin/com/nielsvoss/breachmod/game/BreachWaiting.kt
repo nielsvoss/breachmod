@@ -197,8 +197,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             persistentState.team2Members.remove(PlayerRef.of(player))
             persistentState.team1Members.add(PlayerRef.of(player))
             player.sendMessage(Text.translatable("text.breach.joined_red_team"))
-
-            persistentState.giveTeamArmor(player, config.teamOptions.giveHelmets)
         } else {
             player.sendMessage(Text.translatable("text.breach.team_full"))
         }
@@ -215,8 +213,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
             persistentState.team1Members.remove(PlayerRef.of(player))
             persistentState.team2Members.add(PlayerRef.of(player))
             player.sendMessage(Text.translatable("text.breach.joined_blue_team"))
-
-            persistentState.giveTeamArmor(player, config.teamOptions.giveHelmets)
         } else {
             player.sendMessage(Text.translatable("text.breach.team_full"))
         }
@@ -226,8 +222,6 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         persistentState.team1Members.remove(PlayerRef.of(player))
         persistentState.team2Members.remove(PlayerRef.of(player))
         player.sendMessage(Text.translatable("text.breach.cleared_team_selection"))
-
-        persistentState.giveTeamArmor(player, config.teamOptions.giveHelmets)
     }
 
     private fun requestStart(): GameResult {

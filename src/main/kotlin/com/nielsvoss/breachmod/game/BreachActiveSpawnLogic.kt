@@ -3,6 +3,7 @@ package com.nielsvoss.breachmod.game
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.state.BreachPlayersState
+import com.nielsvoss.breachmod.util.TeamArmorUtils
 import com.nielsvoss.breachmod.util.randomBottom
 import com.nielsvoss.breachmod.util.teleportFacingOrigin
 import net.minecraft.server.network.ServerPlayerEntity
@@ -15,6 +16,7 @@ class BreachActiveSpawnLogic(
     private val world: ServerWorld,
     private val map: BreachMap,
     private val playersState: BreachPlayersState,
+    private val giveHelmets: Boolean
 ) {
     fun spawnPlayers() {
         // To ensure all players spawn in the same region
@@ -35,12 +37,19 @@ class BreachActiveSpawnLogic(
      */
     private fun spawnPlayerAtRegion(player: ServerPlayerEntity, attackersSpawn: TemplateRegion, defendersSpawn: TemplateRegion) {
         playersState.markSurviving(player)
+
+        player.inventory.clear()
+
         if (playersState.isAnyAttacker(player)) {
             val loc = attackersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
+
+            TeamArmorUtils.giveTeamArmor(player, playersState.attackingTeamDyeColor, giveHelmets)
         } else if (playersState.isAnyDefender(player)) {
             val loc = defendersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
+
+            TeamArmorUtils.giveTeamArmor(player, playersState.defendingTeamDyeColor, giveHelmets)
         }
 
         player.changeGameMode(GameMode.SURVIVAL)

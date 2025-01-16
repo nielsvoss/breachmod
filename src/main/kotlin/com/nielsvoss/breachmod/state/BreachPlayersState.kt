@@ -11,6 +11,8 @@ import xyz.nucleoid.plasmid.api.util.PlayerRef
 
 class BreachPlayersState private constructor(private val attackingTeamKey: GameTeamKey,
                                              private val defendingTeamKey: GameTeamKey,
+                                             val attackingTeamDyeColor: Int,
+                                             val defendingTeamDyeColor: Int,
                                              private val teamManager: TeamManager,
                                              private val displayAttackingTeamFirst: Boolean) {
     companion object {
@@ -31,7 +33,9 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
                 teamManager.addPlayerTo(player, defendingTeam.key)
             }
 
-            val breachPlayersState = BreachPlayersState(attackingTeam.key, defendingTeam.key, teamManager, displayAttackersFirst)
+            val breachPlayersState = BreachPlayersState(attackingTeam.key, defendingTeam.key,
+                attackingTeam.config.colors.dyeColor.rgb, defendingTeam.config.colors.dyeColor.rgb,
+                teamManager, displayAttackersFirst)
             return breachPlayersState
         }
     }
