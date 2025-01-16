@@ -102,8 +102,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private var shouldDisplayUIsNextTick = true
 
     init {
-        val prepTicks = config.prepLengthInSeconds * 20;
-        val roundTicks = config.roundLengthInSeconds * 20;
+        val prepTicks = config.timesConfig.prepLengthInSeconds * 20;
+        val roundTicks = config.timesConfig.roundLengthInSeconds * 20;
         if (prepTicks <= 0 || roundTicks <= 0) {
             throw GameOpenException(Text.of("prepTicks and roundTicks need to be positive"))
         }

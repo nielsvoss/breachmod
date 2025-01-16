@@ -17,15 +17,15 @@ import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
 class BreachVictory private constructor(
     private val gameSpace: GameSpace,
     private val world: ServerWorld,
-    private val winningTeam: GameTeam
+    private val winningTeam: GameTeam,
+    private var ticksBeforeClosure: Int
 ) {
-    private var ticksBeforeClosure: Int = 100
-
     companion object {
         fun open(gameSpace: GameSpace, world: ServerWorld, config: BreachGameConfig,
                  persistentState: RoundPersistentState, winningTeam: GameTeam
         ): BreachVictory {
-            val breachVictory = BreachVictory(gameSpace, world, winningTeam)
+            val ticksBeforeClosure = config.timesConfig.secondsAfterGameEndBeforeClosure * 20
+            val breachVictory = BreachVictory(gameSpace, world, winningTeam, ticksBeforeClosure)
 
             gameSpace.setActivity { activity ->
                 activity.deny(GameRuleType.PORTALS)

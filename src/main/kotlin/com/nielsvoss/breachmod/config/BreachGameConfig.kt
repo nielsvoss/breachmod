@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 data class BreachGameConfig(val map: MapConfig, val scoreNeededToWin: Int,
                             val attackerKits: AvailableKitsConfig, val defenderKits: AvailableKitsConfig,
                             val teamOptions: TeamsConfig, val gameplayOptions: GameplayOptionsConfig,
-                            val prepLengthInSeconds: Int, val roundLengthInSeconds: Int,
+                            val timesConfig: TimesConfig,
                             val numberOfTargets: Int, val outlineTargets: Boolean,
                             val remainingPlayersPopup: Boolean) {
     companion object {
@@ -21,8 +21,7 @@ data class BreachGameConfig(val map: MapConfig, val scoreNeededToWin: Int,
                 AvailableKitsConfig.CODEC.fieldOf("defender_kits").forGetter(BreachGameConfig::defenderKits),
                 TeamsConfig.CODEC.fieldOf("teams").forGetter(BreachGameConfig::teamOptions),
                 GameplayOptionsConfig.CODEC.fieldOf("gameplay").forGetter(BreachGameConfig::gameplayOptions),
-                Codec.INT.fieldOf("prep_length_in_seconds").forGetter(BreachGameConfig::prepLengthInSeconds),
-                Codec.INT.fieldOf("round_length_in_seconds").forGetter(BreachGameConfig::roundLengthInSeconds),
+                TimesConfig.CODEC.fieldOf("times").forGetter(BreachGameConfig::timesConfig),
                 Codec.INT.fieldOf("number_of_targets").forGetter(BreachGameConfig::numberOfTargets),
                 Codec.BOOL.fieldOf("outline_targets").forGetter(BreachGameConfig::outlineTargets),
                 Codec.BOOL.fieldOf("remaining_players_popup").forGetter(BreachGameConfig::remainingPlayersPopup)
