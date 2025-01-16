@@ -45,7 +45,9 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         fun open(context: GameOpenContext<BreachGameConfig>) : GameOpenProcedure {
             val config: BreachGameConfig = context.config()
             if (config.scoreNeededToWin <= 0) throw GameOpenException(Text.of("scoreNeededToWin was not positive"))
-            val persistentState = RoundPersistentState(config.scoreNeededToWin)
+            val team1AttackingFirst: Boolean =
+                if (config.teamOptions.randomizeFirstAttackingTeam) kotlin.random.Random.nextBoolean() else true
+            val persistentState = RoundPersistentState(config.scoreNeededToWin, team1AttackingFirst)
             return GameOpenProcedure { gameSpace -> openInSpace(gameSpace, config, persistentState, listOf(), true) }
        }
 

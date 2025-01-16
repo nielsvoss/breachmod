@@ -252,7 +252,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 player.inventory.clear()
             }
 
-            persistentState.swapRoles()
+            if (config.teamOptions.swapRolesAfterEachRound) {
+                persistentState.swapRoles()
+            }
             BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants(), false)
             gameSpace.worlds.remove(this.world)
         } else {
