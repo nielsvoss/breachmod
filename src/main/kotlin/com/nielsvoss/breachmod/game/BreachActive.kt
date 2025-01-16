@@ -69,6 +69,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 }
 
                 activity.deny(GameRuleType.PORTALS)
+                activity.deny(GameRuleType.MODIFY_ARMOR)
 
                 activity.listen(GameActivityEvents.TICK, GameActivityEvents.Tick { breachActive.tick() })
                 activity.listen(PlayerDeathEvent.EVENT, PlayerDeathEvent { player, _ -> breachActive.onPlayerDeath(player) })
