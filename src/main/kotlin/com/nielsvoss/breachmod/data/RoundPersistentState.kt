@@ -8,12 +8,16 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
+import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamConfig
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.util.PlayerRef
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * The state that persists between rounds of a Breach game (but not between games)
@@ -55,7 +59,37 @@ class RoundPersistentState(private val scoreNeededToWin: Int, private var isTeam
     }
 
     fun getScoreDisplay(): Text {
-        return Text.of("Current score: $team1Score - $team2Score")
+        val rightUnfilledTriangle = "\u25B7"
+        val rightFilledTriangle = "\u25B6"
+        val leftUnfilledTriangle = "\u25C1"
+        val leftFilledTriangle = "\u25C0"
+        val unfilledCircle = "\u25CB"
+        val filledCircle = "\u23FA"
+
+        val leftTeam = if (displayTeam1First) team1 else team2
+        val rightTeam = if (displayTeam1First) team2 else team1
+        val leftTeamScore: Int = if (displayTeam1First) team1Score else team2Score
+        val rightTeamScore: Int = if (displayTeam1First) team2Score else team1Score
+
+        val leftFilledArrows: MutableText =
+            Text.literal(rightFilledTriangle.repeat(min(leftTeamScore, scoreNeededToWin - 1)))
+                .formatted(leftTeam.config.chatFormatting())
+        val leftUnfilledArrows: Text =
+            Text.literal(rightUnfilledTriangle.repeat(max(0, scoreNeededToWin - 1 - leftTeamScore)))
+                .formatted(leftTeam.config.chatFormatting())
+        val centerCircle: Text =
+            if (leftTeamScore >= scoreNeededToWin) Text.literal(filledCircle).formatted(leftTeam.config.chatFormatting())
+            else if (rightTeamScore >= scoreNeededToWin) Text.literal(filledCircle).formatted(rightTeam.config.chatFormatting())
+            else Text.literal(unfilledCircle).formatted(Formatting.WHITE)
+        val rightUnfilledArrows: Text =
+            Text.literal(leftUnfilledTriangle.repeat(max(0, scoreNeededToWin - 1 - rightTeamScore)))
+                .formatted(rightTeam.config.chatFormatting())
+        val rightFilledArrows: Text =
+            Text.literal(leftFilledTriangle.repeat(min(rightTeamScore, scoreNeededToWin - 1)))
+                .formatted(rightTeam.config.chatFormatting())
+
+        return leftFilledArrows.append(leftUnfilledArrows).append(centerCircle)
+            .append(rightUnfilledArrows).append(rightFilledArrows)
     }
 
     fun getWinningTeam(): GameTeam? {
