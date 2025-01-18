@@ -76,6 +76,23 @@ abstract class ServerPlayerEntityMixin extends PlayerEntity implements ServerPla
             this.wasGrappleActiveSinceLastTouchingGround = false;
         }
 
+        if (wasGrappleActiveSinceLastTouchingGround) {
+            // Recreate conditions under which LivingEntity#travelMidAir is called in LivingEntity#travel
+            // We need to do this here instead of hooking into LivingEntity#travel because players update movement on
+            // the client side and this needs to run on the server side.
+
+            FluidState fluidState = this.getWorld().getFluidState(this.getBlockPos());
+            boolean isInFluid = (this.isTouchingWater() || this.isInLava())
+                    && this.shouldSwimInFluids() && !this.canWalkOnFluid(fluidState);
+            if (!isInFluid && !this.isGliding()) {
+                double horizontalDragConstant = 0.91;
+                double verticalDragConstant = 0.9800000190734863;
+                Vec3d v = this.getVelocity();
+                this.setVelocity(v.x / horizontalDragConstant, v.y / verticalDragConstant, v.z / horizontalDragConstant);
+                this.velocityModified = true;
+            }
+        }
+
         if (bowRightClickTimer > 0) bowRightClickTimer--;
     }
 }
