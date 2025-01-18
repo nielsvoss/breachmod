@@ -1,5 +1,6 @@
-package com.nielsvoss.breachmod.data
+package com.nielsvoss.breachmod.state
 
+import com.nielsvoss.breachmod.data.KitSelections
 import net.minecraft.scoreboard.AbstractTeam
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text

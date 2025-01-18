@@ -1,7 +1,7 @@
 package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.data.BreachMap
-import com.nielsvoss.breachmod.data.RoundPersistentState
+import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.kit.BreachKit
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.util.TeamArmorUtils

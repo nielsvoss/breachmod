@@ -4,7 +4,7 @@ import com.nielsvoss.breachmod.BreachRuleTypes
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
-import com.nielsvoss.breachmod.data.RoundPersistentState
+import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.state.BreachRoundTimer

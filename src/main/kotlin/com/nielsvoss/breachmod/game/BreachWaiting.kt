@@ -2,7 +2,7 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
-import com.nielsvoss.breachmod.data.RoundPersistentState
+import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
 import eu.pb4.sgui.api.elements.GuiElementBuilder
