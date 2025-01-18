@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod.config
 
+import com.google.gson.JsonObject
 import com.mojang.serialization.Codec
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 @JvmRecord
@@ -19,5 +21,8 @@ data class GameplayOptionsConfig(
                 Codec.BOOL.optionalFieldOf("disable_fire_tick", true).forGetter(GameplayOptionsConfig::disableFireTick)
             ).apply(instance, ::GameplayOptionsConfig)
         }
+
+        @JvmStatic
+        val DEFAULT: GameplayOptionsConfig = CODEC.parse(JsonOps.INSTANCE, JsonObject()).resultOrPartial().orElseThrow()
     }
 }

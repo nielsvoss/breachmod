@@ -23,11 +23,11 @@ data class BreachGameConfig(val map: MapConfig, val scoreNeededToWin: Int,
                     .forGetter(BreachGameConfig::attackerKits),
                 AvailableKitsConfig.CODEC.optionalFieldOf("defender_kits", AvailableKitsConfig.DEFENDER_DEFAULT)
                     .forGetter(BreachGameConfig::defenderKits),
-                TeamsConfig.CODEC.fieldOf("teams")
+                TeamsConfig.CODEC.optionalFieldOf("teams", TeamsConfig.DEFAULT)
                     .forGetter(BreachGameConfig::teamOptions),
-                GameplayOptionsConfig.CODEC.fieldOf("gameplay")
+                GameplayOptionsConfig.CODEC.optionalFieldOf("gameplay", GameplayOptionsConfig.DEFAULT)
                     .forGetter(BreachGameConfig::gameplayOptions),
-                TimesConfig.CODEC.fieldOf("times")
+                TimesConfig.CODEC.optionalFieldOf("times", TimesConfig.DEFAULT)
                     .forGetter(BreachGameConfig::timesConfig),
                 Codec.INT.optionalFieldOf("number_of_targets", 2)
                     .forGetter(BreachGameConfig::numberOfTargets),

@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod.config
 
+import com.google.gson.JsonObject
 import com.mojang.serialization.Codec
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 @JvmRecord
@@ -21,5 +23,8 @@ data class TeamsConfig(val removeTeamRestrictions: Boolean, val allowTeamChanges
                     .forGetter(TeamsConfig::giveHelmets)
             ).apply(instance, ::TeamsConfig)
         }
+
+        @JvmStatic
+        val DEFAULT: TeamsConfig = CODEC.parse(JsonOps.INSTANCE, JsonObject()).resultOrPartial().orElseThrow()
     }
 }

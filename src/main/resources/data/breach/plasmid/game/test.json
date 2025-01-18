@@ -2,11 +2,5 @@
   "type": "breach:breach",
   "map": {
     "id": "breach:test"
-  },
-  "teams": {
-  },
-  "gameplay": {
-  },
-  "times": {
   }
 }

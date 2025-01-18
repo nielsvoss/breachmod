@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod.config
 
+import com.google.gson.JsonObject
 import com.mojang.serialization.Codec
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 
 @JvmRecord
@@ -23,5 +25,8 @@ data class TimesConfig(
                 Codec.INT.optionalFieldOf("seconds_after_game_end_before_closure", 10).forGetter(TimesConfig::secondsAfterGameEndBeforeClosure)
             ).apply(instance, ::TimesConfig)
         }
+
+        @JvmStatic
+        val DEFAULT: TimesConfig = CODEC.parse(JsonOps.INSTANCE, JsonObject()).resultOrPartial().orElseThrow()
     }
 }
