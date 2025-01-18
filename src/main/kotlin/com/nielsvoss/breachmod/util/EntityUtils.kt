@@ -2,7 +2,6 @@ package com.nielsvoss.breachmod.util
 
 import net.minecraft.command.argument.EntityAnchorArgumentType
 import net.minecraft.entity.Entity
-import net.minecraft.network.packet.s2c.play.PositionFlag
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.Vec3d
 

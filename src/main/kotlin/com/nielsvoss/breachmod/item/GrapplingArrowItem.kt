@@ -1,9 +1,8 @@
 package com.nielsvoss.breachmod.item
 
-import com.nielsvoss.breachmod.entity.GrappleEntity
 import com.nielsvoss.breachmod.PersistentProjectileEntityDuck
+import com.nielsvoss.breachmod.entity.GrappleEntity
 import eu.pb4.polymer.core.api.item.PolymerItem
-import eu.pb4.polymer.core.api.item.PolymerItemUtils
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.LivingEntity
@@ -13,8 +12,6 @@ import net.minecraft.item.ArrowItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.item.tooltip.TooltipType
-import net.minecraft.potion.Potions
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier

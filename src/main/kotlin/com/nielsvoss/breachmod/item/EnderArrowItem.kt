@@ -1,7 +1,6 @@
 package com.nielsvoss.breachmod.item
 
 import eu.pb4.polymer.core.api.item.PolymerItem
-import eu.pb4.polymer.core.api.item.PolymerItemUtils
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.component.type.PotionContentsComponent
 import net.minecraft.entity.LivingEntity
@@ -11,7 +10,6 @@ import net.minecraft.item.ArrowItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.util.Identifier
 import net.minecraft.world.World
 import xyz.nucleoid.packettweaker.PacketContext

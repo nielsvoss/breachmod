@@ -5,7 +5,7 @@ import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import net.minecraft.entity.Entity
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import java.util.UUID
+import java.util.*
 
 data class Morph(val morphEntityId: UUID, val morphData: MorphData) {
     companion object {

@@ -1,13 +1,12 @@
 package com.nielsvoss.breachmod.ui;
 
 import com.nielsvoss.breachmod.kit.BreachKit
-import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.util.UIUtils
 import eu.pb4.sgui.api.GuiHelpers
 import eu.pb4.sgui.api.elements.GuiElementBuilder
 import eu.pb4.sgui.api.gui.GuiInterface
 import eu.pb4.sgui.api.gui.SimpleGui
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import java.util.function.BiConsumer
 

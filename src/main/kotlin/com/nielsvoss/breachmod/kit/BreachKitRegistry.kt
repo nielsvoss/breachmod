@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.resource.ResourceManager
 import net.minecraft.resource.ResourceType
 import net.minecraft.util.Identifier
-import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.util.TinyRegistry
 import java.io.BufferedReader
 import java.io.IOException

@@ -1,13 +1,6 @@
 package com.nielsvoss.breachmod.data
 
-import net.minecraft.component.DataComponentTypes
-import net.minecraft.component.type.DyedColorComponent
-import net.minecraft.component.type.UnbreakableComponent
-import net.minecraft.entity.EquipmentSlot
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import net.minecraft.scoreboard.AbstractTeam
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.MutableText
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor

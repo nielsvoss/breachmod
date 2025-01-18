@@ -3,14 +3,12 @@ package com.nielsvoss.breachmod.game
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.RoundPersistentState
 import com.nielsvoss.breachmod.kit.BreachKit
-import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.util.TeamArmorUtils
 import com.nielsvoss.breachmod.util.randomBottom
 import com.nielsvoss.breachmod.util.teleportFacingOrigin
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Identifier
 import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 

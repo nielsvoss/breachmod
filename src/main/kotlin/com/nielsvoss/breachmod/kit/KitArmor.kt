@@ -3,7 +3,6 @@ package com.nielsvoss.breachmod.kit
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
 import xyz.nucleoid.codecs.MoreCodecs
 import java.util.*
 
