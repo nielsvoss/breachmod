@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.data.RoundPersistentState
+import com.nielsvoss.breachmod.kit.BreachKit
 import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import com.nielsvoss.breachmod.state.BreachPlayersState
 import com.nielsvoss.breachmod.util.TeamArmorUtils
@@ -16,7 +18,10 @@ class BreachActiveSpawnLogic(
     private val world: ServerWorld,
     private val map: BreachMap,
     private val playersState: BreachPlayersState,
-    private val giveHelmets: Boolean
+    private val persistentState: RoundPersistentState,
+    private val availableAttackerKits: List<BreachKit>,
+    private val availableDefenderKits: List<BreachKit>,
+    private val giveHelmets: Boolean,
 ) {
     fun spawnPlayers() {
         // To ensure all players spawn in the same region
@@ -40,21 +45,25 @@ class BreachActiveSpawnLogic(
 
         player.inventory.clear()
 
+        var kit: BreachKit? = null
         if (playersState.isAnyAttacker(player)) {
             val loc = attackersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
 
             TeamArmorUtils.giveTeamArmor(player, playersState.attackingTeamDyeColor, giveHelmets)
+            kit = persistentState.kitSelections.getAttackerKitOrRandom(player, availableAttackerKits)
         } else if (playersState.isAnyDefender(player)) {
+
             val loc = defendersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
 
             TeamArmorUtils.giveTeamArmor(player, playersState.defendingTeamDyeColor, giveHelmets)
+            kit = persistentState.kitSelections.getDefenderKitOrRandom(player, availableDefenderKits)
         }
 
+        kit?.equipPlayer(player)
         player.changeGameMode(GameMode.SURVIVAL)
         player.fallDistance = 0F
-        BreachKitRegistry.KITS.get(Identifier.of("breach", "simple"))!!.equipPlayer(player)
     }
 
     fun spawnEliminatedPlayer(player: ServerPlayerEntity) {

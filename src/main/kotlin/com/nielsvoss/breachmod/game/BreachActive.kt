@@ -92,7 +92,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private val targetsState = BreachTargetsState(map.targets)
     private val gameSidebar = Sidebar(Sidebar.Priority.MEDIUM)
-    private val spawnLogic = BreachActiveSpawnLogic(world, map, players, config.teamOptions.giveHelmets)
+    private val spawnLogic = BreachActiveSpawnLogic(world, map, players, persistentState,
+        config.attackerKits.getKits(), config.defenderKits.getKits(), config.teamOptions.giveHelmets)
     private val roundTimer: BreachRoundTimer
     private val morphManager: MorphManager = MorphManager()
     private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()

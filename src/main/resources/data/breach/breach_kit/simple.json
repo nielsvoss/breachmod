@@ -12,5 +12,8 @@
       "count": 3
     }
   ],
+  "armor": {
+    "helmet": "diamond_helmet"
+  },
   "categories": ["attacker", "defender"]
 }
