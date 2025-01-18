@@ -85,6 +85,12 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         }
     }
 
+    /**
+     * Prevent long grapples from breaking
+     */
+    override fun breakLongLeash() {
+    }
+
     override fun getPolymerEntityType(context: PacketContext?): EntityType<*> {
         return EntityType.SLIME
     }
