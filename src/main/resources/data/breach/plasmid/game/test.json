@@ -1,7 +1,7 @@
 {
   "type": "breach:breach",
   "map": {
-    "id": "breach:test",
+    "id": "breach:village",
     "time_of_day": 18000
   },
   "score_needed_to_win": 3,

@@ -44,5 +44,7 @@
   "map.breach.test.east_spawn": "East Spawn",
   "map.breach.test.south_spawn": "South Spawn",
   "map.breach.test.west_spawn": "West Spawn",
+  "map.breach.village.front_gate": "Front Gate",
+  "map.breach.village.mine": "Mine",
   "kit.breach.simple": "Simple"
 }
