@@ -61,6 +61,8 @@ class BreachActiveSpawnLogic(
 
         kit?.equipPlayer(player)
         player.changeGameMode(GameMode.SURVIVAL)
+        player.health = 20F
+        player.hungerManager.foodLevel = 20
         player.fallDistance = 0F
     }
 
