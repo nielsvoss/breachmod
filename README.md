@@ -25,6 +25,8 @@ The config is commented here, but note that comments are not permitted in the ac
     "kits": [],
     // All kits which match any of the categories in this list will be available.
     // It is recommended to leave this alone.
+    // Currently, due to implementation details, if you provide a custom "attacker_kits" block
+    // (perhaps because you wanted to modify "attacker_kits.kits"), then you must specify "attacker_kits.categories".
     "categories": ["attacker"]
   },
   "defender_kits": {

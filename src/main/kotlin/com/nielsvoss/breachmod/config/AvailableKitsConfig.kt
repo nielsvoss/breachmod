@@ -16,6 +16,9 @@ data class AvailableKitsConfig(val kits: List<Identifier>, val categories: List<
                 Codec.list(Codec.STRING).fieldOf("categories").forGetter(AvailableKitsConfig::categories)
             ).apply(instance, ::AvailableKitsConfig)
         }
+
+        val ATTACKER_DEFAULT = AvailableKitsConfig(listOf(), listOf("attacker"))
+        val DEFENDER_DEFAULT = AvailableKitsConfig(listOf(), listOf("defender"))
     }
 
     fun getKits(): List<BreachKit> {

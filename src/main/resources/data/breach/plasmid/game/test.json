@@ -3,12 +3,6 @@
   "map": {
     "id": "breach:test"
   },
-  "attacker_kits": {
-    "categories": ["attacker"]
-  },
-  "defender_kits": {
-    "categories": ["defender"]
-  },
   "teams": {
   },
   "gameplay": {
