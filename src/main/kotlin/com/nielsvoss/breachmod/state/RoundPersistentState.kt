@@ -95,6 +95,7 @@ private fun createTeam(id: String, name: Text, color: DyeColor): GameTeam {
         GameTeamKey(id),
         GameTeamConfig.builder()
             .setCollision(AbstractTeam.CollisionRule.NEVER)
+            .setNameTagVisibility(AbstractTeam.VisibilityRule.NEVER)
             .setColors(GameTeamConfig.Colors.from(color))
             .setName(name)
             .build())
