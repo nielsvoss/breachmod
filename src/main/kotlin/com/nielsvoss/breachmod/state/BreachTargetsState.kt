@@ -12,6 +12,7 @@ import net.minecraft.util.math.AffineTransformation
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Vec3d
 import org.joml.Vector3f
+import java.util.function.Consumer
 
 class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
     private val selectedTargets: MutableList<BreachTarget> = mutableListOf()
@@ -25,11 +26,12 @@ class BreachTargetsState(private val availableTargets: List<BreachTarget>) {
         selectedTargets.add(target)
     }
 
-    fun updateBrokenTargets(world: ServerWorld) {
+    fun updateBrokenTargets(world: ServerWorld, announceBroken: Consumer<BreachTarget>) {
         // TODO: Consider whether it should be selectedTargets or availableTargets
         for (target in selectedTargets) {
             if (target !in brokenTargets && world.getBlockState(target.pos).block != target.block) {
                 brokenTargets.add(target)
+                announceBroken.accept(target)
             }
         }
     }

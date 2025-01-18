@@ -173,7 +173,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             }
         }
 
-        targetsState.updateBrokenTargets(world)
+        targetsState.updateBrokenTargets(world) { brokenTarget ->
+            world.players.broadcast(brokenTarget.block.name.append(Text.translatable("text.breach.target_was_broken")))
+        }
         if (config.outlineTargets) {
             targetsState.updateOutlines(world)
         }
