@@ -15,5 +15,6 @@
   "armor": {
     "helmet": "diamond_helmet"
   },
+  "offhand": "shield",
   "categories": ["attacker", "defender"]
 }
