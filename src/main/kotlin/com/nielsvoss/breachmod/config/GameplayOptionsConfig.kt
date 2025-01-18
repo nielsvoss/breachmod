@@ -12,11 +12,11 @@ data class GameplayOptionsConfig(
         @JvmStatic
         val CODEC: Codec<GameplayOptionsConfig> = RecordCodecBuilder.create{ instance ->
             instance.group(
-                Codec.BOOL.fieldOf("arrows_instant_kill").forGetter(GameplayOptionsConfig::arrowsInstantKill),
-                Codec.BOOL.fieldOf("disable_hunger").forGetter(GameplayOptionsConfig::disableHunger),
-                Codec.BOOL.fieldOf("disable_natural_regeneration").forGetter(GameplayOptionsConfig::disableNaturalRegeneration),
-                Codec.BOOL.fieldOf("disable_tile_drops").forGetter(GameplayOptionsConfig::disableTileDrops),
-                Codec.BOOL.fieldOf("disable_fire_tick").forGetter(GameplayOptionsConfig::disableFireTick)
+                Codec.BOOL.optionalFieldOf("arrows_instant_kill", true).forGetter(GameplayOptionsConfig::arrowsInstantKill),
+                Codec.BOOL.optionalFieldOf("disable_hunger", true).forGetter(GameplayOptionsConfig::disableHunger),
+                Codec.BOOL.optionalFieldOf("disable_natural_regeneration", true).forGetter(GameplayOptionsConfig::disableNaturalRegeneration),
+                Codec.BOOL.optionalFieldOf("disable_tile_drops", true).forGetter(GameplayOptionsConfig::disableTileDrops),
+                Codec.BOOL.optionalFieldOf("disable_fire_tick", true).forGetter(GameplayOptionsConfig::disableFireTick)
             ).apply(instance, ::GameplayOptionsConfig)
         }
     }

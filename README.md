@@ -49,6 +49,9 @@ The config is commented here, but note that comments are not permitted in the ac
     "give_helmets": true
   },
   "gameplay": {
+    // If true, arrows will instantly kill their targets.
+    // It is recommended to leave this enabled, as it is one of the core characteristics of the game.
+    "arrows_instant_kill": true,
     // If true, players will always be at max hunger, but their saturation will not contribute to their regeneration.
     // Players will still regenerate (assuming "disable_natural_regeneration" is false), but at a slow rate.
     "disable_hunger": true,
@@ -57,10 +60,7 @@ The config is commented here, but note that comments are not permitted in the ac
     // If true, blocks will not drop items, as if the gamerule doTileDrops was set to false.
     "disable_tile_drops": true,
     // If true, fire will not spread or disappear, as if the gamerule doFireTick was set to false.
-    "disable_fire_tick": true,
-    // If true, arrows will instantly kill their targets.
-    // It is recommended to leave this enabled, as it is one of the core characteristics of the game.
-    "arrows_instant_kill": true
+    "disable_fire_tick": true
   },
   "times": {
     // Length of the "Prep" phase, in seconds

@@ -15,12 +15,12 @@ data class TimesConfig(
     companion object {
         val CODEC: Codec<TimesConfig> = RecordCodecBuilder.create { instance ->
             instance.group(
-                Codec.INT.fieldOf("prep_length_in_seconds").forGetter(TimesConfig::prepLengthInSeconds),
-                Codec.INT.fieldOf("round_length_in_seconds").forGetter(TimesConfig::roundLengthInSeconds),
-                Codec.INT.fieldOf("lobby_ready_seconds").forGetter(TimesConfig::lobbyReadySeconds),
-                Codec.INT.fieldOf("lobby_full_seconds").forGetter(TimesConfig::lobbyFullSeconds),
-                Codec.INT.fieldOf("seconds_after_round_end_before_next").forGetter(TimesConfig::secondsAfterRoundEndBeforeNext),
-                Codec.INT.fieldOf("seconds_after_game_end_before_closure").forGetter(TimesConfig::secondsAfterGameEndBeforeClosure)
+                Codec.INT.optionalFieldOf("prep_length_in_seconds", 30).forGetter(TimesConfig::prepLengthInSeconds),
+                Codec.INT.optionalFieldOf("round_length_in_seconds", 180).forGetter(TimesConfig::roundLengthInSeconds),
+                Codec.INT.optionalFieldOf("lobby_ready_seconds", 30).forGetter(TimesConfig::lobbyReadySeconds),
+                Codec.INT.optionalFieldOf("lobby_full_seconds", 10).forGetter(TimesConfig::lobbyFullSeconds),
+                Codec.INT.optionalFieldOf("seconds_after_round_end_before_next", 10).forGetter(TimesConfig::secondsAfterRoundEndBeforeNext),
+                Codec.INT.optionalFieldOf("seconds_after_game_end_before_closure", 10).forGetter(TimesConfig::secondsAfterGameEndBeforeClosure)
             ).apply(instance, ::TimesConfig)
         }
     }

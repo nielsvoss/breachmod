@@ -12,7 +12,7 @@ data class AvailableKitsConfig(val kits: List<Identifier>, val categories: List<
         @JvmStatic
         val CODEC: Codec<AvailableKitsConfig> = RecordCodecBuilder.create{ instance ->
             instance.group(
-                Codec.list(Identifier.CODEC).fieldOf("kits").forGetter(AvailableKitsConfig::kits),
+                Codec.list(Identifier.CODEC).optionalFieldOf("kits", listOf()).forGetter(AvailableKitsConfig::kits),
                 Codec.list(Codec.STRING).fieldOf("categories").forGetter(AvailableKitsConfig::categories)
             ).apply(instance, ::AvailableKitsConfig)
         }

@@ -9,11 +9,16 @@ data class TeamsConfig(val removeTeamRestrictions: Boolean, val allowTeamChanges
     companion object {
         val CODEC: Codec<TeamsConfig> = RecordCodecBuilder.create { instance ->
             instance.group(
-                Codec.BOOL.fieldOf("remove_team_restrictions").forGetter(TeamsConfig::removeTeamRestrictions),
-                Codec.BOOL.fieldOf("allow_team_changes_after_first_round").forGetter(TeamsConfig::allowTeamChangesAfterFirstRound),
-                Codec.BOOL.fieldOf("randomize_first_attacking_team").forGetter(TeamsConfig::randomizeFirstAttackingTeam),
-                Codec.BOOL.fieldOf("swap_roles_after_each_round").forGetter(TeamsConfig::swapRolesAfterEachRound),
-                Codec.BOOL.fieldOf("give_helmets").forGetter(TeamsConfig::giveHelmets)
+                Codec.BOOL.optionalFieldOf("remove_team_restrictions", false)
+                    .forGetter(TeamsConfig::removeTeamRestrictions),
+                Codec.BOOL.optionalFieldOf("allow_team_changes_after_first_round", false)
+                    .forGetter(TeamsConfig::allowTeamChangesAfterFirstRound),
+                Codec.BOOL.optionalFieldOf("randomize_first_attacking_team", true)
+                    .forGetter(TeamsConfig::randomizeFirstAttackingTeam),
+                Codec.BOOL.optionalFieldOf("swap_roles_after_each_round", true)
+                    .forGetter(TeamsConfig::swapRolesAfterEachRound),
+                Codec.BOOL.optionalFieldOf("give_helmets", true)
+                    .forGetter(TeamsConfig::giveHelmets)
             ).apply(instance, ::TeamsConfig)
         }
     }

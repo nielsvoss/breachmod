@@ -1,41 +1,18 @@
 {
   "type": "breach:breach",
   "map": {
-    "id": "breach:test",
-    "time_of_day": 6000
+    "id": "breach:test"
   },
-  "score_needed_to_win": 3,
   "attacker_kits": {
-    "kits": [],
     "categories": ["attacker"]
   },
   "defender_kits": {
-    "kits": [],
     "categories": ["defender"]
   },
   "teams": {
-    "remove_team_restrictions": false,
-    "allow_team_changes_after_first_round": false,
-    "randomize_first_attacking_team": true,
-    "swap_roles_after_each_round": true,
-    "give_helmets": true
   },
   "gameplay": {
-    "disable_hunger": true,
-    "disable_natural_regeneration": true,
-    "disable_tile_drops": true,
-    "disable_fire_tick": true,
-    "arrows_instant_kill": true
   },
   "times": {
-    "prep_length_in_seconds": 30,
-    "round_length_in_seconds": 180,
-    "lobby_ready_seconds": 30,
-    "lobby_full_seconds": 10,
-    "seconds_after_round_end_before_next": 10,
-    "seconds_after_game_end_before_closure": 10
-  },
-  "number_of_targets": 2,
-  "outline_targets": true,
-  "remaining_players_popup": true
+  }
 }
