@@ -4,12 +4,14 @@
     "id": "minecraft:crossbow"
   },
   "items": [
-    {
-      "id": "minecraft:crossbow"
-    },
+    "minecraft:crossbow",
     {
       "id": "minecraft:arrow",
       "count": 3
+    },
+    {
+      "stack": "torch",
+      "slot": 8
     }
   ],
   "armor": {

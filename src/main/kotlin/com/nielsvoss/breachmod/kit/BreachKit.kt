@@ -8,12 +8,13 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import xyz.nucleoid.codecs.MoreCodecs
 import java.util.*
+import kotlin.jvm.optionals.getOrDefault
 
 /**
  * Originally based on https://github.com/NucleoidMC/skywars/blob/main/src/main/java/us/potatoboy/skywars/kit/Kit.java
  */
 @JvmRecord
-data class BreachKit(val nameTranslationKey: String, private val icon: ItemStack, val items: List<ItemStack>,
+data class BreachKit(val nameTranslationKey: String, private val icon: ItemStack, val items: List<KitItemStack>,
                      val armor: KitArmor, val offhand: Optional<ItemStack>, val categories: List<String>) {
     companion object {
         @JvmStatic
@@ -21,7 +22,7 @@ data class BreachKit(val nameTranslationKey: String, private val icon: ItemStack
             instance.group(
                 Codec.STRING.fieldOf("name").forGetter(BreachKit::nameTranslationKey),
                 MoreCodecs.ITEM_STACK.fieldOf("icon").forGetter(BreachKit::icon),
-                Codec.list(MoreCodecs.ITEM_STACK).fieldOf("items").forGetter(BreachKit::items),
+                Codec.list(KitItemStack.CODEC).fieldOf("items").forGetter(BreachKit::items),
                 KitArmor.CODEC.optionalFieldOf("armor", KitArmor.EMPTY).forGetter(BreachKit::armor),
                 MoreCodecs.ITEM_STACK.optionalFieldOf("offhand").forGetter(BreachKit::offhand),
                 Codec.list(Codec.STRING).fieldOf("categories").forGetter(BreachKit::categories)
@@ -30,8 +31,9 @@ data class BreachKit(val nameTranslationKey: String, private val icon: ItemStack
     }
 
     fun equipPlayer(player: ServerPlayerEntity) {
-        for ((i, stack) in items.withIndex()) {
-            player.inventory.insertStack(i, stack.copy())
+        for ((i, kitStack) in items.withIndex()) {
+            val slot: Int = kitStack.slot.getOrDefault(i)
+            player.inventory.insertStack(slot, kitStack.stack.copy())
         }
 
         if (armor.helmet.isPresent) player.equipStack(EquipmentSlot.HEAD, armor.helmet.get().copy())
