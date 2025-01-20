@@ -12,17 +12,28 @@ data class GameplayOptionsConfig(
 ) {
     companion object {
         @JvmStatic
-        val CODEC: Codec<GameplayOptionsConfig> = RecordCodecBuilder.create{ instance ->
-            instance.group(
-                Codec.BOOL.optionalFieldOf("arrows_instant_kill", true).forGetter(GameplayOptionsConfig::arrowsInstantKill),
-                Codec.BOOL.optionalFieldOf("disable_hunger", true).forGetter(GameplayOptionsConfig::disableHunger),
-                Codec.BOOL.optionalFieldOf("disable_natural_regeneration", true).forGetter(GameplayOptionsConfig::disableNaturalRegeneration),
-                Codec.BOOL.optionalFieldOf("disable_tile_drops", true).forGetter(GameplayOptionsConfig::disableTileDrops),
-                Codec.BOOL.optionalFieldOf("disable_fire_tick", true).forGetter(GameplayOptionsConfig::disableFireTick)
-            ).apply(instance, ::GameplayOptionsConfig)
-        }
+        val DEFAULT: GameplayOptionsConfig = GameplayOptionsConfig(
+            arrowsInstantKill = true,
+            disableHunger = true,
+            disableNaturalRegeneration = true,
+            disableTileDrops = true,
+            disableFireTick = true
+        )
 
         @JvmStatic
-        val DEFAULT: GameplayOptionsConfig = CODEC.parse(JsonOps.INSTANCE, JsonObject()).resultOrPartial().orElseThrow()
+        val CODEC: Codec<GameplayOptionsConfig> = RecordCodecBuilder.create{ instance ->
+            instance.group(
+                Codec.BOOL.optionalFieldOf("arrows_instant_kill", DEFAULT.arrowsInstantKill)
+                    .forGetter(GameplayOptionsConfig::arrowsInstantKill),
+                Codec.BOOL.optionalFieldOf("disable_hunger", DEFAULT.disableHunger)
+                    .forGetter(GameplayOptionsConfig::disableHunger),
+                Codec.BOOL.optionalFieldOf("disable_natural_regeneration", DEFAULT.disableNaturalRegeneration)
+                    .forGetter(GameplayOptionsConfig::disableNaturalRegeneration),
+                Codec.BOOL.optionalFieldOf("disable_tile_drops", DEFAULT.disableTileDrops)
+                    .forGetter(GameplayOptionsConfig::disableTileDrops),
+                Codec.BOOL.optionalFieldOf("disable_fire_tick", DEFAULT.disableFireTick)
+                    .forGetter(GameplayOptionsConfig::disableFireTick)
+            ).apply(instance, ::GameplayOptionsConfig)
+        }
     }
 }
