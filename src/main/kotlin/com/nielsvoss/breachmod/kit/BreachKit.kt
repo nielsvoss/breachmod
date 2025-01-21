@@ -37,7 +37,7 @@ data class BreachKit(val nameTranslationKey: String, private val icon: ItemStack
         }
 
         if (armor.helmet.isPresent) player.equipStack(EquipmentSlot.HEAD, armor.helmet.get().copy())
-        if (armor.chestplate.isPresent) player.equipStack(EquipmentSlot.BODY, armor.chestplate.get().copy())
+        if (armor.chestplate.isPresent) player.equipStack(EquipmentSlot.CHEST, armor.chestplate.get().copy())
         if (armor.leggings.isPresent) player.equipStack(EquipmentSlot.LEGS, armor.leggings.get().copy())
         if (armor.boots.isPresent) player.equipStack(EquipmentSlot.FEET, armor.boots.get().copy())
 
