@@ -35,6 +35,8 @@
   "gui.breach.defender_kit_selection_item": "Defender Kit Selection",
   "gui.breach.select_attacker_kit": "Select Attacker Kit",
   "gui.breach.select_defender_kit": "Select Defender Kit",
+  "statistic.bundle.breach": "Breach",
+  "statistic.breach.rounds_played": "Rounds Played",
   "item.breach.explosive_arrow": "Explosive Arrow",
   "item.minecraft.tipped_arrow.effect.breach_explosive_arrow": "Explosive Arrow",
   "item.breach.ender_arrow": "Ender Arrow",

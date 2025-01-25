@@ -1,6 +1,8 @@
 package com.nielsvoss.breachmod.game
 
+import com.nielsvoss.breachmod.Breach
 import com.nielsvoss.breachmod.BreachRuleTypes
+import com.nielsvoss.breachmod.BreachStatistics
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
@@ -26,6 +28,8 @@ import xyz.nucleoid.plasmid.api.game.GameOpenException
 import xyz.nucleoid.plasmid.api.game.GameSpace
 import xyz.nucleoid.plasmid.api.game.event.GameActivityEvents
 import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
+import xyz.nucleoid.plasmid.api.game.stats.GameStatisticBundle
+import xyz.nucleoid.plasmid.api.game.stats.StatisticKeys
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 import xyz.nucleoid.stimuli.event.EventResult
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent
@@ -102,6 +106,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
      * Used to open UI on first tick instead of during start(). See tick() for explanation.
      */
     private var shouldDisplayUIsNextTick = true
+
+    private val statistics: GameStatisticBundle = gameSpace.statistics.bundle(Breach.MOD_ID)
 
     init {
         val prepTicks = config.timesConfig.prepLengthInSeconds * 20;
@@ -273,6 +279,8 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         // TODO: Handle offline players
         for (player in players.onlineParticipants()) {
             gameSidebar.addPlayer(player)
+
+            this.statistics.forPlayer(player).increment(BreachStatistics.ROUNDS_PLAYED, 1)
         }
 
         spawnLogic.spawnPlayers()
