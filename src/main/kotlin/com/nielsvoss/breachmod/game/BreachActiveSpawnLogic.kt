@@ -48,14 +48,14 @@ class BreachActiveSpawnLogic(
             val loc = attackersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
 
-            TeamArmorUtils.giveTeamArmor(player, playersState.attackingTeamDyeColor, giveHelmets)
+            TeamArmorUtils.giveTeamArmor(player, playersState.attackingTeamDyeColor.rgb, giveHelmets)
             kit = persistentState.kitSelections.getAttackerKitOrRandom(player, availableAttackerKits)
         } else if (playersState.isAnyDefender(player)) {
 
             val loc = defendersSpawn.bounds.randomBottom()
             player.teleportFacingOrigin(world, loc)
 
-            TeamArmorUtils.giveTeamArmor(player, playersState.defendingTeamDyeColor, giveHelmets)
+            TeamArmorUtils.giveTeamArmor(player, playersState.defendingTeamDyeColor.rgb, giveHelmets)
             kit = persistentState.kitSelections.getDefenderKitOrRandom(player, availableDefenderKits)
         }
 

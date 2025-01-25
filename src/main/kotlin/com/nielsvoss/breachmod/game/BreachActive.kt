@@ -44,12 +44,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         ) {
             gameSpace.setActivity { activity ->
                 val breachPlayersState: BreachPlayersState = BreachPlayersState.create(
-                    activity,
-                    persistentState.teamState.getGameTeam(persistentState.teamState.getAttackingTeam()),
-                    persistentState.teamState.getGameTeam(persistentState.teamState.getDefendingTeam()),
-                    persistentState.teamState.getMemberList(persistentState.teamState.getAttackingTeam()),
-                    persistentState.teamState.getMemberList(persistentState.teamState.getDefendingTeam()),
-                    persistentState.teamState.getGameTeam(persistentState.teamState.getTeamToDisplayFirst()).key
+                    activity, persistentState.teamState, world.players
                 )
                 val breachActive = BreachActive(gameSpace, world, map, config, persistentState, breachPlayersState)
 

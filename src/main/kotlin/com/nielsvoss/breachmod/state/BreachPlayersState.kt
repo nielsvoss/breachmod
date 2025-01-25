@@ -2,45 +2,41 @@ package com.nielsvoss.breachmod.state
 
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
+import net.minecraft.text.TextColor
 import net.minecraft.util.Formatting
 import xyz.nucleoid.plasmid.api.game.GameActivity
-import xyz.nucleoid.plasmid.api.game.common.team.GameTeam
 import xyz.nucleoid.plasmid.api.game.common.team.GameTeamKey
 import xyz.nucleoid.plasmid.api.game.common.team.TeamManager
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 
-class BreachPlayersState private constructor(private val attackingTeamKey: GameTeamKey,
-                                             private val defendingTeamKey: GameTeamKey,
-                                             val attackingTeamDyeColor: Int,
-                                             val defendingTeamDyeColor: Int,
-                                             private val teamManager: TeamManager,
-                                             private val displayAttackingTeamFirst: Boolean) {
+class BreachPlayersState private constructor(private val teamManager: TeamManager,
+                                             private val teamState: PersistentTeamState) {
     companion object {
-        fun create(activity: GameActivity, attackingTeam: GameTeam, defendingTeam: GameTeam, attackers: List<PlayerRef>, defenders: List<PlayerRef>, teamToDisplayFirst: GameTeamKey): BreachPlayersState {
-            val displayAttackersFirst = when (teamToDisplayFirst) {
-                attackingTeam.key -> true
-                defendingTeam.key -> false
-                else -> throw IllegalArgumentException("teamToDisplayFirst needs to be either the attacking or defending team")
-            }
-
+        fun create(activity: GameActivity, teamState: PersistentTeamState, participants: List<ServerPlayerEntity>):
+                BreachPlayersState {
             val teamManager: TeamManager = TeamManager.addTo(activity)
-            teamManager.addTeam(attackingTeam)
-            teamManager.addTeam(defendingTeam)
-            for (player in attackers) {
-                teamManager.addPlayerTo(player, attackingTeam.key)
-            }
-            for (player in defenders) {
-                teamManager.addPlayerTo(player, defendingTeam.key)
+            teamManager.addTeam(teamState.getGameTeam(PersistentTeamState.BreachTeam.RED))
+            teamManager.addTeam(teamState.getGameTeam(PersistentTeamState.BreachTeam.BLUE))
+
+            for (player in participants) {
+                if (PlayerRef.of(player) in teamState.getMemberList(PersistentTeamState.BreachTeam.RED))
+                    teamManager.addPlayerTo(player, teamState.getGameTeam(PersistentTeamState.BreachTeam.RED).key)
+                else if (PlayerRef.of(player) in teamState.getMemberList(PersistentTeamState.BreachTeam.BLUE))
+                    teamManager.addPlayerTo(player, teamState.getGameTeam(PersistentTeamState.BreachTeam.BLUE).key)
             }
 
-            val breachPlayersState = BreachPlayersState(attackingTeam.key, defendingTeam.key,
-                attackingTeam.config.colors.dyeColor.rgb, defendingTeam.config.colors.dyeColor.rgb,
-                teamManager, displayAttackersFirst)
+            val breachPlayersState = BreachPlayersState(teamManager, teamState)
             return breachPlayersState
         }
     }
 
     private val survivingPlayers: MutableSet<PlayerRef> = mutableSetOf()
+
+    private val attackingTeamKey = teamState.getGameTeam(teamState.getAttackingTeam()).key
+    private val defendingTeamKey = teamState.getGameTeam(teamState.getDefendingTeam()).key
+
+    val attackingTeamDyeColor: TextColor = teamState.getGameTeam(teamState.getAttackingTeam()).config.colors.dyeColor
+    val defendingTeamDyeColor: TextColor = teamState.getGameTeam(teamState.getDefendingTeam()).config.colors.dyeColor
 
     /**
      * Includes eliminated attackers. See also isSurvivingAttacker
@@ -125,7 +121,7 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
      */
 
     fun getFirstSidebarLine(): Text {
-        val team = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
+        val team = teamState.getGameTeam(teamState.getTeamToDisplayFirst()).key
         val n = numSurvivingOnlinePlayers(team)
         val name = teamManager.getTeamConfig(team).name
         val nameWithColon = name.copy().append(":") // Colon gets the same color as team name
@@ -133,7 +129,7 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
     }
 
     fun getSecondSidebarLine(): Text {
-        val team = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
+        val team = teamState.getGameTeam(teamState.getTeamToDisplaySecond()).key
         val n = numSurvivingOnlinePlayers(team)
         val name = teamManager.getTeamConfig(team).name
         val nameWithColon = name.copy().append(":") // Colon gets the same color as team name
@@ -141,8 +137,8 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
     }
 
     fun getPopupMessage(): Text {
-        val firstTeam = if (displayAttackingTeamFirst) attackingTeamKey else defendingTeamKey
-        val secondTeam = if (displayAttackingTeamFirst) defendingTeamKey else attackingTeamKey
+        val firstTeam = teamState.getGameTeam(teamState.getTeamToDisplayFirst()).key
+        val secondTeam = teamState.getGameTeam(teamState.getTeamToDisplaySecond()).key
         val firstTeamColor: Formatting = teamManager.getTeamConfig(firstTeam).colors.chatFormatting
         val secondTeamColor: Formatting = teamManager.getTeamConfig(secondTeam).colors.chatFormatting
         val n = numSurvivingOnlinePlayers(firstTeam)
