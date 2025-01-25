@@ -2,6 +2,7 @@ package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
+import com.nielsvoss.breachmod.state.PersistentTeamState
 import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.ui.KitSelectorUI
 import com.nielsvoss.breachmod.util.randomBottom
@@ -146,7 +147,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                     .setItemName(Text.translatable("gui.breach.join_red_team"))
                     .setCallback { _, clickType, _, _ ->
                         if (clickType.isRight) {
-                            tryJoinTeam1(player)
+                            tryJoinTeam(player, PersistentTeamState.BreachTeam.RED)
                         }
                     }
                     .build()
@@ -157,7 +158,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
                     .setItemName(Text.translatable("gui.breach.join_blue_team"))
                     .setCallback { _, clickType, _, _ ->
                         if (clickType.isRight) {
-                            tryJoinTeam2(player)
+                            tryJoinTeam(player, PersistentTeamState.BreachTeam.BLUE)
                         }
                     }
                     .build()
@@ -181,42 +182,30 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         }
     }
 
-    private fun tryJoinTeam1(player: ServerPlayerEntity) {
-        if (persistentState.team1Members.contains(PlayerRef.of(player))) {
+    private fun tryJoinTeam(player: ServerPlayerEntity, team: PersistentTeamState.BreachTeam) {
+        if (PlayerRef.of(player) in persistentState.teamState.getMemberList(team)) {
             player.sendMessage(Text.translatable("text.breach.already_in_team"))
             return
         }
 
-        // If there are 7 or 8 players, each team can support 4 players
-        val enoughSpace: Boolean = persistentState.team1Members.size < (world.players.size + 1) / 2
+        // Example: If there are 7 or 8 players, each team can support 4 players
+        val enoughSpace: Boolean = persistentState.teamState.getMemberList(team).size < (world.players.size + 1) / 2
         if (config.teamOptions.removeTeamRestrictions || enoughSpace) {
-            persistentState.team2Members.remove(PlayerRef.of(player))
-            persistentState.team1Members.add(PlayerRef.of(player))
-            player.sendMessage(Text.translatable("text.breach.joined_red_team"))
-        } else {
-            player.sendMessage(Text.translatable("text.breach.team_full"))
-        }
-    }
-
-    private fun tryJoinTeam2(player: ServerPlayerEntity) {
-        if (persistentState.team2Members.contains(PlayerRef.of(player))) {
-            player.sendMessage(Text.translatable("text.breach.already_in_team"))
-            return
-        }
-
-        val enoughSpace: Boolean = persistentState.team2Members.size < (world.players.size + 1) / 2
-        if (config.teamOptions.removeTeamRestrictions || enoughSpace) {
-            persistentState.team1Members.remove(PlayerRef.of(player))
-            persistentState.team2Members.add(PlayerRef.of(player))
-            player.sendMessage(Text.translatable("text.breach.joined_blue_team"))
+            persistentState.teamState.getMemberList(team.getOtherTeam()).remove(PlayerRef.of(player))
+            persistentState.teamState.getMemberList(team).remove(PlayerRef.of(player))
+            when (team) {
+                PersistentTeamState.BreachTeam.RED ->
+                    player.sendMessage(Text.translatable("text.breach.joined_red_team"))
+                PersistentTeamState.BreachTeam.BLUE ->
+                    player.sendMessage(Text.translatable("text.breach.joined_blue_team"))
+            }
         } else {
             player.sendMessage(Text.translatable("text.breach.team_full"))
         }
     }
 
     private fun clearTeam(player: ServerPlayerEntity) {
-        persistentState.team1Members.remove(PlayerRef.of(player))
-        persistentState.team2Members.remove(PlayerRef.of(player))
+        persistentState.teamState.removeFromAllTeams(PlayerRef.of(player))
         player.sendMessage(Text.translatable("text.breach.cleared_team_selection"))
     }
 
@@ -229,16 +218,19 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
     private fun assignUnassignedPlayers() {
         for (player in gameSpace.players) {
-            if (PlayerRef.of(player) !in persistentState.team1Members && PlayerRef.of(player) !in persistentState.team2Members) {
-                if (persistentState.team1Members.size < persistentState.team2Members.size) {
-                    persistentState.team1Members.add(PlayerRef.of(player))
-                } else if (persistentState.team1Members.size > persistentState.team2Members.size) {
-                    persistentState.team2Members.add(PlayerRef.of(player))
+            val redMembers = persistentState.teamState.getMemberList(PersistentTeamState.BreachTeam.RED)
+            val blueMembers = persistentState.teamState.getMemberList(PersistentTeamState.BreachTeam.BLUE)
+
+            if (PlayerRef.of(player) !in redMembers && PlayerRef.of(player) !in blueMembers) {
+                if (redMembers.size < blueMembers.size) {
+                    redMembers.add(PlayerRef.of(player))
+                } else if (redMembers.size > blueMembers.size) {
+                    blueMembers.add(PlayerRef.of(player))
                 } else {
                     if (kotlin.random.Random.nextBoolean()) {
-                        persistentState.team1Members.add(PlayerRef.of(player))
+                        redMembers.add(PlayerRef.of(player))
                     } else {
-                        persistentState.team2Members.add(PlayerRef.of(player))
+                        blueMembers.add(PlayerRef.of(player))
                     }
                 }
             }

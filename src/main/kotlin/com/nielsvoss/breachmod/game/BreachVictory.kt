@@ -1,6 +1,7 @@
 package com.nielsvoss.breachmod.game
 
 import com.nielsvoss.breachmod.config.BreachGameConfig
+import com.nielsvoss.breachmod.state.PersistentTeamState
 import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.util.sendSubtitle
 import com.nielsvoss.breachmod.util.sendTitle
@@ -17,15 +18,16 @@ import xyz.nucleoid.plasmid.api.game.rule.GameRuleType
 class BreachVictory private constructor(
     private val gameSpace: GameSpace,
     private val world: ServerWorld,
-    private val winningTeam: GameTeam,
+    private val persistentState: RoundPersistentState,
+    private val winningTeam: PersistentTeamState.BreachTeam,
     private var ticksBeforeClosure: Int
 ) {
     companion object {
         fun open(gameSpace: GameSpace, world: ServerWorld, config: BreachGameConfig,
-                 persistentState: RoundPersistentState, winningTeam: GameTeam
+                 persistentState: RoundPersistentState, winningTeam: PersistentTeamState.BreachTeam
         ): BreachVictory {
             val ticksBeforeClosure = config.timesConfig.secondsAfterGameEndBeforeClosure * 20
-            val breachVictory = BreachVictory(gameSpace, world, winningTeam, ticksBeforeClosure)
+            val breachVictory = BreachVictory(gameSpace, world, persistentState, winningTeam, ticksBeforeClosure)
 
             gameSpace.setActivity { activity ->
                 activity.deny(GameRuleType.PORTALS)
@@ -39,11 +41,12 @@ class BreachVictory private constructor(
     }
 
     fun open() {
+        val winningGameTeam = persistentState.teamState.getGameTeam(winningTeam)
         for (player in world.players) {
             player.changeGameMode(GameMode.SPECTATOR)
             player.setTitleTimes(0, 60, 20)
             player.sendTitle(Text.translatable("text.breach.game_over"))
-            player.sendSubtitle(winningTeam.config.name.copy().append(Text.translatable("text.breach.has_won")))
+            player.sendSubtitle(winningGameTeam.config.name.copy().append(Text.translatable("text.breach.has_won")))
         }
     }
 

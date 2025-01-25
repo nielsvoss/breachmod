@@ -6,12 +6,8 @@ import com.nielsvoss.breachmod.BreachStatistics
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
-import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.entity.AbstractMorphEntity
-import com.nielsvoss.breachmod.state.BreachPlayersState
-import com.nielsvoss.breachmod.state.BreachRoundTimer
-import com.nielsvoss.breachmod.state.BreachTargetsState
-import com.nielsvoss.breachmod.state.MorphManager
+import com.nielsvoss.breachmod.state.*
 import com.nielsvoss.breachmod.ui.SpawnSelectorUI
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.*
@@ -49,11 +45,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSpace.setActivity { activity ->
                 val breachPlayersState: BreachPlayersState = BreachPlayersState.create(
                     activity,
-                    persistentState.getAttackingTeam(),
-                    persistentState.getDefendingTeam(),
-                    persistentState.getAttackingTeamMembers(),
-                    persistentState.getDefendingTeamMembers(),
-                    persistentState.getTeamToDisplayFirst().key
+                    persistentState.teamState.getGameTeam(persistentState.teamState.getAttackingTeam()),
+                    persistentState.teamState.getGameTeam(persistentState.teamState.getDefendingTeam()),
+                    persistentState.teamState.getMemberList(persistentState.teamState.getAttackingTeam()),
+                    persistentState.teamState.getMemberList(persistentState.teamState.getDefendingTeam()),
+                    persistentState.teamState.getGameTeam(persistentState.teamState.getTeamToDisplayFirst()).key
                 )
                 val breachActive = BreachActive(gameSpace, world, map, config, persistentState, breachPlayersState)
 
@@ -203,10 +199,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 onTie()
                 onGameEnd()
             } else if (attackersMeetWinCondition) {
-                onAttackersWin()
+                onWin(persistentState.teamState.getAttackingTeam())
                 onGameEnd()
             } else if (defendersMeetWinCondition) {
-                onDefendersWin()
+                onWin(persistentState.teamState.getDefendingTeam())
                 onGameEnd()
             }
         }
@@ -226,31 +222,19 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
     }
 
-    private fun onAttackersWin() {
-        persistentState.incrementAttackerScore()
-        val text = persistentState.getAttackingTeam().config.name.copy()
+    private fun onWin(team: PersistentTeamState.BreachTeam) {
+        persistentState.teamState.incrementScore(team)
+        val gameTeam = persistentState.teamState.getGameTeam(team)
+        val text = gameTeam.config.name.copy()
             .append(Text.translatable("text.breach.win"))
-            .formatted(persistentState.getAttackingTeam().config.chatFormatting())
+            .formatted(gameTeam.config.chatFormatting())
         announceGameEnd(text)
 
         for (playerRef in players.allParticipants()) {
-            if (players.isAnyAttacker(playerRef)) {
-                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_WON, 1)
-            } else {
-                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_LOST, 1)
-            }
-        }
-    }
-
-    private fun onDefendersWin() {
-        persistentState.incrementDefenderScore()
-        val text = persistentState.getDefendingTeam().config.name.copy()
-            .append(Text.translatable("text.breach.win"))
-            .formatted(persistentState.getDefendingTeam().config.chatFormatting())
-        announceGameEnd(text)
-
-        for (playerRef in players.allParticipants()) {
-            if (players.isAnyDefender(playerRef)) {
+            val attackersWon: Boolean = team == persistentState.teamState.getAttackingTeam()
+            val onWinningTeam: Boolean =
+                attackersWon && players.isAnyAttacker(playerRef) || !attackersWon && players.isAnyDefender(playerRef)
+            if (onWinningTeam) {
                 statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_WON, 1)
             } else {
                 statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_LOST, 1)
@@ -283,7 +267,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             }
 
             if (config.teamOptions.swapRolesAfterEachRound) {
-                persistentState.swapRoles()
+                persistentState.teamState.swapRoles()
             }
             BreachWaiting.openInSpace(gameSpace, config, persistentState, players.onlineParticipants(), false)
             gameSpace.worlds.remove(this.world)
