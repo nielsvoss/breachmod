@@ -221,6 +221,9 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
     private fun onTie() {
         announceGameEnd(Text.translatable("text.breach.tie"))
+        for (playerRef in players.allParticipants()) {
+            statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_TIED, 1)
+        }
     }
 
     private fun onAttackersWin() {
@@ -229,6 +232,14 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             .append(Text.translatable("text.breach.win"))
             .formatted(persistentState.getAttackingTeam().config.chatFormatting())
         announceGameEnd(text)
+
+        for (playerRef in players.allParticipants()) {
+            if (players.isAnyAttacker(playerRef)) {
+                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_WON, 1)
+            } else {
+                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_LOST, 1)
+            }
+        }
     }
 
     private fun onDefendersWin() {
@@ -237,6 +248,14 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             .append(Text.translatable("text.breach.win"))
             .formatted(persistentState.getDefendingTeam().config.chatFormatting())
         announceGameEnd(text)
+
+        for (playerRef in players.allParticipants()) {
+            if (players.isAnyDefender(playerRef)) {
+                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_WON, 1)
+            } else {
+                statistics.forPlayer(playerRef).increment(BreachStatistics.ROUNDS_LOST, 1)
+            }
+        }
     }
 
     private fun onGameEnd() {
@@ -281,6 +300,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
             gameSidebar.addPlayer(player)
 
             this.statistics.forPlayer(player).increment(BreachStatistics.ROUNDS_PLAYED, 1)
+            if (PlayerRef.of(player) !in persistentState.playersThatPlayedAtLeastOneRound) {
+                persistentState.playersThatPlayedAtLeastOneRound.add(PlayerRef.of(player))
+                this.statistics.forPlayer(player).increment(StatisticKeys.GAMES_PLAYED, 1)
+            }
         }
 
         spawnLogic.spawnPlayers()
@@ -333,6 +356,7 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         spawnLogic.spawnEliminatedPlayer(player)
         if (didEliminate && config.remainingPlayersPopup && !roundTimer.isGameEnded()) {
             displayRemainingPlayersPopup()
+            statistics.forPlayer(player).increment(StatisticKeys.DEATHS, 1)
         }
         return EventResult.DENY
     }

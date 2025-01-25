@@ -49,11 +49,19 @@ class BreachPlayersState private constructor(private val attackingTeamKey: GameT
         return player in teamManager.playersIn(attackingTeamKey)
     }
 
+    fun isAnyAttacker(playerRef: PlayerRef): Boolean {
+        return playerRef in teamManager.allPlayersIn(attackingTeamKey)
+    }
+
     /**
      * Includes eliminated defenders. See also isSurvivingDefender
      */
     fun isAnyDefender(player: ServerPlayerEntity): Boolean {
         return player in teamManager.playersIn(defendingTeamKey)
+    }
+
+    fun isAnyDefender(playerRef: PlayerRef): Boolean {
+        return playerRef in teamManager.allPlayersIn(defendingTeamKey)
     }
 
     fun isSurvivingAttacker(player: ServerPlayerEntity): Boolean {

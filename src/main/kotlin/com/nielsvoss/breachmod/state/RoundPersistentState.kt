@@ -18,6 +18,13 @@ import kotlin.math.min
  */
 class RoundPersistentState(private val scoreNeededToWin: Int, private var isTeam1Attacking: Boolean) {
     val kitSelections = KitSelections()
+
+    /**
+     * List of player id's that have already spawned into at least one round this game, for the purpose of deciding when
+     * to increment the games played statistics (as opposed to just the rounds played statistic).
+     */
+    val playersThatPlayedAtLeastOneRound: MutableList<PlayerRef> = mutableListOf()
+
     val team1 = createTeam("Breach1", Text.translatable("team.breach.red"), DyeColor.RED)
     val team2 = createTeam("Breach2", Text.translatable("team.breach.blue"), DyeColor.BLUE)
     private var team1Score: Int = 0
