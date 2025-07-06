@@ -62,7 +62,10 @@ The config is commented here, but note that comments are not permitted in the ac
     // If true, blocks will not drop items, as if the gamerule doTileDrops was set to false.
     "disable_tile_drops": true,
     // If true, fire will not spread or disappear, as if the gamerule doFireTick was set to false.
-    "disable_fire_tick": true
+    "disable_fire_tick": true,
+    // When a beacon is broken it will give the glowing effect to all players for this many ticks.
+    // Set to 0 to disable.
+    "beacons_reveal_players_time": 200
   },
   "times": {
     // Length of the "Prep" phase, in seconds

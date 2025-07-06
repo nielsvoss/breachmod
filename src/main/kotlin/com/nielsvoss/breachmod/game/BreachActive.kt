@@ -13,6 +13,8 @@ import com.nielsvoss.breachmod.ui.TargetSelectorUI
 import com.nielsvoss.breachmod.util.*
 import eu.pb4.sidebars.api.Sidebar
 import net.minecraft.block.Blocks
+import net.minecraft.entity.effect.StatusEffectInstance
+import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
@@ -365,6 +367,13 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 .formatted(Formatting.RED))
             return EventResult.DENY
         }
+
+        if (config.gameplayOptions.beaconsRevealPlayersTime > 0 && world.getBlockState(pos).isOf(Blocks.BEACON)) {
+            players.survivingOnlineParticipants().forEach {
+                it.addStatusEffect(StatusEffectInstance(StatusEffects.GLOWING, config.gameplayOptions.beaconsRevealPlayersTime))
+            }
+        }
+
         return EventResult.PASS
     }
 }
