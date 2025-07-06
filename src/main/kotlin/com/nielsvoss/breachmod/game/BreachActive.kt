@@ -6,7 +6,6 @@ import com.nielsvoss.breachmod.BreachStatistics
 import com.nielsvoss.breachmod.config.BreachGameConfig
 import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.data.BreachTarget
-import com.nielsvoss.breachmod.entity.AbstractMorphEntity
 import com.nielsvoss.breachmod.state.*
 import com.nielsvoss.breachmod.ui.SpawnSelectorUI
 import com.nielsvoss.breachmod.ui.TargetSelectorUI
@@ -73,14 +72,6 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
                 activity.listen(BlockBreakEvent.EVENT, BlockBreakEvent { player, world, blockPos ->
                     breachActive.onBreakBlock(player, world, blockPos) })
 
-                activity.listen(PlayerAttackEntityEvent.EVENT, PlayerAttackEntityEvent { attacker, hand, attacked, hitResult ->
-                    if (attacked is AbstractMorphEntity && attacker is ServerPlayerEntity) {
-                        breachActive.morphManager.morphPlayer(attacker, attacked)
-                        ActionResult.CONSUME
-                    }
-                    EventResult.PASS
-                })
-
                 activity.listen(GameActivityEvents.ENABLE, GameActivityEvents.Enable { breachActive.start() })
                 activity.listen(GameActivityEvents.DISABLE, GameActivityEvents.Disable { breachActive.onDisable() })
             }
@@ -92,7 +83,6 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     private val spawnLogic = BreachActiveSpawnLogic(world, map, players, persistentState,
         config.attackerKits.getKits(), config.defenderKits.getKits(), config.teamOptions.giveHelmets)
     private val roundTimer: BreachRoundTimer
-    private val morphManager: MorphManager = MorphManager()
     private val sneakingPlayers: MutableSet<PlayerRef> = mutableSetOf()
 
     /**
@@ -145,8 +135,6 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
     }
 
     private fun tick() {
-        morphManager.tick(world)
-
         // This code used to belong to start(), but for some reason the update to 1.21.4 caused the UIs to no longer
         // open. This hack opens the UIs on the first tick instead, which fixes it for some reason.
         if (shouldDisplayUIsNextTick) {

@@ -1,10 +1,7 @@
 package com.nielsvoss.breachmod
 
 import com.nielsvoss.breachmod.config.BreachGameConfig
-import com.nielsvoss.breachmod.entity.AbstractMorphEntity
-import com.nielsvoss.breachmod.entity.EndermiteMorphEntity
 import com.nielsvoss.breachmod.entity.GrappleEntity
-import com.nielsvoss.breachmod.entity.SilverfishMorphEntity
 import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
@@ -64,14 +61,6 @@ object Breach : ModInitializer {
 	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
 		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build(
 			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple")))
-	@JvmField
-	val SILVERFISH_MORPH_ENTITY_TYPE: EntityType<SilverfishMorphEntity> =
-		EntityType.Builder.create(::SilverfishMorphEntity, SpawnGroup.MISC).build(
-			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "silverfish_morph")))
-	@JvmField
-	val ENDERMITE_MORPH_ENTITY_TYPE: EntityType<EndermiteMorphEntity> =
-		EntityType.Builder.create(::EndermiteMorphEntity, SpawnGroup.MISC).build(
-			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "endermite_morph")))
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -82,12 +71,8 @@ object Breach : ModInitializer {
 		Registry.register(Registries.ITEM, GRAPPLING_ARROW_REGKEY, GRAPPLING_ARROW)
 
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple"), GRAPPLE_ENTITY_TYPE)
-		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "silverfish_morph"), SILVERFISH_MORPH_ENTITY_TYPE)
-		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "endermite_morph"), ENDERMITE_MORPH_ENTITY_TYPE)
 		FabricDefaultAttributeRegistry.register(GRAPPLE_ENTITY_TYPE, MobEntity.createMobAttributes());
-		FabricDefaultAttributeRegistry.register(SILVERFISH_MORPH_ENTITY_TYPE, AbstractMorphEntity.createMorphEntityAttributes());
-		FabricDefaultAttributeRegistry.register(ENDERMITE_MORPH_ENTITY_TYPE, AbstractMorphEntity.createMorphEntityAttributes());
-		PolymerEntityUtils.registerType(GRAPPLE_ENTITY_TYPE, SILVERFISH_MORPH_ENTITY_TYPE, ENDERMITE_MORPH_ENTITY_TYPE)
+		PolymerEntityUtils.registerType(GRAPPLE_ENTITY_TYPE)
 
 		/*
 		// Based on https://github.com/ItsRevolt/Explosive-Arrows-Fabric/blob/1.20/src/main/java/lol/shmokey/explosivearrow/ExplosiveArrow.java
