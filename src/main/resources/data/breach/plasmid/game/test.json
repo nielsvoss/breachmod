@@ -2,5 +2,8 @@
   "type": "breach:breach",
   "map": {
     "id": "breach:test"
+  },
+  "gameplay": {
+    "end_round_when_a_team_is_eliminated": false
   }
 }

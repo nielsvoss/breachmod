@@ -65,7 +65,10 @@ The config is commented here, but note that comments are not permitted in the ac
     "disable_fire_tick": true,
     // When a beacon is broken it will give the glowing effect to all players for this many ticks.
     // Set to 0 to disable.
-    "beacons_reveal_players_time": 200
+    "beacons_reveal_players_time": 200,
+    // If false, the round will keep going even after a team is eliminated.
+    // You should probably keep this set to true, setting this to false is really only intended for testing purposes
+    "end_round_when_a_team_is_eliminated": true
   },
   "times": {
     // Length of the "Prep" phase, in seconds

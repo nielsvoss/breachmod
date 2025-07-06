@@ -8,7 +8,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 @JvmRecord
 data class GameplayOptionsConfig(
     val arrowsInstantKill: Boolean, val disableHunger: Boolean, val disableNaturalRegeneration: Boolean,
-    val disableTileDrops: Boolean, val disableFireTick: Boolean, val beaconsRevealPlayersTime: Int
+    val disableTileDrops: Boolean, val disableFireTick: Boolean, val beaconsRevealPlayersTime: Int,
+    val endRoundWhenATeamIsEliminated: Boolean
 ) {
     companion object {
         @JvmStatic
@@ -18,7 +19,8 @@ data class GameplayOptionsConfig(
             disableNaturalRegeneration = true,
             disableTileDrops = true,
             disableFireTick = true,
-            beaconsRevealPlayersTime = 200
+            beaconsRevealPlayersTime = 200,
+            endRoundWhenATeamIsEliminated = true
         )
 
         @JvmStatic
@@ -35,7 +37,9 @@ data class GameplayOptionsConfig(
                 Codec.BOOL.optionalFieldOf("disable_fire_tick", DEFAULT.disableFireTick)
                     .forGetter(GameplayOptionsConfig::disableFireTick),
                 Codec.INT.optionalFieldOf("beacons_reveal_players_time", DEFAULT.beaconsRevealPlayersTime)
-                    .forGetter(GameplayOptionsConfig::beaconsRevealPlayersTime)
+                    .forGetter(GameplayOptionsConfig::beaconsRevealPlayersTime),
+                Codec.BOOL.optionalFieldOf("end_round_when_a_team_is_eliminated", DEFAULT.endRoundWhenATeamIsEliminated)
+                    .forGetter(GameplayOptionsConfig::endRoundWhenATeamIsEliminated)
             ).apply(instance, ::GameplayOptionsConfig)
         }
     }

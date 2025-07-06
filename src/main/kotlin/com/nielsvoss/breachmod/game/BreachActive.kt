@@ -188,9 +188,11 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
         if (!roundTimer.isGameEnded()) {
             val defendersMeetWinCondition: Boolean =
-                phaseThatJustEnded == BreachRoundTimer.Phase.MAIN_PHASE || players.survivingOnlineAttackers().isEmpty()
+                phaseThatJustEnded == BreachRoundTimer.Phase.MAIN_PHASE ||
+                        (players.survivingOnlineAttackers().isEmpty() && config.gameplayOptions.endRoundWhenATeamIsEliminated)
             val attackersMeetWinCondition: Boolean =
-                (targetsState.allBroken() && !roundTimer.isPrepPhase()) || players.survivingOnlineDefenders().isEmpty()
+                (targetsState.allBroken() && !roundTimer.isPrepPhase()) ||
+                        (players.survivingOnlineDefenders().isEmpty() && config.gameplayOptions.endRoundWhenATeamIsEliminated)
 
             if (attackersMeetWinCondition && defendersMeetWinCondition) {
                 onTie()
