@@ -72,10 +72,10 @@ The config is commented here, but note that comments are not permitted in the ac
   },
   "times": {
     // Length of the "Prep" phase, in seconds
-    "prep_length_in_seconds": 30,
+    "prep_length_in_seconds": 15,
     // Length of the round after the prep phase ends.
     // Total round length = prep_length_in_seconds + round_length_in_seconds.
-    "round_length_in_seconds": 180,
+    "round_length_in_seconds": 120,
     // Number of seconds to wait before starting the game if the threshold of players has not yet been reached.
     "lobby_ready_seconds": 30,
     // Number of seconds to wait before starting the game if the threshold has been reached or exceeded.

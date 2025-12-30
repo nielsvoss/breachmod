@@ -15,8 +15,8 @@ data class TimesConfig(
     companion object {
         @JvmStatic
         val DEFAULT: TimesConfig = TimesConfig(
-            prepLengthInSeconds = 30,
-            roundLengthInSeconds = 180,
+            prepLengthInSeconds = 15,
+            roundLengthInSeconds = 120,
             lobbyReadySeconds = 30,
             lobbyFullSeconds = 10,
             secondsAfterRoundEndBeforeNext = 10,
