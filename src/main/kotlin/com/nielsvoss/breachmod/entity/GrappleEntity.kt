@@ -164,6 +164,9 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         }
 
         shooter.velocityModified = true
+
+        // Disable fall damage when grapple is out
+        shooter.fallDistance = 0F
     }
 }
 
