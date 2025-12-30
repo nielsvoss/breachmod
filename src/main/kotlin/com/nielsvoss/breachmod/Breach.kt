@@ -11,6 +11,8 @@ import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
+import net.minecraft.component.DataComponentTypes
+import net.minecraft.component.type.LoreComponent
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.mob.MobEntity
@@ -21,6 +23,7 @@ import net.minecraft.registry.Registry
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.RegistryKeys
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
@@ -39,7 +42,11 @@ object Breach : ModInitializer {
 	@JvmField
 	val EXPLOSIVE_ARROW: Item = ExplosiveArrowItem(Item.Settings()
 		.useItemPrefixedTranslationKey()
-		.registryKey(EXPLOSIVE_ARROW_REGKEY))
+		.registryKey(EXPLOSIVE_ARROW_REGKEY)
+		.component(DataComponentTypes.LORE, LoreComponent(listOf(
+			Text.translatable("item.breach.explosive_arrow.lore.line1"),
+			Text.translatable("item.breach.explosive_arrow.lore.line2")))
+		))
 
 	@JvmField
 	val ENDER_ARROW_REGKEY: RegistryKey<Item> =
@@ -47,7 +54,10 @@ object Breach : ModInitializer {
 	@JvmField
 	val ENDER_ARROW: Item = EnderArrowItem(Item.Settings()
 		.useItemPrefixedTranslationKey()
-		.registryKey(ENDER_ARROW_REGKEY))
+		.registryKey(ENDER_ARROW_REGKEY)
+		.component(DataComponentTypes.LORE, LoreComponent(listOf(
+			Text.translatable("item.breach.ender_arrow.lore.line1")))
+		))
 
 	@JvmField
 	val GRAPPLING_ARROW_REGKEY: RegistryKey<Item> =
@@ -55,7 +65,12 @@ object Breach : ModInitializer {
 	@JvmField
 	val GRAPPLING_ARROW: Item = GrapplingArrowItem(Item.Settings()
 		.useItemPrefixedTranslationKey()
-		.registryKey(GRAPPLING_ARROW_REGKEY))
+		.registryKey(GRAPPLING_ARROW_REGKEY)
+		.component(DataComponentTypes.LORE, LoreComponent(listOf(
+			Text.translatable("item.breach.grappling_arrow.lore.line1"),
+			Text.translatable("item.breach.grappling_arrow.lore.line2"),
+			Text.translatable("item.breach.grappling_arrow.lore.line3")))
+		))
 
 	@JvmField
 	val GRAPPLE_ENTITY_TYPE: EntityType<GrappleEntity> =
