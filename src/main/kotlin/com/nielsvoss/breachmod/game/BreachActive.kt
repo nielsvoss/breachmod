@@ -19,6 +19,7 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
+import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
 import xyz.nucleoid.map_templates.TemplateRegion
 import xyz.nucleoid.plasmid.api.game.GameOpenException
@@ -30,7 +31,7 @@ import xyz.nucleoid.plasmid.api.game.stats.StatisticKeys
 import xyz.nucleoid.plasmid.api.util.PlayerRef
 import xyz.nucleoid.stimuli.event.EventResult
 import xyz.nucleoid.stimuli.event.block.BlockBreakEvent
-import xyz.nucleoid.stimuli.event.player.PlayerAttackEntityEvent
+import xyz.nucleoid.stimuli.event.item.ItemUseEvent
 import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent
 
 // Designed similarly to https://github.com/NucleoidMC/skywars/blob/1.20/src/main/java/us/potatoboy/skywars/game/SkyWarsActive.java
@@ -74,6 +75,10 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
 
                 activity.listen(GameActivityEvents.ENABLE, GameActivityEvents.Enable { breachActive.start() })
                 activity.listen(GameActivityEvents.DISABLE, GameActivityEvents.Disable { breachActive.onDisable() })
+
+                activity.listen(ItemUseEvent.EVENT, ItemUseEvent { player, hand ->
+                    breachActive.onUseItem(player, hand)
+               })
             }
         }
     }
@@ -365,5 +370,16 @@ class BreachActive private constructor(private val gameSpace: GameSpace, private
         }
 
         return EventResult.PASS
+    }
+
+    private fun onUseItem(player: ServerPlayerEntity, hand: Hand): ActionResult {
+        if (player.getStackInHand(hand).isOf(Breach.TELEPORT_SELECTOR)) {
+            if (roundTimer.isPrepPhase() && players.isAnyDefender(player)) {
+                openSpawnSelectorUIIfMoreThanOneLocation(player, map.attackerSpawnRegions)
+            }
+            return ActionResult.CONSUME
+        } else {
+            return ActionResult.PASS
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.nielsvoss.breachmod.game.BreachWaiting
 import com.nielsvoss.breachmod.item.EnderArrowItem
 import com.nielsvoss.breachmod.item.ExplosiveArrowItem
 import com.nielsvoss.breachmod.item.GrapplingArrowItem
+import com.nielsvoss.breachmod.item.TeleportSelectorItem
 import com.nielsvoss.breachmod.kit.BreachKitRegistry
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils
 import net.fabricmc.api.ModInitializer
@@ -77,6 +78,15 @@ object Breach : ModInitializer {
 		EntityType.Builder.create(::GrappleEntity, SpawnGroup.CREATURE).build(
 			RegistryKey.of(RegistryKeys.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple")))
 
+	@JvmField
+	val TELEPORT_SELECTOR_REGKEY: RegistryKey<Item> =
+		RegistryKey.of(RegistryKeys.ITEM, Identifier.of(MOD_ID, "teleport_selector"))
+
+	@JvmField
+	val TELEPORT_SELECTOR: Item = TeleportSelectorItem(Item.Settings()
+		.useItemPrefixedTranslationKey()
+		.registryKey(TELEPORT_SELECTOR_REGKEY))
+
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
@@ -84,6 +94,7 @@ object Breach : ModInitializer {
 		Registry.register(Registries.ITEM, EXPLOSIVE_ARROW_REGKEY, EXPLOSIVE_ARROW)
 		Registry.register(Registries.ITEM, ENDER_ARROW_REGKEY, ENDER_ARROW)
 		Registry.register(Registries.ITEM, GRAPPLING_ARROW_REGKEY, GRAPPLING_ARROW)
+		Registry.register(Registries.ITEM, TELEPORT_SELECTOR_REGKEY, TELEPORT_SELECTOR)
 
 		Registry.register(Registries.ENTITY_TYPE, Identifier.of(MOD_ID, "grapple"), GRAPPLE_ENTITY_TYPE)
 		FabricDefaultAttributeRegistry.register(GRAPPLE_ENTITY_TYPE, MobEntity.createMobAttributes());
