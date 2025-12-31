@@ -1,0 +1,86 @@
+{
+  "name": "kit.breach.attacker_heavy",
+  "icon": "iron_chestplate",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "quick_charge": 1
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:birch_planks",
+      "count": 48
+    },
+    {
+      "id": "minecraft:stone_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:iron_axe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:shield",
+      "count": 1,
+      "components": {
+        "minecraft:damage": 336
+      }
+    },
+    {
+      "id": "minecraft:flint_and_steel",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:tnt",
+      "count": 2
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 4
+    },
+    {
+      "id": "breach:ender_arrow",
+      "count": 2
+    }
+  ],
+  "armor": {
+    "chestplate": {
+      "id": "minecraft:iron_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    }
+  },
+  "offhand": {
+    "id": "minecraft:shield",
+    "count": 1,
+    "components": {
+      "minecraft:damage": 336
+    }
+  },
+  "categories": [
+    "attacker"
+  ]
+}

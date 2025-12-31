@@ -1,0 +1,80 @@
+{
+  "name": "kit.breach.attacker_demoman",
+  "icon": "tnt",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:redstone_block",
+      "count": 24
+    },
+    {
+      "id": "minecraft:wooden_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:stone_axe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 2
+    },
+    {
+      "id": "breach:explosive_arrow",
+      "count": 2
+    },
+    {
+      "id": "minecraft:flint_and_steel",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:tnt",
+      "count": 10
+    },
+    {
+      "id": "minecraft:water_bucket",
+      "count": 1
+    }
+  ],
+  "armor": {
+    "helmet": {
+      "id": "minecraft:golden_helmet",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "blast_protection": 10
+          }
+        },
+        "minecraft:trim": {
+          "material": "minecraft:copper",
+          "pattern": "minecraft:shaper"
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    }
+  },
+  "categories": [
+    "attacker"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "kit.breach.defender_fortifier",
+  "icon": "iron_bars",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:spruce_planks",
+      "count": 48
+    },
+    {
+      "id": "minecraft:iron_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:iron_axe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:cobweb",
+      "count": 16
+    },
+    {
+      "id": "minecraft:end_stone",
+      "count": 24
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 3
+    },
+    {
+      "id": "breach:explosive_arrow",
+      "count": 2
+    },
+    {
+      "id": "minecraft:water_bucket",
+      "count": 1
+    }
+  ],
+  "armor": {
+    "chestplate": {
+      "id": "minecraft:netherite_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    }
+  },
+  "offhand": {
+    "id": "minecraft:shield",
+    "count": 1,
+    "components": {
+      "minecraft:damage": 336
+    }
+  },
+  "categories": [
+    "defender"
+  ]
+}

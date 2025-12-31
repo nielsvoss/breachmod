@@ -1,0 +1,100 @@
+{
+  "name": "kit.breach.defender_hunter",
+  "icon": "crossbow",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "piercing": 3
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:spruce_planks",
+      "count": 32
+    },
+    {
+      "id": "minecraft:iron_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "efficiency": 1
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:iron_axe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "efficiency": 1
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:wind_charge",
+      "count": 8
+    },
+    {
+      "id": "minecraft:potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "swiftness"
+        }
+      }
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 4
+    },
+    {
+      "id": "breach:ender_arrow",
+      "count": 3
+    },
+    {
+      "id": "breach:grappling_arrow",
+      "count": 1
+    }
+  ],
+  "armor": {
+    "chestplate": {
+      "id": "minecraft:iron_chestplate",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    "boots": {
+      "id": "minecraft:iron_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "feather_falling": 5
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    }
+  },
+  "categories": [
+    "defender"
+  ]
+}

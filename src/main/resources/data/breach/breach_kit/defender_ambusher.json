@@ -1,0 +1,70 @@
+{
+  "name": "kit.breach.defender_ambusher",
+  "icon": "netherite_axe",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:spruce_planks",
+      "count": 32
+    },
+    {
+      "id": "minecraft:iron_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:iron_axe",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:splash_potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:invisibility"
+        }
+      }
+    },
+    {
+      "id": "minecraft:glass",
+      "count": 24
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 5
+    },
+    {
+      "id": "breach:grappling_arrow",
+      "count": 3
+    }
+  ],
+  "armor": {
+    "helmet": "minecraft:air",
+    "chestplate": "minecraft:air"
+  },
+  "categories": [
+    "defender"
+  ]
+}

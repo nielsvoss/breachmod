@@ -1,0 +1,87 @@
+{
+  "name": "kit.breach.attacker_scout",
+  "icon": "wind_charge",
+  "items": [
+    {
+      "id": "minecraft:crossbow",
+      "count": 1,
+      "components": {
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:birch_planks",
+      "count": 48
+    },
+    {
+      "id": "minecraft:iron_pickaxe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "efficiency": 1
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:golden_axe",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "efficiency": 1
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    },
+    {
+      "id": "minecraft:wind_charge",
+      "count": 12
+    },
+    {
+      "id": "minecraft:ender_pearl",
+      "count": 1
+    },
+    {
+      "id": "minecraft:potion",
+      "count": 1,
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "strong_swiftness"
+        }
+      }
+    },
+    {
+      "id": "minecraft:arrow",
+      "count": 3
+    },
+    {
+      "id": "breach:grappling_arrow",
+      "count": 2
+    }
+  ],
+  "armor": {
+    "boots": {
+      "id": "minecraft:golden_boots",
+      "count": 1,
+      "components": {
+        "minecraft:enchantments": {
+          "levels": {
+            "feather_falling": 5
+          }
+        },
+        "minecraft:unbreakable": {
+        }
+      }
+    }
+  },
+  "categories": [
+    "attacker"
+  ]
+}

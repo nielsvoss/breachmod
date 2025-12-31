@@ -59,5 +59,10 @@
   "map.breach.test.west_spawn": "West Spawn",
   "map.breach.village.front_gate": "Front Gate",
   "map.breach.village.mine": "Mine",
-  "kit.breach.simple": "Simple"
+  "kit.breach.attacker_demoman": "Demoman",
+  "kit.breach.attacker_heavy": "Heavy",
+  "kit.breach.attacker_scout": "Scout",
+  "kit.breach.defender_ambusher": "Ambusher",
+  "kit.breach.defender_fortifier": "Fortifier",
+  "kit.breach.defender_hunter": "Hunter"
 }
