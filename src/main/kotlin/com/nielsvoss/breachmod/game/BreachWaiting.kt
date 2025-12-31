@@ -91,6 +91,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
 
                 val spawnLocation = waiting.spawnLocation()
                 for (player in playersToJoin) {
+                    waiting.spawnPlayer(player)
                     player.teleport(world, spawnLocation.x, spawnLocation.y, spawnLocation.z, setOf(), 0F, 0F, true)
                 }
             }
