@@ -4,11 +4,11 @@ import com.nielsvoss.breachmod.data.BreachMap
 import com.nielsvoss.breachmod.state.RoundPersistentState
 import com.nielsvoss.breachmod.kit.BreachKit
 import com.nielsvoss.breachmod.state.BreachPlayersState
-import com.nielsvoss.breachmod.util.TeamArmorUtils
-import com.nielsvoss.breachmod.util.randomBottom
-import com.nielsvoss.breachmod.util.teleportFacingOrigin
+import com.nielsvoss.breachmod.util.*
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
+import net.minecraft.text.Text
+import net.minecraft.util.Formatting
 import net.minecraft.world.GameMode
 import xyz.nucleoid.map_templates.TemplateRegion
 
@@ -69,6 +69,11 @@ class BreachActiveSpawnLogic(
     fun spawnEliminatedPlayer(player: ServerPlayerEntity) {
         val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
         player.health = 20.0F
+        player.inventory.clear()
+        player.changeGameMode(GameMode.SPECTATOR)
+        player.setTitleTimes(0, 20, 5)
+        // The title will be occupied with a "x vs y" message.
+        player.sendSubtitle(Text.translatable("text.breach.death_title").formatted(Formatting.RED))
         player.teleportFacingOrigin(world, respawnLoc)
     }
 }
