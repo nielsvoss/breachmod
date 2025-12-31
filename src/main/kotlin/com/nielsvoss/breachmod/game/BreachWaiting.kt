@@ -106,6 +106,7 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
         player.changeGameMode(GameMode.ADVENTURE)
         player.health = 20.0F
         player.inventory.clear()
+        player.clearStatusEffects()
     }
 
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {

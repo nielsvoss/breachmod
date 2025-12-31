@@ -70,6 +70,7 @@ class BreachActiveSpawnLogic(
         val respawnLoc = map.eliminatedSpawnRegions.random().bounds.randomBottom()
         player.health = 20.0F
         player.inventory.clear()
+        player.clearStatusEffects()
         player.changeGameMode(GameMode.SPECTATOR)
         player.setTitleTimes(0, 20, 5)
         // The title will be occupied with a "x vs y" message.
