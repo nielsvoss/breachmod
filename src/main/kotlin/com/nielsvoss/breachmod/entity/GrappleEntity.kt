@@ -67,7 +67,7 @@ class GrappleEntity(entityType: EntityType<out GrappleEntity>, world: World)
         if (!world.isClient && world is ServerWorld) {
             val shooter: ServerPlayerEntity? = getShooter()
             val projectile: PersistentProjectileEntity? = getProjectile()
-            if (shooter == null || projectile == null || shooter.isDead || !this.isLeashed) {
+            if (shooter == null || projectile == null || shooter.isDead || shooter.isSpectator || !this.isLeashed) {
                 end(false)
                 return
             } else if (this.age > 5 && (shooter as ServerPlayerEntityDuck).breach_rightClickedWithBowRecently()) {
