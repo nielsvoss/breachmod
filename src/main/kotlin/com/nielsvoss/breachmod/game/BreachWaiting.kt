@@ -110,7 +110,8 @@ class BreachWaiting(private val gameSpace: GameSpace, private val world: ServerW
     private fun onPlayerDeath(player: ServerPlayerEntity): EventResult {
         spawnPlayer(player)
         val respawnLocation: Vec3d = map.lobbySpawnRegion.bounds.randomBottom()
-        player.teleport(world, respawnLocation.x, respawnLocation.y, respawnLocation.z, PositionFlag.VALUES, 0.0F, 0.0F, true)
+        // setOf() indicates that no coordinates are relative
+        player.teleport(world, respawnLocation.x, respawnLocation.y, respawnLocation.z, setOf(), 0.0F, 0.0F, true)
         return EventResult.DENY
     }
 
