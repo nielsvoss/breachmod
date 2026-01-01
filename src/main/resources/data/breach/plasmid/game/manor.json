@@ -1,0 +1,7 @@
+{
+  "type": "breach:breach",
+  "map": {
+    "id": "breach:manor",
+    "time_of_day": 18000
+  }
+}
