@@ -1,0 +1,12 @@
+{
+  "type": "breach:breach",
+  "map": {
+    "id": "breach:statue_cow",
+    "time_of_day": 1000
+  },
+  "times": {
+    "prep_length_in_seconds": 5,
+	"round_length_in_seconds": 60
+  },
+  "number_of_targets": 1
+}
